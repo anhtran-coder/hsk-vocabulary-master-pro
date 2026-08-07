@@ -14,7 +14,7 @@
             --success-light: rgba(209, 250, 229, 0.85);
             --danger: #ef4444;
             --danger-light: rgba(254, 226, 226, 0.85);
-            --card-bg: rgba(255, 255, 255, 0.88);
+            --card-bg: rgba(255, 255, 255, 0.92);
             --text-dark: #1e293b;
             --header-bg-start: rgba(238, 242, 255, 0.95);
             --header-bg-end: rgba(224, 231, 255, 0.95);
@@ -22,13 +22,14 @@
             --header-border: #c7d2fe;
         }
 
+        * { box-sizing: border-box; }
+
         body { 
             font-family: 'Inter', system-ui, -apple-system, sans-serif; 
             margin: 0; 
-            padding: 20px;
+            padding: 12px;
             color: var(--text-dark);
             font-size: 14px; 
-            box-sizing: border-box;
             position: relative;
             min-height: 100vh;
             overflow-x: hidden;
@@ -42,394 +43,397 @@
             user-select: none;
             pointer-events: none;
             animation: fall linear infinite;
-            font-size: 24px;
-            opacity: 0.8;
+            font-size: 20px;
+            opacity: 0.7;
         }
 
         @keyframes fall {
-            0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+            0% { transform: translateY(-10vh) rotate(0deg); opacity: 0.8; }
             100% { transform: translateY(110vh) rotate(360deg); opacity: 0.2; }
         }
 
-        .container-wrapper { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; }
+        .container-wrapper { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; width: 100%; }
 
         .app-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 12px;
             flex-wrap: wrap;
-            gap: 12px;
+            gap: 8px;
         }
 
         .app-title {
-            font-size: 26px;
+            font-size: 20px;
             font-weight: 700;
             color: #1e1b4b;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 6px;
             margin: 0;
-            text-shadow: 0 2px 4px rgba(255, 255, 255, 0.8);
+            text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
         }
 
         .app-title .pro-tag {
             background: linear-gradient(135deg, #4f46e5, #8b5cf6);
             color: white;
-            font-size: 11px;
-            padding: 4px 10px;
-            border-radius: 12px;
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 10px;
             vertical-align: middle;
-            box-shadow: 0 2px 5px rgba(79, 70, 229, 0.3);
         }
 
         .controls { 
             display: flex; 
-            gap: 12px; 
-            flex-wrap: wrap; 
-            align-items: center; 
-            background: rgba(255, 255, 255, 0.85); 
-            backdrop-filter: blur(16px);
-            padding: 18px 22px; 
-            border-radius: 24px; 
-            box-shadow: 0 12px 35px -8px rgba(99, 102, 241, 0.2);
-            margin-bottom: 20px;
-            border: 2px solid rgba(255, 255, 255, 0.9);
+            flex-direction: column;
+            gap: 10px; 
+            background: rgba(255, 255, 255, 0.9); 
+            backdrop-filter: blur(12px);
+            padding: 12px; 
+            border-radius: 18px; 
+            box-shadow: 0 8px 25px -5px rgba(99, 102, 241, 0.15);
+            margin-bottom: 16px;
+            border: 1.5px solid rgba(255, 255, 255, 0.9);
+            width: 100%;
+        }
+
+        .control-row {
+            display: flex;
+            gap: 8px;
+            width: 100%;
+            flex-wrap: wrap;
         }
 
         .control-box {
             display: flex;
             align-items: center;
-            gap: 8px;
+            justify-content: space-between;
+            gap: 6px;
             background: #ffffff;
-            padding: 7px 14px;
-            border-radius: 14px;
+            padding: 6px 10px;
+            border-radius: 12px;
             border: 1.5px solid #e2e8f0;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
-            transition: all 0.2s ease;
+            flex: 1 1 calc(50% - 4px);
+            min-width: 130px;
         }
 
-        .control-box:hover { border-color: #cbd5e1; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .control-box.full-width {
+            flex: 1 1 100%;
+        }
 
         .controls label.box-label {
             font-weight: 600;
-            font-size: 13px;
+            font-size: 12px;
             color: #475569;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
             white-space: nowrap;
             margin: 0;
+            flex-shrink: 0;
         }
 
         .controls select, .controls input[type="number"] {
-            padding: 6px 10px;
-            border: 1.5px solid #cbd5e1;
-            border-radius: 9px;
+            padding: 5px 6px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
             outline: none;
             font-weight: 600;
             color: #0f172a;
             background: #f8fafc;
-            transition: all 0.2s;
-            font-size: 13px;
+            font-size: 12px;
+            max-width: 100%;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
         }
 
-        .controls select:focus, .controls input:focus {
-            border-color: #6366f1;
-            background: #ffffff;
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+        .control-box select {
+            flex: 1;
+            min-width: 0;
         }
 
         .range-container {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
             background: #f8fafc;
-            padding: 5px 10px;
-            border-radius: 12px;
-            border: 1.5px solid #cbd5e1;
+            padding: 2px 6px;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
         }
-        .range-container input { width: 48px; text-align: center; }
+        .range-container input { width: 40px !important; text-align: center; padding: 3px !important; }
+
+        .btn-group {
+            display: flex;
+            gap: 6px;
+            width: 100%;
+            flex-wrap: wrap;
+        }
 
         .btn { 
-            padding: 10px 20px; 
+            padding: 8px 12px; 
             border: none; 
-            border-radius: 14px; 
+            border-radius: 10px; 
             cursor: pointer; 
             font-weight: 600; 
             color: white; 
-            font-size: 13px; 
+            font-size: 12px; 
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
-            position: relative;
-            overflow: hidden;
+            justify-content: center;
+            gap: 4px;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            flex: 1 1 calc(33.33% - 4px);
+            white-space: nowrap;
         }
 
-        .btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.18); }
+        .btn:hover { transform: translateY(-1px); }
 
-        .btn-excel { background: linear-gradient(135deg, #059669, #047857); box-shadow: 0 4px 15px rgba(5, 150, 105, 0.35); }
-        .btn-new { background: linear-gradient(135deg, #6366f1, #4f46e5); box-shadow: 0 4px 15px rgba(99, 102, 241, 0.35); }
-        .btn-retry { background: linear-gradient(135deg, #f59e0b, #d97706); box-shadow: 0 4px 15px rgba(245, 158, 11, 0.35); }
-        .btn-reset { background: linear-gradient(135deg, #ef4444, #dc2626); box-shadow: 0 4px 15px rgba(239, 68, 68, 0.35); }
-        .btn-audio { background: linear-gradient(135deg, #8b5cf6, #6d28d9); box-shadow: 0 4px 15px rgba(139, 92, 246, 0.35); }
+        .btn-excel { background: linear-gradient(135deg, #059669, #047857); flex: 1 1 calc(50% - 3px); }
+        .btn-audio { background: linear-gradient(135deg, #8b5cf6, #6d28d9); flex: 1 1 calc(50% - 3px); }
         .btn-audio.muted { background: linear-gradient(135deg, #64748b, #475569); }
+        
+        .btn-new { background: linear-gradient(135deg, #6366f1, #4f46e5); }
+        .btn-retry { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .btn-reset { background: linear-gradient(135deg, #ef4444, #dc2626); }
 
         .btn-speaker {
             background: #e0e7ff;
             border: 1px solid #c7d2fe;
             border-radius: 50%;
-            width: 28px;
-            height: 28px;
+            width: 24px;
+            height: 24px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            font-size: 13px;
-            margin-left: 6px;
-            transition: all 0.2s;
+            font-size: 11px;
+            flex-shrink: 0;
+            margin-left: 2px;
         }
-        .btn-speaker:hover { background: #818cf8; color: white; transform: scale(1.1); }
         
-        .main-layout { display: flex; gap: 20px; align-items: flex-start; }
+        .main-layout { display: flex; flex-direction: column; gap: 16px; width: 100%; }
 
         .table-container { 
-            flex: 1; 
+            width: 100%;
             background: var(--card-bg); 
             backdrop-filter: blur(10px);
-            border-radius: 16px; 
-            padding: 16px; 
-            box-shadow: 0 10px 30px -5px rgba(0,0,0,0.1);
-            border: 2px solid rgba(244, 114, 182, 0.4);
+            border-radius: 14px; 
+            padding: 8px; 
+            box-shadow: 0 8px 20px -5px rgba(0,0,0,0.08);
+            border: 1.5px solid rgba(244, 114, 182, 0.3);
             overflow-x: auto; 
+            -webkit-overflow-scrolling: touch;
         }
         
-        table { width: 100%; border-collapse: separate; border-spacing: 0; table-layout: fixed; }
+        table { width: 100%; border-collapse: separate; border-spacing: 0; table-layout: auto; min-width: 580px; }
 
         th { 
             background: linear-gradient(135deg, var(--header-bg-start), var(--header-bg-end)) !important;
             color: var(--header-text) !important;
             font-weight: 700 !important;
-            font-size: 13px !important;
+            font-size: 11px !important;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            padding: 12px 8px !important;
-            border-top: 1.5px solid var(--header-border) !important;
+            padding: 8px 4px !important;
+            border-top: 1px solid var(--header-border) !important;
             border-bottom: 2px solid #f472b6 !important;
+            text-align: center;
         }
 
-        th:first-child { border-left: 1.5px solid var(--header-border); border-top-left-radius: 10px; border-bottom-left-radius: 10px; }
-        th:last-child { border-right: 1.5px solid var(--header-border); border-top-right-radius: 10px; border-bottom-right-radius: 10px; }
-
-        td { border-bottom: 1px solid rgba(203, 213, 225, 0.6); padding: 12px 6px; text-align: center; word-wrap: break-word; }
+        td { border-bottom: 1px solid rgba(203, 213, 225, 0.6); padding: 8px 4px; text-align: center; word-wrap: break-word; font-size: 12px; }
 
         td.col-hanzi { 
-            font-family: 'Noto Sans SC', 'Microsoft YaHei', 'PingFang SC', sans-serif;
-            font-size: 26px; 
+            font-family: 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
+            font-size: 18px; 
             font-weight: 700 !important;
             color: #9f1239;
-            letter-spacing: 1px;
         }
 
-        td.col-pinyin { color: #475569; font-style: italic; font-size: 14px; font-weight: 600; }
-        td.col-stt { color: #475569; font-weight: 600; }
-        td.col-type { color: #0284c7; font-size: 12px; font-weight: 600; }
-        td.col-viet { font-weight: 600; color: #1e293b; }
-        td.col-status { font-weight: 700; }
-
-        .col-stt { width: 6%; }
-        .col-hanzi { width: 20%; }
-        .col-type { width: 12%; }
-        .col-pinyin { width: 16%; }
-        .col-viet { width: 21%; }
-        .col-input { width: 17%; }
-        .col-status { width: 8%; }
+        td.col-pinyin { color: #475569; font-style: italic; font-size: 11px; font-weight: 600; }
+        td.col-stt { color: #64748b; font-weight: 600; font-size: 11px; }
+        td.col-type { color: #0284c7; font-size: 10px; font-weight: 600; }
+        td.col-viet { font-weight: 600; color: #1e293b; font-size: 12px; }
+        td.col-status { font-weight: 700; font-size: 11px; }
 
         input[type="text"] { 
-            width: 85%; 
-            padding: 8px 10px; 
+            width: 100%; 
+            padding: 5px; 
             border: 1.5px solid #cbd5e1; 
-            border-radius: 8px; 
+            border-radius: 6px; 
             text-align: center; 
-            font-size: 15px; 
+            font-size: 13px; 
             font-weight: 500;
             outline: none;
-            background: rgba(255, 255, 255, 0.95);
+            background: #ffffff;
         }
 
         input[type="text"]:focus {
             border-color: #ec4899;
-            background: #ffffff;
-            box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.25);
+            box-shadow: 0 0 0 2px rgba(236, 72, 153, 0.2);
         }
         
         tr.row-correct td { background-color: var(--success-light) !important; color: #064e3b; }
         tr.row-wrong td { background-color: var(--danger-light) !important; color: #7f1d1d; }
 
         .stats-dashboard { 
-            width: 250px; 
+            width: 100%; 
             background: var(--card-bg); 
             backdrop-filter: blur(10px);
-            border-radius: 16px; 
-            padding: 18px; 
-            box-shadow: 0 10px 30px -5px rgba(0,0,0,0.1);
-            border: 2px solid rgba(244, 114, 182, 0.4);
+            border-radius: 14px; 
+            padding: 14px; 
+            box-shadow: 0 8px 20px -5px rgba(0,0,0,0.08);
+            border: 1.5px solid rgba(244, 114, 182, 0.3);
         }
 
-        .stats-dashboard h3 { font-size: 13px; margin: 0 0 12px 0; text-transform: uppercase; color: #db2777; font-weight: 700; }
+        .stats-dashboard h3 { font-size: 12px; margin: 0 0 10px 0; text-transform: uppercase; color: #db2777; font-weight: 700; }
 
         .timer-box {
             background: linear-gradient(135deg, #e0e7ff, #fce7f3);
-            border: 1.5px solid #f472b6;
-            border-radius: 12px;
-            padding: 10px;
+            border: 1px solid #f472b6;
+            border-radius: 10px;
+            padding: 8px;
             text-align: center;
-            margin-bottom: 14px;
+            margin-bottom: 10px;
         }
-        .timer-box .timer-label { font-size: 11px; color: #4f46e5; font-weight: 700; text-transform: uppercase; }
-        .timer-box .timer-value { font-size: 20px; font-weight: 800; color: #db2777; margin-top: 2px; font-family: monospace; }
+        .timer-box .timer-label { font-size: 10px; color: #4f46e5; font-weight: 700; text-transform: uppercase; }
+        .timer-box .timer-value { font-size: 18px; font-weight: 800; color: #db2777; font-family: monospace; }
 
-        .progress-bar-bg { width: 100%; height: 8px; background-color: rgba(203, 213, 225, 0.6); border-radius: 10px; overflow: hidden; margin-bottom: 16px; }
+        .progress-bar-bg { width: 100%; height: 6px; background-color: rgba(203, 213, 225, 0.6); border-radius: 8px; overflow: hidden; margin-bottom: 12px; }
         .progress-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #ec4899, #8b5cf6); transition: width 0.4s ease; }
 
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .stat-card { background: rgba(255, 255, 255, 0.85); padding: 10px; border-radius: 10px; border: 1.5px solid #fbcfe8; text-align: center; }
-        .stat-card .label { font-size: 11px; color: #475569; margin-bottom: 4px; font-weight: 600; }
-        .stat-card .value { font-size: 16px; font-weight: 700; }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .stat-card { background: rgba(255, 255, 255, 0.9); padding: 8px; border-radius: 8px; border: 1px solid #fbcfe8; text-align: center; }
+        .stat-card .label { font-size: 10px; color: #475569; margin-bottom: 2px; font-weight: 600; }
+        .stat-card .value { font-size: 14px; font-weight: 700; }
 
-        .rate-card { margin-top: 12px; text-align: center; background: rgba(253, 242, 248, 0.9); padding: 12px; border-radius: 12px; border: 1.5px solid #f472b6; }
+        .rate-card { margin-top: 10px; text-align: center; background: rgba(253, 242, 248, 0.9); padding: 8px; border-radius: 10px; border: 1px solid #f472b6; }
         
         .contact-card {
-            margin-top: 14px;
+            margin-top: 12px;
             background: rgba(255, 255, 255, 0.95);
-            border: 1.5px solid #cbd5e1;
-            border-radius: 12px;
-            padding: 10px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            padding: 8px 10px;
             font-size: 11px;
             color: #334155;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
         }
         .contact-card .contact-title {
             font-weight: 700;
             color: #4338ca;
-            margin-bottom: 6px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
+            margin-bottom: 4px;
             text-transform: uppercase;
             font-size: 10px;
-            letter-spacing: 0.3px;
         }
         .contact-card .contact-item {
             display: flex;
             align-items: center;
-            gap: 6px;
-            margin-top: 4px;
-            word-break: break-all;
+            gap: 4px;
+            margin-top: 2px;
         }
         .contact-card .contact-item a { color: #2563eb; text-decoration: none; font-weight: 600; }
-        .contact-card .contact-item a:hover { text-decoration: underline; }
 
-        .footer-owner { text-align: center; margin-top: 14px; padding-top: 10px; border-top: 1px dashed #cbd5e1; font-size: 11px; color: #475569; font-weight: 500; }
+        .footer-owner { text-align: center; margin-top: 10px; padding-top: 8px; border-top: 1px dashed #cbd5e1; font-size: 10px; color: #475569; }
 
-        @media (max-width: 768px) {
-            body { padding: 8px; }
-            .main-layout { flex-direction: column; }
-            .table-container { padding: 6px; }
-            .stats-dashboard { width: 100%; box-sizing: border-box; }
-            .col-status { display: none !important; }
-            th { font-size: 11px !important; padding: 10px 2px !important; }
-            td { padding: 10px 2px !important; font-size: 13px; }
-            td.col-hanzi { font-size: 20px; }
-            td.col-pinyin { font-size: 12px; }
-            td.col-type { font-size: 11px; }
-            td.col-viet { font-size: 12px; }
-            input[type="text"] { font-size: 13px; padding: 6px 2px; width: 95%; }
-            .col-stt { width: 8%; }
-            .col-hanzi { width: 25%; }
-            .col-type { width: 12%; }
-            .col-pinyin { width: 18%; }
-            .col-viet { width: 22%; }
-            .col-input { width: 15%; }
+        @media (min-width: 769px) {
+            body { padding: 20px; }
+            .controls { flex-direction: row; flex-wrap: wrap; padding: 18px 22px; border-radius: 24px; }
+            .control-row { width: auto; flex-wrap: wrap; }
+            .control-box { flex: 0 0 auto; width: auto; }
+            .control-box.full-width { flex: 0 0 auto; width: auto; }
+            .btn-group { width: auto; }
+            .btn { flex: 0 0 auto; width: auto; padding: 10px 18px; }
+            .btn-excel, .btn-audio { flex: 0 0 auto; }
+            .main-layout { flex-direction: row; align-items: flex-start; }
+            .table-container { flex: 1; }
+            .stats-dashboard { width: 260px; flex-shrink: 0; }
+            .app-title { font-size: 24px; }
+            td.col-hanzi { font-size: 24px; }
         }
     </style>
 </head>
 <body>
 
     <script>
-        const symbols = ['🌸', '🌺', '🌷', '🌻', '🍃', '❄️', '❅', '✨', '💮', '❄️'];
-        for (let i = 0; i < 40; i++) {
+        const symbols = ['🌸', '🌺', '🌷', '🍃', '✨', '💮', '❄️'];
+        for (let i = 0; i < 25; i++) {
             const div = document.createElement('div');
             div.className = 'falling-decor';
             div.innerHTML = symbols[Math.floor(Math.random() * symbols.length)];
             div.style.left = Math.random() * 100 + 'vw';
             div.style.animationDuration = (Math.random() * 5 + 5) + 's';
             div.style.animationDelay = (Math.random() * 5) + 's';
-            div.style.fontSize = (Math.random() * 14 + 16) + 'px';
+            div.style.fontSize = (Math.random() * 10 + 14) + 'px';
             document.body.appendChild(div);
         }
     </script>
 
     <div class="container-wrapper">
         <div class="app-header">
-            <h2 class="app-title">🌸 HSK Vocabulary Master <span class="pro-tag">PRO</span></h2>
+            <h2 class="app-title">🌸 HSK Master <span class="pro-tag">PRO</span></h2>
+            <span id="loadingStatus" style="font-size: 11px; font-weight: 700; color: var(--success);"></span>
         </div>
 
         <div class="controls">
-            <label class="btn btn-excel">
-                📁 Chọn Excel
-                <input type="file" id="excelFile" accept=".xlsx, .xls" style="display: none;">
-            </label>
-
-            <!-- Nút Bật/Tắt Âm thanh -->
-            <button class="btn btn-audio" id="btnAudioToggle">🔊 Phát âm: Bật</button>
-            
-            <!-- Bộ chọn Giọng đọc tiếng Trung -->
-            <div class="control-box">
-                <label class="box-label">🎙️ Giọng đọc</label>
-                <select id="voiceSelect" style="max-width: 150px;">
-                    <option value="">Đang tải giọng...</option>
-                </select>
-                <button class="btn-speaker" onclick="playPronunciation('你好')" title="Thử giọng">🔊</button>
+            <div class="btn-group">
+                <label class="btn btn-excel">
+                    📁 Chọn Excel
+                    <input type="file" id="excelFile" accept=".xlsx, .xls" style="display: none;">
+                </label>
+                <button class="btn btn-audio" id="btnAudioToggle">🔊 Âm thanh: Bật</button>
             </div>
 
-            <div class="control-box">
-                <label class="box-label">🎯 Chế độ</label>
-                <select id="modeSelect">
-                    <option value="chinese_only">1. Chỉ gõ Chữ Hán (Hiện Tiếng Việt)</option>
-                    <option value="pinyin_to_chinese">2. Gõ Chữ Hán HOẶC Pinyin (Hiện Tiếng Việt)</option>
-                    <option value="chinese_to_meaning">3. Gõ Tiếng Việt (Hiện Chữ Hán)</option>
-                </select>
-            </div>
-
-            <div class="control-box">
-                <label class="box-label">🔄 Trộn câu</label>
-                <select id="shuffleSelect">
-                    <option value="sequential">🔢 Theo thứ tự</option>
-                    <option value="random">🔀 Đảo ngẫu nhiên</option>
-                </select>
-            </div>
-
-            <div class="control-box">
-                <label class="box-label">📝 Số câu</label>
-                <input type="number" id="quizSize" value="10" min="1" style="width: 48px; text-align: center;">
-            </div>
-
-            <div class="control-box">
-                <label class="box-label">📊 Khoảng</label>
-                <div class="range-container">
-                    <input type="number" id="rangeFrom" placeholder="Từ" min="1" value="1">
-                    <span>đến</span>
-                    <input type="number" id="rangeTo" placeholder="Đến" min="1" value="100">
+            <div class="control-row">
+                <div class="control-box full-width">
+                    <label class="box-label">🎙️ Giọng đọc</label>
+                    <select id="voiceSelect"><option value="">Đang tải giọng...</option></select>
+                    <button class="btn-speaker" onclick="playPronunciation('你好')" title="Thử giọng">🔊</button>
                 </div>
             </div>
 
-            <button class="btn btn-new" id="btnNewQuiz">⚡ Đổi đề</button>
-            <button class="btn btn-retry" id="btnRetryQuiz">♻️ Làm lại</button>
-            <button class="btn btn-reset" id="btnReset">🗑️ Xóa data</button>
-            <span id="loadingStatus" style="font-size: 13px; font-weight: 600; color: var(--success); margin-left: auto;"></span>
+            <div class="control-row">
+                <div class="control-box full-width">
+                    <label class="box-label">🎯 Chế độ</label>
+                    <select id="modeSelect">
+                        <option value="chinese_only">1. Chỉ gõ Chữ Hán (Hiện Tiếng Việt)</option>
+                        <option value="pinyin_to_chinese">2. Gõ Chữ Hán HOẶC Pinyin (Hiện Tiếng Việt)</option>
+                        <option value="chinese_to_meaning">3. Gõ Tiếng Việt (Hiện Chữ Hán)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="control-row">
+                <div class="control-box">
+                    <label class="box-label">🔄 Trộn câu</label>
+                    <select id="shuffleSelect">
+                        <option value="sequential">🔢 Thứ tự</option>
+                        <option value="random">🔀 Đảo</option>
+                    </select>
+                </div>
+
+                <div class="control-box">
+                    <label class="box-label">📝 Số câu</label>
+                    <input type="number" id="quizSize" value="10" min="1" style="width: 42px; text-align: center;">
+                </div>
+            </div>
+
+            <div class="control-row">
+                <div class="control-box full-width">
+                    <label class="box-label">📊 Khoảng câu</label>
+                    <div class="range-container">
+                        <input type="number" id="rangeFrom" min="1" value="1">
+                        <span>đến</span>
+                        <input type="number" id="rangeTo" min="1" value="100">
+                    </div>
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn btn-new" id="btnNewQuiz">⚡ Đổi đề</button>
+                <button class="btn btn-retry" id="btnRetryQuiz">♻️ Làm lại</button>
+                <button class="btn btn-reset" id="btnReset">🗑️ Xóa data</button>
+            </div>
         </div>
 
         <div class="main-layout">
@@ -437,13 +441,13 @@
                 <table>
                     <thead>
                         <tr>
-                            <th class="col-stt">STT</th>
-                            <th class="col-hanzi">Chữ Hán</th>
-                            <th class="col-type">Loại từ</th>
-                            <th class="col-pinyin">Pinyin</th>
-                            <th class="col-viet">Tiếng Việt</th>
-                            <th class="col-input">Ô Nhập</th>
-                            <th class="col-status">Trạng thái</th>
+                            <th style="width: 32px;">STT</th>
+                            <th style="width: 85px;">Chữ Hán</th>
+                            <th style="width: 85px;">Loại từ</th>
+                            <th style="width: 80px;">Pinyin</th>
+                            <th style="width: 100px;">Tiếng Việt</th>
+                            <th style="width: 90px;">Ô Nhập</th>
+                            <th style="width: 45px;">KQ</th>
                         </tr>
                     </thead>
                     <tbody id="vocabTable"></tbody>
@@ -465,19 +469,19 @@
                     <div class="stat-card" style="border-color: #fecaca; background: rgba(254, 242, 242, 0.9);"><div class="label" style="color: #991b1b;">Số câu Sai</div><div class="value" style="color: var(--danger);" id="statWrong">0</div></div>
                 </div>
                 <div class="rate-card">
-                    <div style="font-size: 11px; color: #be185d; font-weight: 700;">TỶ LỆ CHÍNH XÁC</div>
-                    <div style="font-size: 22px; font-weight: 700; color: #db2777; margin-top: 2px;" id="statRate">0.0%</div>
+                    <div style="font-size: 10px; color: #be185d; font-weight: 700;">TỶ LỆ CHÍNH XÁC</div>
+                    <div style="font-size: 18px; font-weight: 700; color: #db2777; margin-top: 1px;" id="statRate">0.0%</div>
                 </div>
 
                 <div class="contact-card">
-                    <div class="contact-title">💬 Trung tâm Hỗ trợ & Góp ý</div>
+                    <div class="contact-title">💬 Trung tâm Hỗ trợ</div>
                     <div class="contact-item">
                         <span>✉️</span>
-                        <span>Email: <a href="mailto:tuan91.at@gmail.com">tuan91.at@gmail.com</a></span>
+                        <span><a href="mailto:tuan91.at@gmail.com">tuan91.at@gmail.com</a></span>
                     </div>
                     <div class="contact-item">
                         <span>📞</span>
-                        <span>Hotline: <a href="tel:0917241091">0917 241 091</a></span>
+                        <span><a href="tel:0917241091">0917 241 091</a></span>
                     </div>
                 </div>
 
@@ -505,7 +509,6 @@
         let isAudioMuted = false;
         let availableVoices = [];
 
-        // Nạp và Lọc các Giọng Đọc Tiếng Trung Chuẩn nhất
         function populateVoices() {
             if (!('speechSynthesis' in window)) return;
             
@@ -513,8 +516,14 @@
             const voiceSelect = document.getElementById('voiceSelect');
             voiceSelect.innerHTML = '';
 
-            // Lọc các giọng Tiếng Trung (zh, zh-CN, zh-TW, zh-HK)
-            availableVoices = voices.filter(v => v.lang.includes('zh') || v.lang.includes('CN'));
+            availableVoices = voices.filter(v => {
+                const lang = v.lang.toLowerCase();
+                const name = v.name.toLowerCase();
+                if (lang.includes('zh-hk') || lang.includes('yue') || name.includes('cantonese') || name.includes('粵語')) {
+                    return false;
+                }
+                return lang.includes('zh') || lang.includes('cn');
+            });
 
             if (availableVoices.length === 0) {
                 const opt = document.createElement('option');
@@ -533,7 +542,6 @@
                 opt.innerText = `${name} (${voice.lang})`;
                 voiceSelect.appendChild(opt);
 
-                // Ưu tiên chọn giọng Google hoặc Microsoft tự nhiên
                 if (voice.name.includes('Google') || voice.name.includes('Xiaoxiao') || voice.name.includes('Yunxi') || voice.name.includes('Natural')) {
                     bestVoiceIndex = index;
                 }
@@ -563,8 +571,8 @@
                 utterance.lang = 'zh-CN';
             }
 
-            utterance.rate = 0.85; // Tốc độ nói vừa phải (dễ nghe)
-            utterance.pitch = 1.0;  // Cao độ tự nhiên
+            utterance.rate = 0.85; 
+            utterance.pitch = 1.0;  
             window.speechSynthesis.speak(utterance);
         }
 
@@ -612,11 +620,11 @@
             btnAudio.addEventListener('click', function() {
                 isAudioMuted = !isAudioMuted;
                 if (isAudioMuted) {
-                    btnAudio.innerText = "🔇 Phát âm: Tắt";
+                    btnAudio.innerText = "🔇 Âm thanh: Tắt";
                     btnAudio.classList.add('muted');
                     window.speechSynthesis.cancel();
                 } else {
-                    btnAudio.innerText = "🔊 Phát âm: Bật";
+                    btnAudio.innerText = "🔊 Âm thanh: Bật";
                     btnAudio.classList.remove('muted');
                 }
             });
@@ -921,9 +929,7 @@
                 statusTd.innerText = 'Sai';
             }
 
-            // Tự động phát âm từ vừa nhập
             playPronunciation(item.chinese);
-
             updateStats();
         }
 
