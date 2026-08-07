@@ -27,9 +27,9 @@
         body { 
             font-family: 'Inter', system-ui, -apple-system, sans-serif; 
             margin: 0; 
-            padding: 12px;
+            padding: 8px;
             color: var(--text-dark);
-            font-size: 14px; 
+            font-size: 13px; 
             position: relative;
             min-height: 100vh;
             overflow-x: hidden;
@@ -43,7 +43,7 @@
             user-select: none;
             pointer-events: none;
             animation: fall linear infinite;
-            font-size: 20px;
+            font-size: 18px;
             opacity: 0.7;
         }
 
@@ -58,13 +58,13 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
             flex-wrap: wrap;
-            gap: 8px;
+            gap: 6px;
         }
 
         .app-title {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 700;
             color: #1e1b4b;
             display: flex;
@@ -77,124 +77,113 @@
         .app-title .pro-tag {
             background: linear-gradient(135deg, #4f46e5, #8b5cf6);
             color: white;
-            font-size: 10px;
-            padding: 2px 8px;
-            border-radius: 10px;
-            vertical-align: middle;
+            font-size: 9px;
+            padding: 2px 6px;
+            border-radius: 8px;
         }
 
         .controls { 
             display: flex; 
             flex-direction: column;
-            gap: 10px; 
-            background: rgba(255, 255, 255, 0.9); 
+            gap: 8px; 
+            background: rgba(255, 255, 255, 0.92); 
             backdrop-filter: blur(12px);
-            padding: 12px; 
-            border-radius: 18px; 
-            box-shadow: 0 8px 25px -5px rgba(99, 102, 241, 0.15);
-            margin-bottom: 16px;
-            border: 1.5px solid rgba(255, 255, 255, 0.9);
+            padding: 10px; 
+            border-radius: 14px; 
+            box-shadow: 0 4px 15px -3px rgba(99, 102, 241, 0.12);
+            margin-bottom: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.9);
             width: 100%;
         }
 
         .control-row {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             width: 100%;
-            flex-wrap: wrap;
         }
 
         .control-box {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 6px;
+            gap: 4px;
             background: #ffffff;
-            padding: 6px 10px;
-            border-radius: 12px;
-            border: 1.5px solid #e2e8f0;
-            flex: 1 1 calc(50% - 4px);
-            min-width: 130px;
+            padding: 4px 8px;
+            border-radius: 10px;
+            border: 1px solid #cbd5e1;
+            flex: 1;
+            min-width: 0;
         }
 
         .control-box.full-width {
-            flex: 1 1 100%;
+            width: 100%;
         }
 
         .controls label.box-label {
             font-weight: 600;
-            font-size: 12px;
+            font-size: 11px;
             color: #475569;
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 3px;
             white-space: nowrap;
             margin: 0;
             flex-shrink: 0;
         }
 
         .controls select, .controls input[type="number"] {
-            padding: 5px 6px;
+            padding: 4px;
             border: 1px solid #cbd5e1;
-            border-radius: 8px;
+            border-radius: 6px;
             outline: none;
             font-weight: 600;
             color: #0f172a;
             background: #f8fafc;
-            font-size: 12px;
-            max-width: 100%;
+            font-size: 11px;
+            width: 100%;
             text-overflow: ellipsis;
             white-space: nowrap;
             overflow: hidden;
         }
 
-        .control-box select {
-            flex: 1;
-            min-width: 0;
-        }
-
         .range-container {
             display: inline-flex;
             align-items: center;
-            gap: 4px;
+            gap: 2px;
             background: #f8fafc;
-            padding: 2px 6px;
-            border-radius: 8px;
+            padding: 2px 4px;
+            border-radius: 6px;
             border: 1px solid #cbd5e1;
+            font-size: 11px;
         }
-        .range-container input { width: 40px !important; text-align: center; padding: 3px !important; }
+        .range-container input { width: 36px !important; text-align: center; padding: 2px !important; }
 
         .btn-group {
             display: flex;
             gap: 6px;
             width: 100%;
-            flex-wrap: wrap;
         }
 
         .btn { 
-            padding: 8px 12px; 
+            padding: 7px 8px; 
             border: none; 
-            border-radius: 10px; 
+            border-radius: 8px; 
             cursor: pointer; 
             font-weight: 600; 
             color: white; 
-            font-size: 12px; 
+            font-size: 11px; 
             display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 4px;
-            transition: all 0.2s ease;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-            flex: 1 1 calc(33.33% - 4px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+            flex: 1;
             white-space: nowrap;
         }
 
-        .btn:hover { transform: translateY(-1px); }
-
-        .btn-excel { background: linear-gradient(135deg, #059669, #047857); flex: 1 1 calc(50% - 3px); }
-        .btn-audio { background: linear-gradient(135deg, #8b5cf6, #6d28d9); flex: 1 1 calc(50% - 3px); }
+        .btn-excel { background: linear-gradient(135deg, #059669, #047857); }
+        .btn-audio { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
         .btn-audio.muted { background: linear-gradient(135deg, #64748b, #475569); }
-        
         .btn-new { background: linear-gradient(135deg, #6366f1, #4f46e5); }
         .btn-retry { background: linear-gradient(135deg, #f59e0b, #d97706); }
         .btn-reset { background: linear-gradient(135deg, #ef4444, #dc2626); }
@@ -203,68 +192,78 @@
             background: #e0e7ff;
             border: 1px solid #c7d2fe;
             border-radius: 50%;
-            width: 24px;
-            height: 24px;
+            width: 20px;
+            height: 20px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            font-size: 11px;
+            font-size: 10px;
             flex-shrink: 0;
+            padding: 0;
             margin-left: 2px;
         }
         
-        .main-layout { display: flex; flex-direction: column; gap: 16px; width: 100%; }
+        .main-layout { display: flex; flex-direction: column; gap: 12px; width: 100%; }
 
+        /* Bảng căn vừa khít màn hình, loại bỏ scroll ngang */
         .table-container { 
             width: 100%;
             background: var(--card-bg); 
             backdrop-filter: blur(10px);
-            border-radius: 14px; 
-            padding: 8px; 
-            box-shadow: 0 8px 20px -5px rgba(0,0,0,0.08);
-            border: 1.5px solid rgba(244, 114, 182, 0.3);
-            overflow-x: auto; 
-            -webkit-overflow-scrolling: touch;
+            border-radius: 12px; 
+            padding: 4px; 
+            box-shadow: 0 4px 15px -3px rgba(0,0,0,0.06);
+            border: 1px solid rgba(244, 114, 182, 0.3);
+            overflow-x: hidden; 
         }
         
-        table { width: 100%; border-collapse: separate; border-spacing: 0; table-layout: auto; min-width: 580px; }
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            table-layout: fixed; 
+        }
 
         th { 
             background: linear-gradient(135deg, var(--header-bg-start), var(--header-bg-end)) !important;
             color: var(--header-text) !important;
             font-weight: 700 !important;
-            font-size: 11px !important;
-            text-transform: uppercase;
-            padding: 8px 4px !important;
-            border-top: 1px solid var(--header-border) !important;
+            font-size: 10px !important;
+            padding: 6px 2px !important;
             border-bottom: 2px solid #f472b6 !important;
             text-align: center;
+            white-space: nowrap;
         }
 
-        td { border-bottom: 1px solid rgba(203, 213, 225, 0.6); padding: 8px 4px; text-align: center; word-wrap: break-word; font-size: 12px; }
+        td { 
+            border-bottom: 1px solid rgba(203, 213, 225, 0.5); 
+            padding: 6px 2px; 
+            text-align: center; 
+            word-break: break-word; 
+            font-size: 11px; 
+            line-height: 1.2;
+        }
 
         td.col-hanzi { 
-            font-family: 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
-            font-size: 18px; 
+            font-family: 'Noto Sans SC', sans-serif;
+            font-size: 15px; 
             font-weight: 700 !important;
             color: #9f1239;
         }
 
-        td.col-pinyin { color: #475569; font-style: italic; font-size: 11px; font-weight: 600; }
-        td.col-stt { color: #64748b; font-weight: 600; font-size: 11px; }
-        td.col-type { color: #0284c7; font-size: 10px; font-weight: 600; }
-        td.col-viet { font-weight: 600; color: #1e293b; font-size: 12px; }
-        td.col-status { font-weight: 700; font-size: 11px; }
+        td.col-pinyin { color: #475569; font-style: italic; font-size: 10px; font-weight: 600; }
+        td.col-stt { color: #64748b; font-weight: 600; font-size: 10px; }
+        td.col-type { color: #0284c7; font-size: 9px; font-weight: 600; }
+        td.col-viet { font-weight: 600; color: #1e293b; font-size: 11px; }
 
         input[type="text"] { 
             width: 100%; 
-            padding: 5px; 
-            border: 1.5px solid #cbd5e1; 
-            border-radius: 6px; 
+            padding: 4px 2px; 
+            border: 1px solid #cbd5e1; 
+            border-radius: 5px; 
             text-align: center; 
-            font-size: 13px; 
-            font-weight: 500;
+            font-size: 12px; 
+            font-weight: 600;
             outline: none;
             background: #ffffff;
         }
@@ -281,90 +280,80 @@
             width: 100%; 
             background: var(--card-bg); 
             backdrop-filter: blur(10px);
-            border-radius: 14px; 
-            padding: 14px; 
-            box-shadow: 0 8px 20px -5px rgba(0,0,0,0.08);
-            border: 1.5px solid rgba(244, 114, 182, 0.3);
+            border-radius: 12px; 
+            padding: 10px; 
+            box-shadow: 0 4px 15px -3px rgba(0,0,0,0.06);
+            border: 1px solid rgba(244, 114, 182, 0.3);
         }
 
-        .stats-dashboard h3 { font-size: 12px; margin: 0 0 10px 0; text-transform: uppercase; color: #db2777; font-weight: 700; }
+        .stats-dashboard h3 { font-size: 11px; margin: 0 0 8px 0; text-transform: uppercase; color: #db2777; font-weight: 700; }
 
         .timer-box {
             background: linear-gradient(135deg, #e0e7ff, #fce7f3);
             border: 1px solid #f472b6;
-            border-radius: 10px;
-            padding: 8px;
+            border-radius: 8px;
+            padding: 6px;
             text-align: center;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
-        .timer-box .timer-label { font-size: 10px; color: #4f46e5; font-weight: 700; text-transform: uppercase; }
-        .timer-box .timer-value { font-size: 18px; font-weight: 800; color: #db2777; font-family: monospace; }
+        .timer-box .timer-label { font-size: 9px; color: #4f46e5; font-weight: 700; text-transform: uppercase; }
+        .timer-box .timer-value { font-size: 16px; font-weight: 800; color: #db2777; font-family: monospace; }
 
-        .progress-bar-bg { width: 100%; height: 6px; background-color: rgba(203, 213, 225, 0.6); border-radius: 8px; overflow: hidden; margin-bottom: 12px; }
-        .progress-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #ec4899, #8b5cf6); transition: width 0.4s ease; }
+        .progress-bar-bg { width: 100%; height: 5px; background-color: rgba(203, 213, 225, 0.6); border-radius: 6px; overflow: hidden; margin-bottom: 8px; }
+        .progress-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #ec4899, #8b5cf6); transition: width 0.3s ease; }
 
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        .stat-card { background: rgba(255, 255, 255, 0.9); padding: 8px; border-radius: 8px; border: 1px solid #fbcfe8; text-align: center; }
-        .stat-card .label { font-size: 10px; color: #475569; margin-bottom: 2px; font-weight: 600; }
-        .stat-card .value { font-size: 14px; font-weight: 700; }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+        .stat-card { background: rgba(255, 255, 255, 0.9); padding: 6px; border-radius: 6px; border: 1px solid #fbcfe8; text-align: center; }
+        .stat-card .label { font-size: 9px; color: #475569; margin-bottom: 1px; font-weight: 600; }
+        .stat-card .value { font-size: 13px; font-weight: 700; }
 
-        .rate-card { margin-top: 10px; text-align: center; background: rgba(253, 242, 248, 0.9); padding: 8px; border-radius: 10px; border: 1px solid #f472b6; }
+        .rate-card { margin-top: 8px; text-align: center; background: rgba(253, 242, 248, 0.9); padding: 6px; border-radius: 8px; border: 1px solid #f472b6; }
         
         .contact-card {
-            margin-top: 12px;
+            margin-top: 8px;
             background: rgba(255, 255, 255, 0.95);
             border: 1px solid #cbd5e1;
-            border-radius: 10px;
-            padding: 8px 10px;
-            font-size: 11px;
+            border-radius: 8px;
+            padding: 6px 8px;
+            font-size: 10px;
             color: #334155;
         }
-        .contact-card .contact-title {
-            font-weight: 700;
-            color: #4338ca;
-            margin-bottom: 4px;
-            text-transform: uppercase;
-            font-size: 10px;
-        }
-        .contact-card .contact-item {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            margin-top: 2px;
-        }
+        .contact-card .contact-title { font-weight: 700; color: #4338ca; margin-bottom: 2px; text-transform: uppercase; font-size: 9px; }
+        .contact-card .contact-item { display: flex; align-items: center; gap: 4px; margin-top: 2px; }
         .contact-card .contact-item a { color: #2563eb; text-decoration: none; font-weight: 600; }
 
-        .footer-owner { text-align: center; margin-top: 10px; padding-top: 8px; border-top: 1px dashed #cbd5e1; font-size: 10px; color: #475569; }
+        .footer-owner { text-align: center; margin-top: 8px; padding-top: 6px; border-top: 1px dashed #cbd5e1; font-size: 9px; color: #475569; }
 
         @media (min-width: 769px) {
-            body { padding: 20px; }
-            .controls { flex-direction: row; flex-wrap: wrap; padding: 18px 22px; border-radius: 24px; }
-            .control-row { width: auto; flex-wrap: wrap; }
+            body { padding: 16px; font-size: 14px; }
+            .controls { flex-direction: row; flex-wrap: wrap; padding: 14px; }
+            .control-row { width: auto; }
             .control-box { flex: 0 0 auto; width: auto; }
             .control-box.full-width { flex: 0 0 auto; width: auto; }
             .btn-group { width: auto; }
-            .btn { flex: 0 0 auto; width: auto; padding: 10px 18px; }
-            .btn-excel, .btn-audio { flex: 0 0 auto; }
+            .btn { flex: 0 0 auto; padding: 8px 14px; font-size: 12px; }
             .main-layout { flex-direction: row; align-items: flex-start; }
             .table-container { flex: 1; }
-            .stats-dashboard { width: 260px; flex-shrink: 0; }
-            .app-title { font-size: 24px; }
-            td.col-hanzi { font-size: 24px; }
+            .stats-dashboard { width: 250px; flex-shrink: 0; }
+            .app-title { font-size: 22px; }
+            td.col-hanzi { font-size: 20px; }
+            th { font-size: 11px !important; }
+            td { font-size: 12px; }
         }
     </style>
 </head>
 <body>
 
     <script>
-        const symbols = ['🌸', '🌺', '🌷', '🍃', '✨', '💮', '❄️'];
-        for (let i = 0; i < 25; i++) {
+        const symbols = ['🌸', '🌺', '🌷', '🍃', '✨', '💮'];
+        for (let i = 0; i < 20; i++) {
             const div = document.createElement('div');
             div.className = 'falling-decor';
             div.innerHTML = symbols[Math.floor(Math.random() * symbols.length)];
             div.style.left = Math.random() * 100 + 'vw';
             div.style.animationDuration = (Math.random() * 5 + 5) + 's';
             div.style.animationDelay = (Math.random() * 5) + 's';
-            div.style.fontSize = (Math.random() * 10 + 14) + 'px';
+            div.style.fontSize = (Math.random() * 8 + 12) + 'px';
             document.body.appendChild(div);
         }
     </script>
@@ -372,7 +361,7 @@
     <div class="container-wrapper">
         <div class="app-header">
             <h2 class="app-title">🌸 HSK Master <span class="pro-tag">PRO</span></h2>
-            <span id="loadingStatus" style="font-size: 11px; font-weight: 700; color: var(--success);"></span>
+            <span id="loadingStatus" style="font-size: 10px; font-weight: 700; color: var(--success);"></span>
         </div>
 
         <div class="controls">
@@ -405,7 +394,7 @@
 
             <div class="control-row">
                 <div class="control-box">
-                    <label class="box-label">🔄 Trộn câu</label>
+                    <label class="box-label">🔄 Trộn</label>
                     <select id="shuffleSelect">
                         <option value="sequential">🔢 Thứ tự</option>
                         <option value="random">🔀 Đảo</option>
@@ -414,7 +403,7 @@
 
                 <div class="control-box">
                     <label class="box-label">📝 Số câu</label>
-                    <input type="number" id="quizSize" value="10" min="1" style="width: 42px; text-align: center;">
+                    <input type="number" id="quizSize" value="10" min="1" style="text-align: center;">
                 </div>
             </div>
 
@@ -423,7 +412,7 @@
                     <label class="box-label">📊 Khoảng câu</label>
                     <div class="range-container">
                         <input type="number" id="rangeFrom" min="1" value="1">
-                        <span>đến</span>
+                        <span>-</span>
                         <input type="number" id="rangeTo" min="1" value="100">
                     </div>
                 </div>
@@ -432,22 +421,30 @@
             <div class="btn-group">
                 <button class="btn btn-new" id="btnNewQuiz">⚡ Đổi đề</button>
                 <button class="btn btn-retry" id="btnRetryQuiz">♻️ Làm lại</button>
-                <button class="btn btn-reset" id="btnReset">🗑️ Xóa data</button>
+                <button class="btn btn-reset" id="btnReset">🗑️ Xóa</button>
             </div>
         </div>
 
         <div class="main-layout">
             <div class="table-container">
                 <table>
+                    <!-- Định dạng tỉ lệ % cho các cột để không bị gãy giao diện -->
+                    <colgroup>
+                        <col style="width: 8%;">  <!-- STT -->
+                        <col style="width: 22%;"> <!-- Chữ Hán -->
+                        <col style="width: 18%;"> <!-- Loại từ -->
+                        <col style="width: 18%;"> <!-- Pinyin -->
+                        <col style="width: 18%;"> <!-- Tiếng Việt -->
+                        <col style="width: 16%;"> <!-- Ô nhập -->
+                    </colgroup>
                     <thead>
                         <tr>
-                            <th style="width: 32px;">STT</th>
-                            <th style="width: 85px;">Chữ Hán</th>
-                            <th style="width: 85px;">Loại từ</th>
-                            <th style="width: 80px;">Pinyin</th>
-                            <th style="width: 100px;">Tiếng Việt</th>
-                            <th style="width: 90px;">Ô Nhập</th>
-                            <th style="width: 45px;">KQ</th>
+                            <th>STT</th>
+                            <th>Từ</th>
+                            <th>Loại</th>
+                            <th>Pinyin</th>
+                            <th>Việt</th>
+                            <th>Nhập</th>
                         </tr>
                     </thead>
                     <tbody id="vocabTable"></tbody>
@@ -465,12 +462,12 @@
                 <div class="stats-grid">
                     <div class="stat-card"><div class="label">Tổng số câu</div><div class="value" id="statTotal">0</div></div>
                     <div class="stat-card"><div class="label">Đã hoàn thành</div><div class="value" id="statDone">0</div></div>
-                    <div class="stat-card" style="border-color: #a7f3d0; background: rgba(240, 253, 244, 0.9);"><div class="label" style="color: #065f46;">Số câu Đúng</div><div class="value" style="color: var(--success);" id="statCorrect">0</div></div>
-                    <div class="stat-card" style="border-color: #fecaca; background: rgba(254, 242, 242, 0.9);"><div class="label" style="color: #991b1b;">Số câu Sai</div><div class="value" style="color: var(--danger);" id="statWrong">0</div></div>
+                    <div class="stat-card" style="border-color: #a7f3d0; background: rgba(240, 253, 244, 0.9);"><div class="label" style="color: #065f46;">Đúng</div><div class="value" style="color: var(--success);" id="statCorrect">0</div></div>
+                    <div class="stat-card" style="border-color: #fecaca; background: rgba(254, 242, 242, 0.9);"><div class="label" style="color: #991b1b;">Sai</div><div class="value" style="color: var(--danger);" id="statWrong">0</div></div>
                 </div>
                 <div class="rate-card">
-                    <div style="font-size: 10px; color: #be185d; font-weight: 700;">TỶ LỆ CHÍNH XÁC</div>
-                    <div style="font-size: 18px; font-weight: 700; color: #db2777; margin-top: 1px;" id="statRate">0.0%</div>
+                    <div style="font-size: 9px; color: #be185d; font-weight: 700;">TỶ LỆ CHÍNH XÁC</div>
+                    <div style="font-size: 16px; font-weight: 700; color: #db2777; margin-top: 1px;" id="statRate">0.0%</div>
                 </div>
 
                 <div class="contact-card">
@@ -666,7 +663,7 @@
             if (!file) return;
 
             const statusText = document.getElementById('loadingStatus');
-            if (statusText) { statusText.innerText = "⏳ Đang kiểm tra..."; statusText.style.color = "var(--primary)"; }
+            if (statusText) { statusText.innerText = "⏳ Đang đọc..."; statusText.style.color = "var(--primary)"; }
 
             const reader = new FileReader();
             reader.onload = function(e) {
@@ -856,7 +853,6 @@
                                onblur="checkAnswer(${index})"
                                onkeydown="handleKeyDown(event, ${index})">
                     </td>
-                    <td id="status_${index}" class="col-status">-</td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -884,11 +880,9 @@
             const userVal = cleanString(inputEl.value);
             const mode = document.getElementById('modeSelect').value;
             const tr = document.getElementById(`row_${index}`);
-            const statusTd = document.getElementById(`status_${index}`);
 
             if (!userVal) {
                 tr.className = '';
-                statusTd.innerText = '-';
                 updateStats();
                 return;
             }
@@ -923,10 +917,8 @@
 
             if (isCorrect) {
                 tr.className = 'row-correct';
-                statusTd.innerText = 'Đúng';
             } else {
                 tr.className = 'row-wrong';
-                statusTd.innerText = 'Sai';
             }
 
             playPronunciation(item.chinese);
