@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=1200, initial-scale=0.4, maximum-scale=2.0">
     <title>HSK Vocabulary Master - Hệ Thống Luyện Từ Vựng HSK</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@500;700;900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -31,7 +31,7 @@
             box-sizing: border-box;
             position: relative;
             min-height: 100vh;
-            overflow-x: hidden;
+            overflow-x: auto;
             background: linear-gradient(135deg, #fbcfe8 0%, #e0e7ff 50%, #bae6fd 100%);
         }
 
@@ -51,14 +51,20 @@
             100% { transform: translateY(110vh) rotate(360deg); opacity: 0.2; }
         }
 
-        .container-wrapper { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; }
+        .container-wrapper { 
+            position: relative; 
+            z-index: 1; 
+            min-width: 1100px;
+            max-width: 1200px; 
+            margin: 0 auto; 
+        }
 
         .app-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
             gap: 12px;
         }
 
@@ -167,6 +173,7 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.12);
             position: relative;
             overflow: hidden;
+            white-space: nowrap;
         }
 
         .btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.18); }
@@ -280,6 +287,7 @@
             box-shadow: 0 10px 30px -5px rgba(0,0,0,0.1);
             border: 2px solid rgba(244, 114, 182, 0.4);
             box-sizing: border-box;
+            flex-shrink: 0;
         }
 
         .stats-dashboard h3 { font-size: 13px; margin: 0 0 12px 0; text-transform: uppercase; color: #db2777; font-weight: 700; }
@@ -337,143 +345,6 @@
         .contact-card .contact-item a:hover { text-decoration: underline; }
 
         .footer-owner { text-align: center; margin-top: 14px; padding-top: 10px; border-top: 1px dashed #cbd5e1; font-size: 11px; color: #475569; font-weight: 500; }
-
-        /* ========================================================= */
-        /* CSS DÀNH RIÊNG CHO MÀN HÌNH ĐIỆN THOẠI (RESPONSIVE MOBILE) */
-        /* ========================================================= */
-        @media (max-width: 768px) {
-            body { padding: 10px 8px; }
-
-            .app-title { font-size: 20px; }
-            .app-title .pro-tag { font-size: 9px; padding: 2px 6px; }
-
-            /* Tối ưu khung điều khiển trên mobile */
-            .controls {
-                padding: 12px;
-                gap: 8px;
-                border-radius: 16px;
-            }
-
-            .control-box {
-                width: 100%;
-                justify-content: space-between;
-                box-sizing: border-box;
-                padding: 8px 12px;
-            }
-
-            .controls select, .controls input[type="number"] {
-                font-size: 14px;
-            }
-
-            .controls select { flex: 1; max-width: none !important; }
-
-            .btn {
-                flex: 1 1 calc(50% - 8px);
-                padding: 12px 10px;
-                font-size: 12px;
-                justify-content: center;
-            }
-
-            .btn-excel { flex: 1 1 100%; }
-
-            #loadingStatus {
-                width: 100%;
-                text-align: center;
-                margin-left: 0;
-            }
-
-            /* Bố cục giao diện chính */
-            .main-layout { 
-                flex-direction: column-reverse; 
-                gap: 16px; 
-            }
-
-            .stats-dashboard { 
-                width: 100%; 
-            }
-
-            .table-container { 
-                padding: 8px; 
-                border-radius: 12px; 
-                width: 100%; 
-                box-sizing: border-box; 
-            }
-
-            /* Chuyển Bảng thành dạng Thẻ Card hiện đại trên điện thoại */
-            table, thead, tbody, th, td, tr { 
-                display: block; 
-            }
-
-            thead tr { 
-                position: absolute; 
-                top: -9999px; 
-                left: -9999px; 
-            }
-
-            tr {
-                background: #ffffff;
-                border: 1.5px solid #e2e8f0;
-                border-radius: 14px;
-                margin-bottom: 12px;
-                padding: 12px;
-                box-shadow: 0 4px 10px rgba(0,0,0,0.03);
-                position: relative;
-            }
-
-            tr.row-correct {
-                border-color: #10b981 !important;
-            }
-
-            tr.row-wrong {
-                border-color: #ef4444 !important;
-            }
-
-            td {
-                border: none !important;
-                padding: 4px 0 !important;
-                text-align: left !important;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                width: 100% !important;
-                box-sizing: border-box;
-            }
-
-            /* Định dạng lại từng phần tử trong thẻ từ vựng */
-            td.col-stt {
-                font-size: 11px;
-                color: #64748b;
-                margin-bottom: 4px;
-            }
-            td.col-stt::before { content: "STT: "; font-weight: 700; }
-
-            td.col-hanzi {
-                font-size: 28px !important;
-                justify-content: center !important;
-                margin: 6px 0;
-                background: #fff5f8;
-                border-radius: 8px;
-                padding: 6px 0 !important;
-            }
-
-            td.col-pinyin::before { content: "Pinyin:"; font-style: normal; font-weight: 600; color: #64748b; }
-            td.col-type::before { content: "Loại từ:"; font-weight: 600; color: #64748b; }
-            td.col-viet::before { content: "Nghĩa:"; font-weight: 600; color: #64748b; }
-            td.col-status::before { content: "Trạng thái:"; font-weight: 600; color: #64748b; }
-
-            td.col-input {
-                margin-top: 8px;
-                padding-top: 8px !important;
-                border-top: 1px dashed #e2e8f0 !important;
-            }
-
-            td.col-input input[type="text"] {
-                width: 100% !important;
-                padding: 10px;
-                font-size: 16px; /* Giúp chống auto-zoom trên iOS */
-                text-align: left;
-            }
-        }
     </style>
 </head>
 <body>
@@ -503,10 +374,8 @@
                 <input type="file" id="excelFile" accept=".xlsx, .xls" style="display: none;">
             </label>
 
-            <!-- Nút Bật/Tắt Âm thanh -->
             <button class="btn btn-audio" id="btnAudioToggle">🔊 Phát âm: Bật</button>
             
-            <!-- Bộ chọn Giọng đọc tiếng Trung -->
             <div class="control-box">
                 <label class="box-label">🎙️ Giọng đọc</label>
                 <select id="voiceSelect" style="max-width: 150px;">
