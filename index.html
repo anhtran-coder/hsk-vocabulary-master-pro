@@ -295,14 +295,6 @@
             border-color: #cbd5e1;
             font-weight: 600;
         }
-
-        .wrong-ans-hint {
-            color: #dc2626;
-            font-weight: 700;
-            font-size: 13px;
-            display: block;
-            margin-top: 2px;
-        }
         
         tr.row-correct td { background-color: var(--success-light) !important; color: #064e3b; }
         tr.row-wrong td { background-color: var(--danger-light) !important; color: #7f1d1d; }
@@ -374,7 +366,7 @@
 
         .footer-owner { text-align: center; margin-top: 14px; padding-top: 10px; border-top: 1px dashed #cbd5e1; font-size: 11px; color: #475569; font-weight: 500; }
 
-        /* PHẦN ĐÃ CHỈNH SỬA CHO ĐIỆN THOẠI (KHÔNG ẢNH HƯỞNG MÁY TÍNH) */
+        /* PHẦN TỐI ƯU GIAO DIỆN TRÊN ĐIỆN THOẠI */
         @media screen and (max-width: 950px) {
             body { padding: 4px 2px; }
             .container-wrapper { width: 100%; max-width: 100%; padding: 0 2px; }
@@ -575,8 +567,6 @@
     </div>
 
     <script>
-        const SECRET_KEY = "CAMTU2019S2THANHAN2025";
-
         const EMBEDDED_VOCAB_DATA = [
             {"chinese": "早饭 / 早餐", "type": "Danh từ", "pinyin": "zǎofàn / zǎocān", "meaning": "Bữa sáng, điểm tâm"},
             {"chinese": "午饭 / 晚餐", "type": "Danh từ", "pinyin": "wǔfàn / wǔcān", "meaning": "Bữa trưa"},
@@ -658,25 +648,9 @@
             window.speechSynthesis.speak(utterance);
         }
 
-        function removePinyinTones(str) {
-            if (!str) return '';
-            return str.normalize('NFD')
-                      .replace(/[\u0300-\u036f]/g, '')
-                      .replace(/ü/g, 'v')
-                      .replace(/Ü/g, 'v')
-                      .toLowerCase();
-        }
-
         function cleanString(str) {
             if (!str) return '';
             return str.toLowerCase().trim().replace(/\s+/g, ' ');
-        }
-
-        function splitVariants(str) {
-            if (!str) return [];
-            return str.split(/[/,;|\n]+/)
-                      .map(s => cleanString(s))
-                      .filter(s => s.length > 0);
         }
 
         window.onload = function() {
@@ -712,8 +686,227 @@
                 }
             });
 
-            // Gọi hàm khởi tạo danh sách câu hỏi mẫu nếu có (hoặc bạn giữ nguyên logic của bạn ở đây)
+            // Xử lý tải file Excel
+            document.getElementById('excelFile').addEventListener('change', function(e) {
+                let file = e.target.files[0];
+                if (!file) return;
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        let data = new Uint8Array(e.target.result);
+                        let workbook = XLSX.read(data, {type: 'array'});
+                        let firstSheetName = workbook.SheetNames[0];
+                        let worksheet = workbook.Sheets[firstSheetName];
+                        let json = XLSX.utils.sheet_to_json(worksheet, {header: 1});
+                        
+                        let loadedArray = [];
+                        for (let i = 1; i < json.length; i++) {
+                            let row = json[i];
+                            if (row && row.length >= 2) {
+                                loadedArray.push({
+                                    chinese: row[1] || '',
+                                    type: row[2] || '',
+                                    pinyin: row[3] || '',
+                                    meaning: row[4] || ''
+                                });
+                            }
+                        }
+                        if (loadedArray.length > 0) {
+                            fullVocabData = loadedArray;
+                            localStorage.setItem('hsk_vocab_data', JSON.stringify(fullVocabData));
+                            document.getElementById('rangeTo').value = fullVocabData.length;
+                            document.getElementById('loadingStatus').innerText = `Đã tải ${fullVocabData.length} từ!`;
+                            startNewQuiz();
+                        } else {
+                            alert("File Excel không đúng định dạng hoặc không có dữ liệu!");
+                        }
+                    } catch(err) {
+                        alert("Lỗi khi đọc file Excel!");
+                    }
+                };
+                reader.readAsArrayBuffer(file);
+            });
+
+            // Tự động tạo đề lần đầu khi mở trang
+            startNewQuiz();
         };
+
+        function startNewQuiz() {
+            if (!fullVocabData || fullVocabData.length === 0) {
+                alert("Chưa có dữ liệu từ vựng!");
+                return;
+            }
+
+            let fromIdx = parseInt(document.getElementById('rangeFrom').value) || 1;
+            let toIdx = parseInt(document.getElementById('rangeTo').value) || fullVocabData.length;
+            let quizSize = parseInt(document.getElementById('quizSize').value) || 10;
+
+            let slicedData = fullVocabData.slice(fromIdx - 1, toIdx);
+            if (slicedData.length === 0) {
+                slicedData = fullVocabData;
+            }
+
+            let shuffleMode = document.getElementById('shuffleSelect').value;
+            let pool = [...slicedData];
+
+            if (shuffleMode === 'random') {
+                pool.sort(() => Math.random() - 0.5);
+            } else {
+                pool = pool.slice(sequentialOffset, sequentialOffset + quizSize);
+                sequentialOffset += quizSize;
+                if (sequentialOffset >= slicedData.length) sequentialOffset = 0;
+            }
+
+            currentQuizData = pool.slice(0, quizSize);
+            renderQuizTable();
+            resetTimer();
+            updateStats();
+        }
+
+        function retryCurrentQuiz() {
+            if (!currentQuizData || currentQuizData.length === 0) {
+                startNewQuiz();
+                return;
+            }
+            renderQuizTable();
+            resetTimer();
+            updateStats();
+        }
+
+        function resetAllData() {
+            if (confirm("Bạn có chắc chắn muốn xóa dữ liệu đã tải và khôi phục về mặc định?")) {
+                localStorage.removeItem('hsk_vocab_data');
+                fullVocabData = [...EMBEDDED_VOCAB_DATA];
+                document.getElementById('rangeTo').value = fullVocabData.length;
+                startNewQuiz();
+            }
+        }
+
+        function renderQuizTable() {
+            const tbody = document.getElementById('vocabTable');
+            tbody.innerHTML = '';
+
+            if (!currentQuizData || currentQuizData.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding: 20px; color: #64748b;">Chưa có câu hỏi nào. Vui lòng bấm nút <b>"Đổi đề"</b>!</td></tr>`;
+                return;
+            }
+
+            currentQuizData.forEach((item, index) => {
+                let tr = document.createElement('tr');
+                tr.id = `row-${index}`;
+
+                tr.innerHTML = `
+                    <td class="col-stt">${index + 1}</td>
+                    <td class="col-hanzi">
+                        ${item.chinese}
+                        <button class="btn-speaker" onclick="playPronunciation('${item.chinese}')" title="Nghe đọc">🔊</button>
+                    </td>
+                    <td class="col-type">${item.type || ''}</td>
+                    <td class="col-pinyin">${item.pinyin || ''}</td>
+                    <td class="col-viet">${item.meaning || ''}</td>
+                    <td class="col-input">
+                        <input type="text" id="input-${index}" placeholder="Nhập..." autocomplete="off" onkeypress="handleKeyPress(event, ${index})">
+                    </td>
+                    <td class="col-status" id="status-${index}">⏳</td>
+                `;
+                tbody.appendChild(tr);
+            });
+            
+            startTimer();
+        }
+
+        function handleKeyPress(event, index) {
+            if (event.key === 'Enter') {
+                checkAnswer(index);
+                let nextInput = document.getElementById(`input-${index + 1}`);
+                if (nextInput) {
+                    nextInput.focus();
+                }
+            }
+        }
+
+        function checkAnswer(index) {
+            let inputElem = document.getElementById(`input-${index}`);
+            let rowElem = document.getElementById(`row-${index}`);
+            let statusElem = document.getElementById(`status-${index}`);
+            
+            if (!inputElem || inputElem.disabled) return;
+
+            let userVal = cleanString(inputElem.value);
+            let item = currentQuizData[index];
+            let mode = document.getElementById('modeSelect').value;
+
+            let targetVal = "";
+            if (mode === 'chinese_only' || mode === 'pinyin_to_chinese') {
+                targetVal = cleanString(item.chinese.split('/')[0]);
+            } else {
+                targetVal = cleanString(item.meaning.split('/')[0]);
+            }
+
+            if (userVal === targetVal || userVal === cleanString(item.chinese)) {
+                rowElem.className = 'row-correct';
+                if(statusElem) statusElem.innerText = '✅';
+                inputElem.disabled = true;
+            } else {
+                rowElem.className = 'row-wrong';
+                if(statusElem) statusElem.innerText = '❌';
+            }
+            updateStats();
+        }
+
+        function updateStats() {
+            let total = currentQuizData.length;
+            let done = 0, correct = 0, wrong = 0;
+
+            currentQuizData.forEach((item, index) => {
+                let row = document.getElementById(`row-${index}`);
+                if (row && row.classList.contains('row-correct')) {
+                    done++;
+                    correct++;
+                } else if (row && row.classList.contains('row-wrong')) {
+                    wrong++;
+                }
+            });
+
+            document.getElementById('statTotal').innerText = total;
+            document.getElementById('statDone').innerText = done;
+            document.getElementById('statCorrect').innerText = correct;
+            document.getElementById('statWrong').innerText = wrong;
+
+            let rate = total > 0 ? ((correct / total) * 100).toFixed(1) : 0;
+            document.getElementById('statRate').innerText = rate + '%';
+            document.getElementById('progressBar').style.width = total > 0 ? (done / total) * 100 + '%' : '0%';
+
+            if (done === total && total > 0) {
+                stopTimer();
+            }
+        }
+
+        function startTimer() {
+            if (isTimerRunning) return;
+            isTimerRunning = true;
+            secondsElapsed = 0;
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                secondsElapsed++;
+                let mins = Math.floor(secondsElapsed / 60).toString().padStart(2, '0');
+                let secs = (secondsElapsed % 60).toString().padStart(2, '0');
+                let timerDisplay = document.getElementById('timerDisplay');
+                if (timerDisplay) timerDisplay.innerText = `${mins}:${secs}`;
+            }, 1000);
+        }
+
+        function resetTimer() {
+            stopTimer();
+            secondsElapsed = 0;
+            let timerDisplay = document.getElementById('timerDisplay');
+            if (timerDisplay) timerDisplay.innerText = "00:00";
+        }
+
+        function stopTimer() {
+            isTimerRunning = false;
+            clearInterval(timerInterval);
+        }
     </script>
 </body>
 </html>
