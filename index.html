@@ -220,6 +220,7 @@
         table { 
             width: 100%; 
             border-collapse: collapse; 
+            table-layout: fixed;
         }
 
         th { 
@@ -322,22 +323,21 @@
 
         .footer-owner { text-align: center; margin-top: 10px; padding-top: 8px; border-top: 1px dashed #cbd5e1; font-size: 10px; color: #475569; }
 
-        /* --- CHỈ ÁP DỤNG TRÊN ĐIỆN THOẠI (Màn hình nhỏ hơn 768px) --- */
+        /* --- XỬ LÝ TRÊN ĐIỆN THOẠI (Dưới 768px) --- */
         @media (max-width: 768px) {
             body { padding: 6px; font-size: 12px; }
             .table-container { padding: 4px; overflow-x: hidden; }
-            table { table-layout: fixed; }
             
-            /* Dối với điện thoại: Ẩn cột KQ */
-            th.col-kq, td.col-kq { display: none !important; }
-            
-            /* Chia tỉ lệ cột riêng cho điện thoại */
-            th:nth-child(1), td:nth-child(1) { width: 8%; }  /* STT */
-            th:nth-child(2), td:nth-child(2) { width: 22%; } /* Từ */
-            th:nth-child(3), td:nth-child(3) { width: 18%; } /* Loại */
-            th:nth-child(4), td:nth-child(4) { width: 18%; } /* Pinyin */
-            th:nth-child(5), td:nth-child(5) { width: 18%; } /* Việt */
-            th:nth-child(6), td:nth-child(6) { width: 16%; } /* Ô Nhập */
+            /* Hide KQ on mobile */
+            .col-kq { display: none !important; }
+
+            /* Re-calculate column widths for mobile screen */
+            .cg-stt { width: 8% !important; }
+            .cg-hanzi { width: 22% !important; }
+            .cg-type { width: 18% !important; }
+            .cg-pinyin { width: 18% !important; }
+            .cg-viet { width: 18% !important; }
+            .cg-input { width: 16% !important; }
 
             th { font-size: 10px !important; padding: 6px 2px !important; }
             td { padding: 5px 2px; font-size: 11px; word-break: break-word; }
@@ -345,7 +345,7 @@
             input[type="text"] { padding: 4px 2px; font-size: 11px; }
         }
 
-        /* --- GIAO DIỆN MÁY TÍNH (Màn hình lớn hơn 768px) --- */
+        /* --- XỬ LÝ TRÊN MÁY TÍNH (Từ 769px trở lên) --- */
         @media (min-width: 769px) {
             body { padding: 16px; font-size: 14px; }
             .controls { flex-direction: row; flex-wrap: wrap; padding: 14px; }
@@ -447,6 +447,15 @@
         <div class="main-layout">
             <div class="table-container">
                 <table>
+                    <colgroup>
+                        <col class="cg-stt" style="width: 7%;">
+                        <col class="cg-hanzi" style="width: 14%;">
+                        <col class="cg-type" style="width: 14%;">
+                        <col class="cg-pinyin" style="width: 14%;">
+                        <col class="cg-viet" style="width: 25%;">
+                        <col class="cg-input" style="width: 18%;">
+                        <col class="cg-kq col-kq" style="width: 8%;">
+                    </colgroup>
                     <thead>
                         <tr>
                             <th>STT</th>
