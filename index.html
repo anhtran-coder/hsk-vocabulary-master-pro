@@ -362,54 +362,86 @@
         .footer-owner { text-align: center; margin-top: 14px; padding-top: 10px; border-top: 1px dashed #cbd5e1; font-size: 11px; color: #475569; font-weight: 500; }
 
         /* =========================================================
-           THIẾT LẬP RIÊNG CHO MÀN HÌNH NHỎ (ĐIỆN THOẠI & TABLET < 868px)
-           MÁY TÍNH SẼ HOÀN TOÀN KHÔNG BỊ ẢNH HƯỞNG
+           TỐI ƯU SIÊU GỌN GÀNG CHO ĐIỆN THOẠI (< 868px)
            ========================================================= */
         @media screen and (max-width: 868px) {
-            body { padding: 10px 8px; }
+            body { padding: 8px 6px; }
 
+            .app-title { font-size: 20px; }
+
+            /* Thanh công cụ siêu gọn gàng: Dạng Lưới 2 Cột */
             .controls {
-                padding: 12px;
-                gap: 8px;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 6px;
+                padding: 10px;
                 border-radius: 16px;
+                margin-bottom: 12px;
             }
 
             .control-box {
-                width: 100%;
-                justify-content: space-between;
+                padding: 4px 8px;
+                border-radius: 8px;
+                font-size: 11px;
             }
 
+            .controls label.box-label {
+                font-size: 11px;
+            }
+
+            .controls select, .controls input[type="number"] {
+                padding: 3px 5px;
+                font-size: 11px;
+            }
+
+            .range-container {
+                padding: 2px 4px;
+            }
+            .range-container input { width: 35px; }
+
             .btn {
-                width: 100%;
+                padding: 8px 6px;
+                font-size: 11px;
+                border-radius: 10px;
                 justify-content: center;
             }
 
+            /* Đổi thứ tự: Bảng bài tập lên TRÊN, Thống kê xuống DƯỚI CÙNG */
             .main-layout { 
-                flex-direction: column-reverse; 
-                gap: 14px; 
+                flex-direction: column; 
+                gap: 12px; 
             }
 
             .table-container { 
-                padding: 6px; 
+                padding: 4px; 
                 border-radius: 12px; 
                 width: 100%;
                 overflow-x: auto;
                 -webkit-overflow-scrolling: touch;
             }
 
+            /* Thống kê thu nhỏ và nằm dưới cùng */
             .stats-dashboard { 
                 width: 100%; 
+                padding: 12px;
+                border-radius: 14px;
             }
 
-            /* Ẩn cột Trạng thái trên điện thoại để tiết kiệm diện tích */
+            .timer-box { padding: 6px; margin-bottom: 8px; }
+            .timer-box .timer-value { font-size: 16px; }
+            .stat-card { padding: 6px; }
+            .stat-card .value { font-size: 14px; }
+            .rate-card { padding: 8px; margin-top: 8px; }
+
+            /* Ẩn cột Trạng thái để bảng rộng hơn */
             .col-status { display: none !important; }
 
-            th { font-size: 11px !important; padding: 8px 2px !important; }
-            td { padding: 8px 2px !important; font-size: 12px; }
-            td.col-hanzi { font-size: 18px; }
-            td.col-pinyin { font-size: 11px; }
-            td.col-type { font-size: 10px; }
-            td.col-viet { font-size: 11px; }
+            th { font-size: 10px !important; padding: 6px 2px !important; }
+            td { padding: 6px 2px !important; font-size: 11px; }
+            td.col-hanzi { font-size: 16px; }
+            td.col-pinyin { font-size: 10px; }
+            td.col-type { font-size: 9px; }
+            td.col-viet { font-size: 10px; }
 
             .col-stt { width: 8%; }
             .col-hanzi { width: 26%; }
@@ -419,8 +451,8 @@
             .col-input { width: 16%; }
 
             input[type="text"] { 
-                font-size: 12px; 
-                padding: 5px 2px; 
+                font-size: 11px; 
+                padding: 4px 2px; 
                 width: 100%; 
             }
         }
@@ -456,9 +488,9 @@
             <button class="btn btn-audio" id="btnAudioToggle">🔊 Phát âm: Bật</button>
             
             <div class="control-box">
-                <label class="box-label">🎙️ Giọng đọc</label>
-                <select id="voiceSelect" style="max-width: 150px;">
-                    <option value="">Đang tải giọng...</option>
+                <label class="box-label">🎙️ Giọng</label>
+                <select id="voiceSelect" style="max-width: 100px;">
+                    <option value="">Đang tải...</option>
                 </select>
                 <button class="btn-speaker" onclick="playPronunciation('你好')" title="Thử giọng">🔊</button>
             </div>
@@ -466,38 +498,38 @@
             <div class="control-box">
                 <label class="box-label">🎯 Chế độ</label>
                 <select id="modeSelect">
-                    <option value="chinese_only">1. Chỉ gõ Chữ Hán (Hiện Tiếng Việt)</option>
-                    <option value="pinyin_to_chinese">2. Gõ Chữ Hán HOẶC Pinyin (Hiện Tiếng Việt)</option>
-                    <option value="chinese_to_meaning">3. Gõ Tiếng Việt (Hiện Chữ Hán)</option>
+                    <option value="chinese_only">1. Gõ Chữ Hán</option>
+                    <option value="pinyin_to_chinese">2. Gõ Hán/Pinyin</option>
+                    <option value="chinese_to_meaning">3. Gõ Tiếng Việt</option>
                 </select>
             </div>
 
             <div class="control-box">
                 <label class="box-label">🔄 Trộn câu</label>
                 <select id="shuffleSelect">
-                    <option value="sequential">🔢 Theo thứ tự</option>
-                    <option value="random">🔀 Đảo ngẫu nhiên</option>
+                    <option value="sequential">🔢 Thứ tự</option>
+                    <option value="random">🔀 Ngẫu nhiên</option>
                 </select>
             </div>
 
             <div class="control-box">
                 <label class="box-label">📝 Số câu</label>
-                <input type="number" id="quizSize" value="10" min="1" style="width: 48px; text-align: center;">
+                <input type="number" id="quizSize" value="10" min="1" style="width: 40px; text-align: center;">
             </div>
 
-            <div class="control-box">
-                <label class="box-label">📊 Khoảng</label>
+            <div class="control-box" style="grid-column: span 2;">
+                <label class="box-label">📊 Khoảng từ</label>
                 <div class="range-container">
                     <input type="number" id="rangeFrom" placeholder="Từ" min="1" value="1">
-                    <span>đến</span>
+                    <span>-</span>
                     <input type="number" id="rangeTo" placeholder="Đến" min="1" value="100">
                 </div>
             </div>
 
             <button class="btn btn-new" id="btnNewQuiz">⚡ Đổi đề</button>
             <button class="btn btn-retry" id="btnRetryQuiz">♻️ Làm lại</button>
-            <button class="btn btn-reset" id="btnReset">🗑️ Xóa data</button>
-            <span id="loadingStatus" style="font-size: 13px; font-weight: 600; color: var(--success); margin-left: auto;"></span>
+            <button class="btn btn-reset" id="btnReset" style="grid-column: span 2;">🗑️ Xóa dữ liệu</button>
+            <span id="loadingStatus" style="font-size: 11px; font-weight: 600; color: var(--success); grid-column: span 2; text-align: center;"></span>
         </div>
 
         <div class="main-layout">
@@ -527,14 +559,14 @@
                 <h3>📊 Tiến độ bài tập</h3>
                 <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressBar"></div></div>
                 <div class="stats-grid">
-                    <div class="stat-card"><div class="label">Tổng số câu</div><div class="value" id="statTotal">0</div></div>
-                    <div class="stat-card"><div class="label">Đã hoàn thành</div><div class="value" id="statDone">0</div></div>
-                    <div class="stat-card" style="border-color: #a7f3d0; background: rgba(240, 253, 244, 0.9);"><div class="label" style="color: #065f46;">Số câu Đúng</div><div class="value" style="color: var(--success);" id="statCorrect">0</div></div>
-                    <div class="stat-card" style="border-color: #fecaca; background: rgba(254, 242, 242, 0.9);"><div class="label" style="color: #991b1b;">Số câu Sai</div><div class="value" style="color: var(--danger);" id="statWrong">0</div></div>
+                    <div class="stat-card"><div class="label">Tổng câu</div><div class="value" id="statTotal">0</div></div>
+                    <div class="stat-card"><div class="label">Đã xong</div><div class="value" id="statDone">0</div></div>
+                    <div class="stat-card" style="border-color: #a7f3d0; background: rgba(240, 253, 244, 0.9);"><div class="label" style="color: #065f46;">Đúng</div><div class="value" style="color: var(--success);" id="statCorrect">0</div></div>
+                    <div class="stat-card" style="border-color: #fecaca; background: rgba(254, 242, 242, 0.9);"><div class="label" style="color: #991b1b;">Sai</div><div class="value" style="color: var(--danger);" id="statWrong">0</div></div>
                 </div>
                 <div class="rate-card">
                     <div style="font-size: 11px; color: #be185d; font-weight: 700;">TỶ LỆ CHÍNH XÁC</div>
-                    <div style="font-size: 22px; font-weight: 700; color: #db2777; margin-top: 2px;" id="statRate">0.0%</div>
+                    <div style="font-size: 20px; font-weight: 700; color: #db2777; margin-top: 2px;" id="statRate">0.0%</div>
                 </div>
 
                 <div class="contact-card">
