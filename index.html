@@ -22,24 +22,16 @@
             --header-border: #c7d2fe;
         }
 
-        *, *::before, *::after {
-            box-sizing: border-box;
-        }
-
-        html, body {
-            width: 100%;
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
-        }
-
         body { 
             font-family: 'Inter', system-ui, -apple-system, sans-serif; 
+            margin: 0; 
             padding: 20px;
             color: var(--text-dark);
             font-size: 14px; 
+            box-sizing: border-box;
             position: relative;
             min-height: 100vh;
+            overflow-x: hidden;
             background: linear-gradient(135deg, #fbcfe8 0%, #e0e7ff 50%, #bae6fd 100%);
         }
 
@@ -59,13 +51,7 @@
             100% { transform: translateY(110vh) rotate(360deg); opacity: 0.2; }
         }
 
-        .container-wrapper { 
-            position: relative; 
-            z-index: 1; 
-            max-width: 1200px; 
-            margin: 0 auto; 
-            width: 100%;
-        }
+        .container-wrapper { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; }
 
         .app-header {
             display: flex;
@@ -99,17 +85,16 @@
 
         .controls { 
             display: flex; 
-            gap: 10px; 
+            gap: 12px; 
             flex-wrap: wrap; 
             align-items: center; 
             background: rgba(255, 255, 255, 0.85); 
             backdrop-filter: blur(16px);
-            padding: 16px 18px; 
-            border-radius: 20px; 
+            padding: 18px 22px; 
+            border-radius: 24px; 
             box-shadow: 0 12px 35px -8px rgba(99, 102, 241, 0.2);
             margin-bottom: 20px;
             border: 2px solid rgba(255, 255, 255, 0.9);
-            width: 100%;
         }
 
         .control-box {
@@ -117,12 +102,11 @@
             align-items: center;
             gap: 8px;
             background: #ffffff;
-            padding: 8px 12px;
-            border-radius: 12px;
+            padding: 7px 14px;
+            border-radius: 14px;
             border: 1.5px solid #e2e8f0;
             box-shadow: 0 2px 6px rgba(0,0,0,0.02);
             transition: all 0.2s ease;
-            flex-shrink: 0;
         }
 
         .control-box:hover { border-color: #cbd5e1; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
@@ -141,7 +125,7 @@
         .controls select, .controls input[type="number"] {
             padding: 6px 10px;
             border: 1.5px solid #cbd5e1;
-            border-radius: 8px;
+            border-radius: 9px;
             outline: none;
             font-weight: 600;
             color: #0f172a;
@@ -161,28 +145,27 @@
             align-items: center;
             gap: 6px;
             background: #f8fafc;
-            padding: 4px 8px;
-            border-radius: 10px;
+            padding: 5px 10px;
+            border-radius: 12px;
             border: 1.5px solid #cbd5e1;
         }
-        .range-container input { width: 60px; text-align: center; }
+        .range-container input { width: 48px; text-align: center; }
 
         .btn { 
-            padding: 10px 16px; 
+            padding: 10px 20px; 
             border: none; 
-            border-radius: 12px; 
+            border-radius: 14px; 
             cursor: pointer; 
             font-weight: 600; 
             color: white; 
             font-size: 13px; 
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: 0 4px 12px rgba(0,0,0,0.12);
             position: relative;
             overflow: hidden;
-            flex-shrink: 0;
         }
 
         .btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.18); }
@@ -207,16 +190,10 @@
             font-size: 13px;
             margin-left: 6px;
             transition: all 0.2s;
-            flex-shrink: 0;
         }
         .btn-speaker:hover { background: #818cf8; color: white; transform: scale(1.1); }
         
-        .main-layout { 
-            display: flex; 
-            gap: 20px; 
-            align-items: flex-start; 
-            width: 100%;
-        }
+        .main-layout { display: flex; gap: 20px; align-items: flex-start; }
 
         .table-container { 
             flex: 1; 
@@ -287,14 +264,6 @@
             background: #ffffff;
             box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.25);
         }
-
-        input[type="text"]:disabled {
-            background-color: #f1f5f9;
-            color: #475569;
-            cursor: not-allowed;
-            border-color: #cbd5e1;
-            font-weight: 600;
-        }
         
         tr.row-correct td { background-color: var(--success-light) !important; color: #064e3b; }
         tr.row-wrong td { background-color: var(--danger-light) !important; color: #7f1d1d; }
@@ -307,7 +276,6 @@
             padding: 18px; 
             box-shadow: 0 10px 30px -5px rgba(0,0,0,0.1);
             border: 2px solid rgba(244, 114, 182, 0.4);
-            flex-shrink: 0;
         }
 
         .stats-dashboard h3 { font-size: 13px; margin: 0 0 12px 0; text-transform: uppercase; color: #db2777; font-weight: 700; }
@@ -366,75 +334,25 @@
 
         .footer-owner { text-align: center; margin-top: 14px; padding-top: 10px; border-top: 1px dashed #cbd5e1; font-size: 11px; color: #475569; font-weight: 500; }
 
-        /* PHẦN TỐI ƯU GIAO DIỆN TRÊN ĐIỆN THOẠI */
-        @media screen and (max-width: 950px) {
-            body { padding: 4px 2px; }
-            .container-wrapper { width: 100%; max-width: 100%; padding: 0 2px; }
-            .app-header { margin-bottom: 10px; }
-            .app-title { font-size: 18px; }
-            
-            .controls {
-                display: flex;
-                flex-direction: column;
-                gap: 6px;
-                padding: 8px;
-                border-radius: 12px;
-                margin-bottom: 10px;
-                width: 100%;
-            }
-            .control-box { 
-                padding: 4px 8px; 
-                border-radius: 8px; 
-                font-size: 11px; 
-                width: 100%; 
-                justify-content: space-between; 
-            }
-            .controls label.box-label { font-size: 11px; }
-            .controls select, .controls input[type="number"] { padding: 3px 4px; font-size: 11px; }
-            .range-container { padding: 2px 4px; width: 100%; justify-content: space-between; }
-            .range-container input { width: 45px !important; }
-            
-            .btn { 
-                padding: 6px 8px; 
-                font-size: 11px; 
-                border-radius: 8px; 
-                justify-content: center; 
-                width: 100%; 
-            }
-            
-            .main-layout { flex-direction: column; gap: 10px; width: 100%; }
-            .table-container { 
-                padding: 2px; 
-                border-radius: 10px; 
-                width: 100%; 
-                overflow-x: auto; 
-                -webkit-overflow-scrolling: touch; 
-            }
-            
-            table { width: 100%; table-layout: auto; }
-            .stats-dashboard { width: 100%; padding: 10px; border-radius: 12px; }
-            .timer-box { padding: 4px; margin-bottom: 6px; }
-            .timer-box .timer-value { font-size: 14px; }
-            .stat-card { padding: 4px; }
-            .stat-card .value { font-size: 12px; }
-            .rate-card { padding: 6px; margin-top: 6px; }
-            
+        @media (max-width: 768px) {
+            body { padding: 8px; }
+            .main-layout { flex-direction: column; }
+            .table-container { padding: 6px; }
+            .stats-dashboard { width: 100%; box-sizing: border-box; }
             .col-status { display: none !important; }
-            th { font-size: 9px !important; padding: 4px 1px !important; }
-            td { padding: 4px 1px !important; font-size: 10px; }
-            td.col-hanzi { font-size: 14px; }
-            td.col-pinyin { font-size: 9px; }
-            td.col-type { font-size: 8px; }
-            td.col-viet { font-size: 9px; }
-            
-            .col-stt { width: 7%; }
-            .col-hanzi { width: 22%; }
-            .col-type { width: 13%; }
+            th { font-size: 11px !important; padding: 10px 2px !important; }
+            td { padding: 10px 2px !important; font-size: 13px; }
+            td.col-hanzi { font-size: 20px; }
+            td.col-pinyin { font-size: 12px; }
+            td.col-type { font-size: 11px; }
+            td.col-viet { font-size: 12px; }
+            input[type="text"] { font-size: 13px; padding: 6px 2px; width: 95%; }
+            .col-stt { width: 8%; }
+            .col-hanzi { width: 25%; }
+            .col-type { width: 12%; }
             .col-pinyin { width: 18%; }
             .col-viet { width: 22%; }
-            .col-input { width: 18%; }
-            
-            input[type="text"] { font-size: 10px; padding: 3px 1px; width: 100%; }
+            .col-input { width: 15%; }
         }
     </style>
 </head>
@@ -442,7 +360,7 @@
 
     <script>
         const symbols = ['🌸', '🌺', '🌷', '🌻', '🍃', '❄️', '❅', '✨', '💮', '❄️'];
-        for (let i = 0; i < 35; i++) {
+        for (let i = 0; i < 40; i++) {
             const div = document.createElement('div');
             div.className = 'falling-decor';
             div.innerHTML = symbols[Math.floor(Math.random() * symbols.length)];
@@ -468,9 +386,9 @@
             <button class="btn btn-audio" id="btnAudioToggle">🔊 Phát âm: Bật</button>
             
             <div class="control-box">
-                <label class="box-label">🎙️ Giọng</label>
-                <select id="voiceSelect" style="max-width: 120px;">
-                    <option value="">Đang tải...</option>
+                <label class="box-label">🎙️ Giọng đọc</label>
+                <select id="voiceSelect" style="max-width: 150px;">
+                    <option value="">Đang tải giọng...</option>
                 </select>
                 <button class="btn-speaker" onclick="playPronunciation('你好')" title="Thử giọng">🔊</button>
             </div>
@@ -478,38 +396,38 @@
             <div class="control-box">
                 <label class="box-label">🎯 Chế độ</label>
                 <select id="modeSelect">
-                    <option value="chinese_only">1. Gõ Chữ Hán</option>
-                    <option value="pinyin_to_chinese">2. Gõ Hán/Pinyin</option>
-                    <option value="chinese_to_meaning">3. Gõ Tiếng Việt</option>
+                    <option value="chinese_only">1. Chỉ gõ Chữ Hán (Hiện Tiếng Việt)</option>
+                    <option value="pinyin_to_chinese">2. Gõ Chữ Hán HOẶC Pinyin (Hiện Tiếng Việt)</option>
+                    <option value="chinese_to_meaning">3. Gõ Tiếng Việt (Hiện Chữ Hán)</option>
                 </select>
             </div>
 
             <div class="control-box">
                 <label class="box-label">🔄 Trộn câu</label>
                 <select id="shuffleSelect">
-                    <option value="sequential">🔢 Thứ tự</option>
-                    <option value="random">🔀 Ngẫu nhiên</option>
+                    <option value="sequential">🔢 Theo thứ tự</option>
+                    <option value="random">🔀 Đảo ngẫu nhiên</option>
                 </select>
             </div>
 
             <div class="control-box">
                 <label class="box-label">📝 Số câu</label>
-                <input type="number" id="quizSize" value="10" min="1" style="width: 55px; text-align: center;">
+                <input type="number" id="quizSize" value="10" min="1" style="width: 48px; text-align: center;">
             </div>
 
             <div class="control-box">
-                <label class="box-label">📊 Khoảng từ</label>
+                <label class="box-label">📊 Khoảng</label>
                 <div class="range-container">
                     <input type="number" id="rangeFrom" placeholder="Từ" min="1" value="1">
-                    <span>-</span>
+                    <span>đến</span>
                     <input type="number" id="rangeTo" placeholder="Đến" min="1" value="100">
                 </div>
             </div>
 
             <button class="btn btn-new" id="btnNewQuiz">⚡ Đổi đề</button>
             <button class="btn btn-retry" id="btnRetryQuiz">♻️ Làm lại</button>
-            <button class="btn btn-reset" id="btnReset">🗑️ Xóa dữ liệu</button>
-            <span id="loadingStatus" style="font-size: 11px; font-weight: 600; color: var(--success); width: 100%; text-align: center;"></span>
+            <button class="btn btn-reset" id="btnReset">🗑️ Xóa data</button>
+            <span id="loadingStatus" style="font-size: 13px; font-weight: 600; color: var(--success); margin-left: auto;"></span>
         </div>
 
         <div class="main-layout">
@@ -539,14 +457,14 @@
                 <h3>📊 Tiến độ bài tập</h3>
                 <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressBar"></div></div>
                 <div class="stats-grid">
-                    <div class="stat-card"><div class="label">Tổng câu</div><div class="value" id="statTotal">0</div></div>
-                    <div class="stat-card"><div class="label">Đã xong</div><div class="value" id="statDone">0</div></div>
-                    <div class="stat-card" style="border-color: #a7f3d0; background: rgba(240, 253, 244, 0.9);"><div class="label" style="color: #065f46;">Đúng</div><div class="value" style="color: var(--success);" id="statCorrect">0</div></div>
-                    <div class="stat-card" style="border-color: #fecaca; background: rgba(254, 242, 242, 0.9);"><div class="label" style="color: #991b1b;">Sai</div><div class="value" style="color: var(--danger);" id="statWrong">0</div></div>
+                    <div class="stat-card"><div class="label">Tổng số câu</div><div class="value" id="statTotal">0</div></div>
+                    <div class="stat-card"><div class="label">Đã hoàn thành</div><div class="value" id="statDone">0</div></div>
+                    <div class="stat-card" style="border-color: #a7f3d0; background: rgba(240, 253, 244, 0.9);"><div class="label" style="color: #065f46;">Số câu Đúng</div><div class="value" style="color: var(--success);" id="statCorrect">0</div></div>
+                    <div class="stat-card" style="border-color: #fecaca; background: rgba(254, 242, 242, 0.9);"><div class="label" style="color: #991b1b;">Số câu Sai</div><div class="value" style="color: var(--danger);" id="statWrong">0</div></div>
                 </div>
                 <div class="rate-card">
                     <div style="font-size: 11px; color: #be185d; font-weight: 700;">TỶ LỆ CHÍNH XÁC</div>
-                    <div style="font-size: 20px; font-weight: 700; color: #db2777; margin-top: 2px;" id="statRate">0.0%</div>
+                    <div style="font-size: 22px; font-weight: 700; color: #db2777; margin-top: 2px;" id="statRate">0.0%</div>
                 </div>
 
                 <div class="contact-card">
@@ -567,6 +485,8 @@
     </div>
 
     <script>
+        const SECRET_KEY = "CAMTU2019S2THANHAN2025";
+
         const EMBEDDED_VOCAB_DATA = [
             {"chinese": "早饭 / 早餐", "type": "Danh từ", "pinyin": "zǎofàn / zǎocān", "meaning": "Bữa sáng, điểm tâm"},
             {"chinese": "午饭 / 晚餐", "type": "Danh từ", "pinyin": "wǔfàn / wǔcān", "meaning": "Bữa trưa"},
@@ -585,6 +505,7 @@
 
         function populateVoices() {
             if (!('speechSynthesis' in window)) return;
+            
             const voices = window.speechSynthesis.getVoices();
             const voiceSelect = document.getElementById('voiceSelect');
             voiceSelect.innerHTML = '';
@@ -648,9 +569,25 @@
             window.speechSynthesis.speak(utterance);
         }
 
+        function removePinyinTones(str) {
+            if (!str) return '';
+            return str.normalize('NFD')
+                      .replace(/[\u0300-\u036f]/g, '')
+                      .replace(/ü/g, 'v')
+                      .replace(/Ü/g, 'v')
+                      .toLowerCase();
+        }
+
         function cleanString(str) {
             if (!str) return '';
             return str.toLowerCase().trim().replace(/\s+/g, ' ');
+        }
+
+        function splitVariants(str) {
+            if (!str) return [];
+            return str.split(/[/,;|\n]+/)
+                      .map(s => cleanString(s))
+                      .filter(s => s.length > 0);
         }
 
         window.onload = function() {
@@ -686,98 +623,181 @@
                 }
             });
 
-            // Xử lý tải file Excel
-            document.getElementById('excelFile').addEventListener('change', function(e) {
-                let file = e.target.files[0];
-                if (!file) return;
-                let reader = new FileReader();
-                reader.onload = function(e) {
-                    try {
-                        let data = new Uint8Array(e.target.result);
-                        let workbook = XLSX.read(data, {type: 'array'});
-                        let firstSheetName = workbook.SheetNames[0];
-                        let worksheet = workbook.Sheets[firstSheetName];
-                        let json = XLSX.utils.sheet_to_json(worksheet, {header: 1});
-                        
-                        let loadedArray = [];
-                        for (let i = 1; i < json.length; i++) {
-                            let row = json[i];
-                            if (row && row.length >= 2) {
-                                loadedArray.push({
-                                    chinese: row[1] || '',
-                                    type: row[2] || '',
-                                    pinyin: row[3] || '',
-                                    meaning: row[4] || ''
-                                });
-                            }
-                        }
-                        if (loadedArray.length > 0) {
-                            fullVocabData = loadedArray;
-                            localStorage.setItem('hsk_vocab_data', JSON.stringify(fullVocabData));
-                            document.getElementById('rangeTo').value = fullVocabData.length;
-                            document.getElementById('loadingStatus').innerText = `Đã tải ${fullVocabData.length} từ!`;
-                            startNewQuiz();
-                        } else {
-                            alert("File Excel không đúng định dạng hoặc không có dữ liệu!");
-                        }
-                    } catch(err) {
-                        alert("Lỗi khi đọc file Excel!");
-                    }
-                };
-                reader.readAsArrayBuffer(file);
-            });
-
-            // Tự động tạo đề lần đầu khi mở trang
             startNewQuiz();
         };
 
+        function resetTimer() {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            secondsElapsed = 0;
+            isTimerRunning = false;
+            updateTimerDisplay();
+        }
+
+        function checkAndStartTimer() {
+            if (!isTimerRunning) {
+                isTimerRunning = true;
+                timerInterval = setInterval(() => {
+                    secondsElapsed++;
+                    updateTimerDisplay();
+                }, 1000);
+            }
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+            isTimerRunning = false;
+        }
+
+        function updateTimerDisplay() {
+            const mins = Math.floor(secondsElapsed / 60).toString().padStart(2, '0');
+            const secs = (secondsElapsed % 60).toString().padStart(2, '0');
+            document.getElementById('timerDisplay').innerText = `${mins}:${secs}`;
+        }
+
+        document.getElementById('excelFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const statusText = document.getElementById('loadingStatus');
+            if (statusText) { statusText.innerText = "⏳ Đang kiểm tra..."; statusText.style.color = "var(--primary)"; }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+
+                    const cellZ1 = worksheet['Z1'] ? worksheet['Z1'].v.toString().trim() : '';
+                    const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: "" });
+
+                    if (!rows || rows.length < 2) {
+                        alert("File Excel không có dữ liệu!");
+                        return;
+                    }
+
+                    let hasValidKey = false;
+                    if (cellZ1 === SECRET_KEY) {
+                        hasValidKey = true;
+                    } else if (rows[0]) {
+                        for (let col = 0; col < rows[0].length; col++) {
+                            if (rows[0][col] && rows[0][col].toString().trim() === SECRET_KEY) {
+                                hasValidKey = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (!hasValidKey) {
+                        alert("❌ TRUY CẬP BỊ TỪ CHỐI!\n\nFile Excel này KHÔNG HỢP LỆ hoặc mã khóa ở ô Z1 không đúng.");
+                        document.getElementById('excelFile').value = '';
+                        if (statusText) statusText.innerText = "";
+                        return;
+                    }
+
+                    let headerRowIndex = 0;
+                    for (let i = 0; i < Math.min(rows.length, 5); i++) {
+                        const rowStr = rows[i].join(" ").toUpperCase();
+                        if (rowStr.includes("CHENESE") || rowStr.includes("CHINESE") || rowStr.includes("PINYIN") || rowStr.includes("MEANING")) {
+                            headerRowIndex = i;
+                            break;
+                        }
+                    }
+
+                    const headers = rows[headerRowIndex].map(h => h.toString().trim().toUpperCase());
+                    let colChinese = -1, colType = -1, colPinyin = -1, colMeaning = -1;
+
+                    headers.forEach((h, idx) => {
+                        if (h.includes('INPUT')) return;
+                        if ((h.includes('CHENESE') || h.includes('CHINESE') || h.includes('HÁN')) && colChinese === -1) colChinese = idx;
+                        else if (h.includes('TYPE') || h.includes('LOẠI TỪ')) colType = idx;
+                        else if (h.includes('PINYIN') || h.includes('PHIÊN ÂM')) colPinyin = idx;
+                        else if (h.includes('MEANING') || h.includes('TIẾNG VIỆT') || h.includes('NGHĨA')) colMeaning = idx;
+                    });
+
+                    if (colChinese === -1) colChinese = 1;
+                    if (colType === -1) colType = 2;
+                    if (colPinyin === -1) colPinyin = 3;
+                    if (colMeaning === -1) colMeaning = 4;
+
+                    const parsedData = [];
+                    for (let i = headerRowIndex + 1; i < rows.length; i++) {
+                        const row = rows[i];
+                        if (!row || row.length === 0) continue;
+
+                        const chinese = row[colChinese] ? row[colChinese].toString().trim() : '';
+                        const type    = row[colType]    ? row[colType].toString().trim() : '';
+                        const pinyin  = row[colPinyin]  ? row[colPinyin].toString().trim() : '';
+                        const meaning = row[colMeaning] ? row[colMeaning].toString().trim() : '';
+
+                        if (chinese || meaning) {
+                            parsedData.push({ chinese, type, pinyin, meaning });
+                        }
+                    }
+
+                    if (parsedData.length === 0) {
+                        alert("Không tìm thấy dữ liệu từ vựng hợp lệ!");
+                        return;
+                    }
+
+                    fullVocabData = parsedData;
+                    localStorage.setItem('hsk_vocab_data', JSON.stringify(fullVocabData));
+                    
+                    if (statusText) { 
+                        statusText.innerText = `✅ Đã nạp ${fullVocabData.length} từ!`; 
+                        statusText.style.color = "var(--success)"; 
+                    }
+                    
+                    document.getElementById('rangeFrom').value = 1;
+                    document.getElementById('rangeTo').value = fullVocabData.length;
+                    sequentialOffset = 0;
+                    startNewQuiz();
+                } catch (err) {
+                    alert("Lỗi đọc file Excel: " + err.message);
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        });
+
         function startNewQuiz() {
-            if (!fullVocabData || fullVocabData.length === 0) {
-                alert("Chưa có dữ liệu từ vựng!");
-                return;
-            }
-
-            let fromIdx = parseInt(document.getElementById('rangeFrom').value) || 1;
-            let toIdx = parseInt(document.getElementById('rangeTo').value) || fullVocabData.length;
-            let quizSize = parseInt(document.getElementById('quizSize').value) || 10;
-
-            let slicedData = fullVocabData.slice(fromIdx - 1, toIdx);
-            if (slicedData.length === 0) {
-                slicedData = fullVocabData;
-            }
-
-            let shuffleMode = document.getElementById('shuffleSelect').value;
-            let pool = [...slicedData];
-
-            if (shuffleMode === 'random') {
-                pool.sort(() => Math.random() - 0.5);
-            } else {
-                pool = pool.slice(sequentialOffset, sequentialOffset + quizSize);
-                sequentialOffset += quizSize;
-                if (sequentialOffset >= slicedData.length) sequentialOffset = 0;
-            }
-
-            currentQuizData = pool.slice(0, quizSize);
-            renderQuizTable();
             resetTimer();
+            const from = Math.max(1, parseInt(document.getElementById('rangeFrom').value) || 1) - 1;
+            const to = Math.min(fullVocabData.length, parseInt(document.getElementById('rangeTo').value) || fullVocabData.length);
+            const size = Math.max(1, parseInt(document.getElementById('quizSize').value) || 10);
+            const isRandom = document.getElementById('shuffleSelect').value === 'random';
+
+            let pool = fullVocabData.slice(from, to);
+            if (pool.length === 0) pool = [...fullVocabData];
+
+            if (isRandom) {
+                currentQuizData = [...pool].sort(() => Math.random() - 0.5).slice(0, size);
+            } else {
+                if (sequentialOffset >= pool.length) sequentialOffset = 0;
+                currentQuizData = pool.slice(sequentialOffset, sequentialOffset + size);
+                sequentialOffset += size;
+            }
+
+            currentQuizData = currentQuizData.map(item => ({ ...item, userInput: '', status: '' }));
+            renderQuizTable();
             updateStats();
         }
 
         function retryCurrentQuiz() {
-            if (!currentQuizData || currentQuizData.length === 0) {
-                startNewQuiz();
-                return;
-            }
-            renderQuizTable();
             resetTimer();
+            currentQuizData = currentQuizData.map(item => ({ ...item, userInput: '', status: '' }));
+            renderQuizTable();
             updateStats();
         }
 
         function resetAllData() {
-            if (confirm("Bạn có chắc chắn muốn xóa dữ liệu đã tải và khôi phục về mặc định?")) {
+            if (confirm("Bạn có chắc chắn muốn xóa dữ liệu đã tải lên không?")) {
                 localStorage.removeItem('hsk_vocab_data');
                 fullVocabData = [...EMBEDDED_VOCAB_DATA];
+                document.getElementById('rangeFrom').value = 1;
                 document.getElementById('rangeTo').value = fullVocabData.length;
+                document.getElementById('loadingStatus').innerText = "";
+                sequentialOffset = 0;
                 startNewQuiz();
             }
         }
@@ -785,127 +805,102 @@
         function renderQuizTable() {
             const tbody = document.getElementById('vocabTable');
             tbody.innerHTML = '';
-
-            if (!currentQuizData || currentQuizData.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding: 20px; color: #64748b;">Chưa có câu hỏi nào. Vui lòng bấm nút <b>"Đổi đề"</b>!</td></tr>`;
-                return;
-            }
+            const mode = document.getElementById('modeSelect').value;
 
             currentQuizData.forEach((item, index) => {
-                let tr = document.createElement('tr');
-                tr.id = `row-${index}`;
+                const tr = document.createElement('tr');
+                if (item.status === 'correct') tr.className = 'row-correct';
+                if (item.status === 'wrong') tr.className = 'row-wrong';
+
+                let hanziContent = item.chinese;
+                let pinyinContent = item.pinyin;
+                let meaningContent = item.meaning;
+
+                if (mode === 'chinese_only' || mode === 'pinyin_to_chinese') {
+                    hanziContent = '***';
+                    pinyinContent = '***';
+                } else if (mode === 'chinese_to_meaning') {
+                    meaningContent = '***';
+                }
+
+                const speakerBtn = (mode === 'chinese_to_meaning' || item.status === 'correct') 
+                    ? `<button class="btn-speaker" onclick="playPronunciation('${item.chinese}')">🔊</button>` 
+                    : '';
 
                 tr.innerHTML = `
                     <td class="col-stt">${index + 1}</td>
-                    <td class="col-hanzi">
-                        ${item.chinese}
-                        <button class="btn-speaker" onclick="playPronunciation('${item.chinese}')" title="Nghe đọc">🔊</button>
-                    </td>
-                    <td class="col-type">${item.type || ''}</td>
-                    <td class="col-pinyin">${item.pinyin || ''}</td>
-                    <td class="col-viet">${item.meaning || ''}</td>
+                    <td class="col-hanzi">${hanziContent} ${speakerBtn}</td>
+                    <td class="col-type">${item.type || '-'}</td>
+                    <td class="col-pinyin">${pinyinContent}</td>
+                    <td class="col-viet">${meaningContent}</td>
                     <td class="col-input">
-                        <input type="text" id="input-${index}" placeholder="Nhập..." autocomplete="off" onkeypress="handleKeyPress(event, ${index})">
+                        <input type="text" value="${item.userInput}" data-index="${index}" oninput="handleInput(event)" onfocus="checkAndStartTimer()">
                     </td>
-                    <td class="col-status" id="status-${index}">⏳</td>
+                    <td class="col-status">${item.status === 'correct' ? '✅' : item.status === 'wrong' ? '❌' : ''}</td>
                 `;
                 tbody.appendChild(tr);
             });
-            
-            startTimer();
         }
 
-        function handleKeyPress(event, index) {
-            if (event.key === 'Enter') {
-                checkAnswer(index);
-                let nextInput = document.getElementById(`input-${index + 1}`);
-                if (nextInput) {
-                    nextInput.focus();
+        function handleInput(e) {
+            const index = e.target.getAttribute('data-index');
+            const val = e.target.value;
+            currentQuizData[index].userInput = val;
+
+            const mode = document.getElementById('modeSelect').value;
+            const item = currentQuizData[index];
+            const cleanVal = cleanString(val);
+
+            if (!cleanVal) {
+                item.status = '';
+            } else {
+                let isCorrect = false;
+
+                if (mode === 'chinese_only') {
+                    const validHanzi = splitVariants(item.chinese);
+                    isCorrect = validHanzi.includes(cleanVal);
+                } else if (mode === 'pinyin_to_chinese') {
+                    const validHanzi = splitVariants(item.chinese);
+                    const validPinyin = splitVariants(item.pinyin).map(removePinyinTones);
+                    const cleanValNoTone = removePinyinTones(cleanVal);
+                    isCorrect = validHanzi.includes(cleanVal) || validPinyin.includes(cleanValNoTone);
+                } else if (mode === 'chinese_to_meaning') {
+                    const validMeanings = splitVariants(item.meaning);
+                    isCorrect = validMeanings.some(m => cleanString(m) === cleanVal || cleanVal.includes(m));
+                }
+
+                if (isCorrect) {
+                    item.status = 'correct';
+                    playPronunciation(item.chinese);
+                } else {
+                    item.status = 'wrong';
                 }
             }
-        }
 
-        function checkAnswer(index) {
-            let inputElem = document.getElementById(`input-${index}`);
-            let rowElem = document.getElementById(`row-${index}`);
-            let statusElem = document.getElementById(`status-${index}`);
-            
-            if (!inputElem || inputElem.disabled) return;
+            const tr = e.target.closest('tr');
+            tr.className = item.status === 'correct' ? 'row-correct' : item.status === 'wrong' ? 'row-wrong' : '';
+            tr.querySelector('.col-status').innerText = item.status === 'correct' ? '✅' : item.status === 'wrong' ? '❌' : '';
 
-            let userVal = cleanString(inputElem.value);
-            let item = currentQuizData[index];
-            let mode = document.getElementById('modeSelect').value;
-
-            let targetVal = "";
-            if (mode === 'chinese_only' || mode === 'pinyin_to_chinese') {
-                targetVal = cleanString(item.chinese.split('/')[0]);
-            } else {
-                targetVal = cleanString(item.meaning.split('/')[0]);
-            }
-
-            if (userVal === targetVal || userVal === cleanString(item.chinese)) {
-                rowElem.className = 'row-correct';
-                if(statusElem) statusElem.innerText = '✅';
-                inputElem.disabled = true;
-            } else {
-                rowElem.className = 'row-wrong';
-                if(statusElem) statusElem.innerText = '❌';
-            }
             updateStats();
         }
 
         function updateStats() {
-            let total = currentQuizData.length;
-            let done = 0, correct = 0, wrong = 0;
-
-            currentQuizData.forEach((item, index) => {
-                let row = document.getElementById(`row-${index}`);
-                if (row && row.classList.contains('row-correct')) {
-                    done++;
-                    correct++;
-                } else if (row && row.classList.contains('row-wrong')) {
-                    wrong++;
-                }
-            });
+            const total = currentQuizData.length;
+            const correct = currentQuizData.filter(i => i.status === 'correct').length;
+            const wrong = currentQuizData.filter(i => i.status === 'wrong').length;
+            const done = correct + wrong;
+            const rate = done > 0 ? ((correct / total) * 100).toFixed(1) : '0.0';
 
             document.getElementById('statTotal').innerText = total;
             document.getElementById('statDone').innerText = done;
             document.getElementById('statCorrect').innerText = correct;
             document.getElementById('statWrong').innerText = wrong;
-
-            let rate = total > 0 ? ((correct / total) * 100).toFixed(1) : 0;
-            document.getElementById('statRate').innerText = rate + '%';
-            document.getElementById('progressBar').style.width = total > 0 ? (done / total) * 100 + '%' : '0%';
+            document.getElementById('statRate').innerText = `${rate}%`;
+            document.getElementById('progressBar').style.width = `${(done / total) * 100}%`;
 
             if (done === total && total > 0) {
                 stopTimer();
             }
-        }
-
-        function startTimer() {
-            if (isTimerRunning) return;
-            isTimerRunning = true;
-            secondsElapsed = 0;
-            clearInterval(timerInterval);
-            timerInterval = setInterval(() => {
-                secondsElapsed++;
-                let mins = Math.floor(secondsElapsed / 60).toString().padStart(2, '0');
-                let secs = (secondsElapsed % 60).toString().padStart(2, '0');
-                let timerDisplay = document.getElementById('timerDisplay');
-                if (timerDisplay) timerDisplay.innerText = `${mins}:${secs}`;
-            }, 1000);
-        }
-
-        function resetTimer() {
-            stopTimer();
-            secondsElapsed = 0;
-            let timerDisplay = document.getElementById('timerDisplay');
-            if (timerDisplay) timerDisplay.innerText = "00:00";
-        }
-
-        function stopTimer() {
-            isTimerRunning = false;
-            clearInterval(timerInterval);
         }
     </script>
 </body>
