@@ -369,7 +369,6 @@
 
             .app-title { font-size: 20px; }
 
-            /* Thanh công cụ siêu gọn gàng: Dạng Lưới 2 Cột */
             .controls {
                 display: grid;
                 grid-template-columns: 1fr 1fr;
@@ -406,7 +405,6 @@
                 justify-content: center;
             }
 
-            /* Đổi thứ tự: Bảng bài tập lên TRÊN, Thống kê xuống DƯỚI CÙNG */
             .main-layout { 
                 flex-direction: column; 
                 gap: 12px; 
@@ -420,7 +418,6 @@
                 -webkit-overflow-scrolling: touch;
             }
 
-            /* Thống kê thu nhỏ và nằm dưới cùng */
             .stats-dashboard { 
                 width: 100%; 
                 padding: 12px;
@@ -433,7 +430,6 @@
             .stat-card .value { font-size: 14px; }
             .rate-card { padding: 8px; margin-top: 8px; }
 
-            /* Ẩn cột Trạng thái để bảng rộng hơn */
             .col-status { display: none !important; }
 
             th { font-size: 10px !important; padding: 6px 2px !important; }
@@ -936,12 +932,35 @@
                     <td class="col-pinyin">${pinyinContent}</td>
                     <td class="col-viet">${meaningContent}</td>
                     <td class="col-input">
-                        <input type="text" value="${item.userInput}" data-index="${index}" oninput="handleInput(event)" onfocus="checkAndStartTimer()">
+                        <input type="text" value="${item.userInput}" data-index="${index}" oninput="handleInput(event)" onkeydown="handleKeyDown(event)" onfocus="checkAndStartTimer()">
                     </td>
                     <td class="col-status">${item.status === 'correct' ? '✅' : item.status === 'wrong' ? '❌' : ''}</td>
                 `;
                 tbody.appendChild(tr);
             });
+        }
+
+        /* ===== XỬ LÝ NHẤN ENTER ĐỂ TỰ ĐỘNG CHUYỂN CÂU ===== */
+        function handleKeyDown(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault(); // Ngăn hành vi xuống dòng mặc định
+                const currentIndex = parseInt(e.target.getAttribute('data-index'));
+                const nextIndex = currentIndex + 1;
+                
+                // Tìm ô nhập của câu tiếp theo
+                const nextInput = document.querySelector(`input[data-index="${nextIndex}"]`);
+                if (nextInput) {
+                    nextInput.focus();
+                    nextInput.select(); // bôi đen văn bản câu tiếp theo (nếu có) để tiện gõ đè
+                } else {
+                    // Nếu là câu cuối cùng, quay lại ô đầu tiên
+                    const firstInput = document.querySelector(`input[data-index="0"]`);
+                    if (firstInput) {
+                        firstInput.focus();
+                        firstInput.select();
+                    }
+                }
+            }
         }
 
         function handleInput(e) {
