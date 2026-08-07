@@ -904,7 +904,7 @@
                     <td class="col-pinyin">${pinyinContent}</td>
                     <td class="col-viet">${meaningContent}</td>
                     <td class="col-input">
-                        <input type="text" value="${item.userInput}" data-index="${index}" ${isDisabled} onchange="handleInputChange(event)" onkeydown="handleKeyDown(event)" onfocus="checkAndStartTimer()">
+                        <input type="text" value="${item.userInput}" data-index="${index}" ${isDisabled} oninput="handleInputTyping(event)" onkeydown="handleKeyDown(event)" onfocus="checkAndStartTimer()">
                     </td>
                     <td class="col-status">${item.status === 'correct' ? '✅' : item.status === 'wrong' ? '❌' : ''}</td>
                 `;
@@ -915,17 +915,41 @@
         function handleKeyDown(e) {
             if (e.key === 'Enter') {
                 e.preventDefault();
-                handleInputChange(e);
+                const index = parseInt(e.target.getAttribute('data-index'));
+                const item = currentQuizData[index];
 
+                // Nếu ô đó chưa có trạng thái đúng/sai (chưa bấm rời chuột sang ô khác hoặc đang để trống/gõ dở)
+                // khi bấm Enter sẽ lưu lại chữ đang gõ nhưng ĐỂ TRỐNG trạng thái (không tính sai), rồi nhảy sang ô tiếp theo.
+                if (item.status !== 'correct' && item.status !== 'wrong') {
+                    item.userInput = e.target.value;
+                    item.status = ''; // Chưa tính đúng sai
+                }
+
+                // Tìm ô nhập tiếp theo để focus
                 const allInputs = document.querySelectorAll(`input[type="text"]:not([disabled])`);
-                if (allInputs.length > 0) {
-                    allInputs[0].focus();
-                    allInputs[0].select();
+                let nextInput = null;
+                for (let i = 0; i < allInputs.length; i++) {
+                    if (parseInt(allInputs[i].getAttribute('data-index')) > index) {
+                        nextInput = allInputs[i];
+                        break;
+                    }
+                }
+                // Nếu hết danh sách thì quay lại ô đầu tiên còn trống/chưa khóa
+                if (!nextInput && allInputs.length > 0) {
+                    nextInput = allInputs[0];
+                }
+
+                renderQuizTable();
+                updateStats();
+
+                if (nextInput) {
+                    nextInput.focus();
+                    nextInput.select();
                 }
             }
         }
 
-        function handleInputChange(e) {
+        function handleInputTyping(e) {
             const index = e.target.getAttribute('data-index');
             const val = e.target.value;
             const item = currentQuizData[index];
@@ -936,7 +960,11 @@
             const mode = document.getElementById('modeSelect').value;
             const cleanVal = cleanString(val);
 
-            if (!cleanVal) return;
+            if (!cleanVal) {
+                item.status = '';
+                updateStats();
+                return;
+            }
 
             let isCorrect = false;
             if (mode === 'chinese_only') {
@@ -955,11 +983,8 @@
             if (isCorrect) {
                 item.status = 'correct';
                 playPronunciation(item.chinese);
-            } else {
-                item.status = 'wrong';
+                renderQuizTable();
             }
-
-            renderQuizTable();
             updateStats();
         }
 
@@ -967,6 +992,8 @@
             const total = currentQuizData.length;
             const correct = currentQuizData.filter(i => i.status === 'correct').length;
             const wrong = currentQuizData.filter(i => i.status === 'wrong').length;
+            
+            // Chỉ tính câu đã hoàn thành hẳn là đúng hoặc sai vào số lượng "đã xong"
             const done = correct + wrong;
             const rate = done > 0 ? ((correct / done) * 100).toFixed(1) : '0.0';
 
@@ -975,9 +1002,10 @@
             document.getElementById('statCorrect').innerText = correct;
             document.getElementById('statWrong').innerText = wrong;
             document.getElementById('statRate').innerText = `${rate}%`;
-            document.getElementById('progressBar').style.width = `${(done / total) * 100}%`;
+            document.getElementById('progressBar').style.width = `${(correct / total) * 100}%`;
 
-            if (done === total && total > 0) {
+            // Kiểm tra nếu tất cả các câu đều đã đúng hết thì dừng đồng hồ
+            if (correct === total && total > 0) {
                 stopTimer();
             }
         }
