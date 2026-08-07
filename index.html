@@ -59,7 +59,6 @@
             100% { transform: translateY(110vh) rotate(360deg); opacity: 0.2; }
         }
 
-        /* ===== CONTAINER CHÍNH ===== */
         .container-wrapper { 
             position: relative; 
             z-index: 1; 
@@ -68,7 +67,6 @@
             width: 100%;
         }
 
-        /* ===== HEADER ===== */
         .app-header {
             display: flex;
             justify-content: space-between;
@@ -99,7 +97,6 @@
             box-shadow: 0 2px 5px rgba(79, 70, 229, 0.3);
         }
 
-        /* ===== THANH ĐIỀU KHIỂN (MÁY TÍNH MẶC ĐỊNH) ===== */
         .controls { 
             display: flex; 
             gap: 12px; 
@@ -212,7 +209,6 @@
         }
         .btn-speaker:hover { background: #818cf8; color: white; transform: scale(1.1); }
         
-        /* ===== CẤU TRÚC CHÍNH (2 CỘT CHO MÁY TÍNH) ===== */
         .main-layout { 
             display: flex; 
             gap: 20px; 
@@ -289,11 +285,27 @@
             background: #ffffff;
             box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.25);
         }
+
+        input[type="text"]:disabled {
+            background-color: #f1f5f9;
+            color: #475569;
+            cursor: not-allowed;
+            border-color: #cbd5e1;
+            font-weight: 600;
+        }
+
+        /* Đáp án hiển thị gợi ý khi trả lời sai */
+        .wrong-ans-hint {
+            color: #dc2626;
+            font-weight: 700;
+            font-size: 13px;
+            display: block;
+            margin-top: 2px;
+        }
         
         tr.row-correct td { background-color: var(--success-light) !important; color: #064e3b; }
         tr.row-wrong td { background-color: var(--danger-light) !important; color: #7f1d1d; }
 
-        /* ===== BOARD THỐNG KÊ (CỘT PHẢI MÁY TÍNH) ===== */
         .stats-dashboard { 
             width: 250px; 
             background: var(--card-bg); 
@@ -361,14 +373,9 @@
 
         .footer-owner { text-align: center; margin-top: 14px; padding-top: 10px; border-top: 1px dashed #cbd5e1; font-size: 11px; color: #475569; font-weight: 500; }
 
-        /* =========================================================
-           TỐI ƯU SIÊU GỌN GÀNG CHO ĐIỆN THOẠI (< 868px)
-           ========================================================= */
         @media screen and (max-width: 868px) {
             body { padding: 8px 6px; }
-
             .app-title { font-size: 20px; }
-
             .controls {
                 display: grid;
                 grid-template-columns: 1fr 1fr;
@@ -377,80 +384,34 @@
                 border-radius: 16px;
                 margin-bottom: 12px;
             }
-
-            .control-box {
-                padding: 4px 8px;
-                border-radius: 8px;
-                font-size: 11px;
-            }
-
-            .controls label.box-label {
-                font-size: 11px;
-            }
-
-            .controls select, .controls input[type="number"] {
-                padding: 3px 5px;
-                font-size: 11px;
-            }
-
-            .range-container {
-                padding: 2px 4px;
-            }
+            .control-box { padding: 4px 8px; border-radius: 8px; font-size: 11px; }
+            .controls label.box-label { font-size: 11px; }
+            .controls select, .controls input[type="number"] { padding: 3px 5px; font-size: 11px; }
+            .range-container { padding: 2px 4px; }
             .range-container input { width: 35px; }
-
-            .btn {
-                padding: 8px 6px;
-                font-size: 11px;
-                border-radius: 10px;
-                justify-content: center;
-            }
-
-            .main-layout { 
-                flex-direction: column; 
-                gap: 12px; 
-            }
-
-            .table-container { 
-                padding: 4px; 
-                border-radius: 12px; 
-                width: 100%;
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-            }
-
-            .stats-dashboard { 
-                width: 100%; 
-                padding: 12px;
-                border-radius: 14px;
-            }
-
+            .btn { padding: 8px 6px; font-size: 11px; border-radius: 10px; justify-content: center; }
+            .main-layout { flex-direction: column; gap: 12px; }
+            .table-container { padding: 4px; border-radius: 12px; width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+            .stats-dashboard { width: 100%; padding: 12px; border-radius: 14px; }
             .timer-box { padding: 6px; margin-bottom: 8px; }
             .timer-box .timer-value { font-size: 16px; }
             .stat-card { padding: 6px; }
             .stat-card .value { font-size: 14px; }
             .rate-card { padding: 8px; margin-top: 8px; }
-
             .col-status { display: none !important; }
-
             th { font-size: 10px !important; padding: 6px 2px !important; }
             td { padding: 6px 2px !important; font-size: 11px; }
             td.col-hanzi { font-size: 16px; }
             td.col-pinyin { font-size: 10px; }
             td.col-type { font-size: 9px; }
             td.col-viet { font-size: 10px; }
-
             .col-stt { width: 8%; }
             .col-hanzi { width: 26%; }
             .col-type { width: 12%; }
             .col-pinyin { width: 18%; }
             .col-viet { width: 20%; }
             .col-input { width: 16%; }
-
-            input[type="text"] { 
-                font-size: 11px; 
-                padding: 4px 2px; 
-                width: 100%; 
-            }
+            input[type="text"] { font-size: 11px; padding: 4px 2px; width: 100%; }
         }
     </style>
 </head>
@@ -588,7 +549,7 @@
         const EMBEDDED_VOCAB_DATA = [
             {"chinese": "早饭 / 早餐", "type": "Danh từ", "pinyin": "zǎofàn / zǎocān", "meaning": "Bữa sáng, điểm tâm"},
             {"chinese": "午饭 / 晚餐", "type": "Danh từ", "pinyin": "wǔfàn / wǔcān", "meaning": "Bữa trưa"},
-            {"chinese": "เพราะ……所以……", "type": "Liên từ", "pinyin": "yīnwèi……suǒyǐ……", "meaning": "Vì…… nên……"},
+            {"chinese": "因为……所以……", "type": "Liên từ", "pinyin": "yīnwèi……suǒyǐ……", "meaning": "Vì…… nên……"},
             {"chinese": "姐姐", "type": "Danh từ", "pinyin": "jiějie", "meaning": "Chị gái"}
         ];
 
@@ -603,7 +564,6 @@
 
         function populateVoices() {
             if (!('speechSynthesis' in window)) return;
-            
             const voices = window.speechSynthesis.getVoices();
             const voiceSelect = document.getElementById('voiceSelect');
             voiceSelect.innerHTML = '';
@@ -914,16 +874,29 @@
                 let pinyinContent = item.pinyin;
                 let meaningContent = item.meaning;
 
+                // Xử lý ẩn/hiện đáp án gợi ý màu đỏ khi trả lời SAI
                 if (mode === 'chinese_only' || mode === 'pinyin_to_chinese') {
-                    hanziContent = '***';
-                    pinyinContent = '***';
+                    if (item.status === 'wrong') {
+                        hanziContent = `<span class="wrong-ans-hint">${item.chinese}</span>`;
+                        pinyinContent = `<span class="wrong-ans-hint">${item.pinyin}</span>`;
+                    } else if (item.status !== 'correct') {
+                        hanziContent = '***';
+                        pinyinContent = '***';
+                    }
                 } else if (mode === 'chinese_to_meaning') {
-                    meaningContent = '***';
+                    if (item.status === 'wrong') {
+                        meaningContent = `<span class="wrong-ans-hint">${item.meaning}</span>`;
+                    } else if (item.status !== 'correct') {
+                        meaningContent = '***';
+                    }
                 }
 
-                const speakerBtn = (mode === 'chinese_to_meaning' || item.status === 'correct') 
+                const speakerBtn = (mode === 'chinese_to_meaning' || item.status === 'correct' || item.status === 'wrong') 
                     ? `<button class="btn-speaker" onclick="playPronunciation('${item.chinese}')">🔊</button>` 
                     : '';
+
+                // KHÓA CẢ KHI ĐÚNG VÀ KHI SAI (chỉ mở khi chưa trả lời)
+                const isDisabled = (item.status === 'correct' || item.status === 'wrong') ? 'disabled' : '';
 
                 tr.innerHTML = `
                     <td class="col-stt">${index + 1}</td>
@@ -932,7 +905,7 @@
                     <td class="col-pinyin">${pinyinContent}</td>
                     <td class="col-viet">${meaningContent}</td>
                     <td class="col-input">
-                        <input type="text" value="${item.userInput}" data-index="${index}" oninput="handleInput(event)" onkeydown="handleKeyDown(event)" onfocus="checkAndStartTimer()">
+                        <input type="text" value="${item.userInput}" data-index="${index}" ${isDisabled} onchange="handleInputChange(event)" onkeydown="handleKeyDown(event)" onfocus="checkAndStartTimer()">
                     </td>
                     <td class="col-status">${item.status === 'correct' ? '✅' : item.status === 'wrong' ? '❌' : ''}</td>
                 `;
@@ -940,69 +913,61 @@
             });
         }
 
-        /* ===== XỬ LÝ NHẤN ENTER ĐỂ TỰ ĐỘNG CHUYỂN CÂU ===== */
         function handleKeyDown(e) {
             if (e.key === 'Enter') {
-                e.preventDefault(); // Ngăn hành vi xuống dòng mặc định
+                e.preventDefault();
+                // Kích hoạt xử lý kết quả
+                handleInputChange(e);
+
                 const currentIndex = parseInt(e.target.getAttribute('data-index'));
-                const nextIndex = currentIndex + 1;
-                
-                // Tìm ô nhập của câu tiếp theo
-                const nextInput = document.querySelector(`input[data-index="${nextIndex}"]`);
-                if (nextInput) {
-                    nextInput.focus();
-                    nextInput.select(); // bôi đen văn bản câu tiếp theo (nếu có) để tiện gõ đè
-                } else {
-                    // Nếu là câu cuối cùng, quay lại ô đầu tiên
-                    const firstInput = document.querySelector(`input[data-index="0"]`);
-                    if (firstInput) {
-                        firstInput.focus();
-                        firstInput.select();
-                    }
+                // Tự động nhảy sang ô nhập tiếp theo chưa bị khóa
+                const allInputs = document.querySelectorAll(`input[type="text"]:not([disabled])`);
+                if (allInputs.length > 0) {
+                    allInputs[0].focus();
+                    allInputs[0].select();
                 }
             }
         }
 
-        function handleInput(e) {
+        function handleInputChange(e) {
             const index = e.target.getAttribute('data-index');
             const val = e.target.value;
-            currentQuizData[index].userInput = val;
-
-            const mode = document.getElementById('modeSelect').value;
             const item = currentQuizData[index];
+
+            // Nếu ô đã có kết quả rồi thì không chấm lại
+            if (item.status === 'correct' || item.status === 'wrong') return;
+
+            item.userInput = val;
+            const mode = document.getElementById('modeSelect').value;
             const cleanVal = cleanString(val);
 
             if (!cleanVal) {
-                item.status = '';
-            } else {
-                let isCorrect = false;
-
-                if (mode === 'chinese_only') {
-                    const validHanzi = splitVariants(item.chinese);
-                    isCorrect = validHanzi.includes(cleanVal);
-                } else if (mode === 'pinyin_to_chinese') {
-                    const validHanzi = splitVariants(item.chinese);
-                    const validPinyin = splitVariants(item.pinyin).map(removePinyinTones);
-                    const cleanValNoTone = removePinyinTones(cleanVal);
-                    isCorrect = validHanzi.includes(cleanVal) || validPinyin.includes(cleanValNoTone);
-                } else if (mode === 'chinese_to_meaning') {
-                    const validMeanings = splitVariants(item.meaning);
-                    isCorrect = validMeanings.some(m => cleanString(m) === cleanVal || cleanVal.includes(m));
-                }
-
-                if (isCorrect) {
-                    item.status = 'correct';
-                    playPronunciation(item.chinese);
-                } else {
-                    item.status = 'wrong';
-                }
+                return;
             }
 
-            const tr = e.target.closest('tr');
-            tr.className = item.status === 'correct' ? 'row-correct' : item.status === 'wrong' ? 'row-wrong' : '';
-            const statusCol = tr.querySelector('.col-status');
-            if (statusCol) statusCol.innerText = item.status === 'correct' ? '✅' : item.status === 'wrong' ? '❌' : '';
+            let isCorrect = false;
+            if (mode === 'chinese_only') {
+                const validHanzi = splitVariants(item.chinese);
+                isCorrect = validHanzi.includes(cleanVal);
+            } else if (mode === 'pinyin_to_chinese') {
+                const validHanzi = splitVariants(item.chinese);
+                const validPinyin = splitVariants(item.pinyin).map(removePinyinTones);
+                const cleanValNoTone = removePinyinTones(cleanVal);
+                isCorrect = validHanzi.includes(cleanVal) || validPinyin.includes(cleanValNoTone);
+            } else if (mode === 'chinese_to_meaning') {
+                const validMeanings = splitVariants(item.meaning);
+                isCorrect = validMeanings.some(m => cleanString(m) === cleanVal || cleanVal.includes(m));
+            }
 
+            if (isCorrect) {
+                item.status = 'correct';
+                playPronunciation(item.chinese);
+            } else {
+                item.status = 'wrong';
+            }
+
+            // Vẽ lại giao diện (sẽ tự động khóa ô nhập và hiển thị đáp án đúng nếu sai)
+            renderQuizTable();
             updateStats();
         }
 
@@ -1011,7 +976,9 @@
             const correct = currentQuizData.filter(i => i.status === 'correct').length;
             const wrong = currentQuizData.filter(i => i.status === 'wrong').length;
             const done = correct + wrong;
-            const rate = done > 0 ? ((correct / total) * 100).toFixed(1) : '0.0';
+            
+            // Tính % chính xác trên tổng số câu đã làm
+            const rate = done > 0 ? ((correct / done) * 100).toFixed(1) : '0.0';
 
             document.getElementById('statTotal').innerText = total;
             document.getElementById('statDone').innerText = done;
