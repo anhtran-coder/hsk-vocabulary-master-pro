@@ -912,44 +912,62 @@
             });
         }
 
+        function jumpToNextInput(currentIndex) {
+            const allInputs = document.querySelectorAll(`input[type="text"]:not([disabled])`);
+            let nextInput = null;
+            for (let i = 0; i < allInputs.length; i++) {
+                if (parseInt(allInputs[i].getAttribute('data-index')) > currentIndex) {
+                    nextInput = allInputs[i];
+                    break;
+                }
+            }
+            if (!nextInput && allInputs.length > 0) {
+                nextInput = allInputs[0];
+            }
+            if (nextInput) {
+                nextInput.focus();
+                nextInput.select();
+            }
+        }
+
         function handleKeyDown(e) {
             if (e.key === 'Enter') {
                 e.preventDefault();
                 const index = parseInt(e.target.getAttribute('data-index'));
                 const item = currentQuizData[index];
 
-                // Lưu lại nội dung đang gõ nhưng KHÔNG tính sai (status giữ nguyên rỗng nếu chưa đúng)
                 if (item.status !== 'correct' && item.status !== 'wrong') {
                     item.userInput = e.target.value;
-                }
+                    const mode = document.getElementById('modeSelect').value;
+                    const cleanVal = cleanString(e.target.value);
 
-                // Lấy toàn bộ các ô nhập chưa bị khóa (disabled)
-                const allInputs = document.querySelectorAll(`input[type="text"]:not([disabled])`);
-                let nextInput = null;
-
-                // Tìm ô nhập có index lớn hơn hiện tại
-                for (let i = 0; i < allInputs.length; i++) {
-                    if (parseInt(allInputs[i].getAttribute('data-index')) > index) {
-                        nextInput = allInputs[i];
-                        break;
+                    let isCorrect = false;
+                    if (cleanVal) {
+                        if (mode === 'chinese_only') {
+                            const validHanzi = splitVariants(item.chinese);
+                            isCorrect = validHanzi.includes(cleanVal);
+                        } else if (mode === 'pinyin_to_chinese') {
+                            const validHanzi = splitVariants(item.chinese);
+                            const validPinyin = splitVariants(item.pinyin).map(removePinyinTones);
+                            const cleanValNoTone = removePinyinTones(cleanVal);
+                            isCorrect = validHanzi.includes(cleanVal) || validPinyin.includes(cleanValNoTone);
+                        } else if (mode === 'chinese_to_meaning') {
+                            const validMeanings = splitVariants(item.meaning);
+                            isCorrect = validMeanings.some(m => cleanString(m) === cleanVal || cleanVal.includes(m));
+                        }
                     }
-                }
-                
-                // Nếu đã ở câu cuối cùng, quay vòng lại ô đầu tiên còn trống
-                if (!nextInput && allInputs.length > 0) {
-                    nextInput = allInputs[0];
-                }
 
-                // Cập nhật lại giao diện bảng để giữ focus mượt mà không bị render lại toàn bộ mất con trỏ
-                if (nextInput) {
-                    nextInput.focus();
-                    nextInput.select();
+                    item.status = isCorrect ? 'correct' : 'wrong';
+                    if (isCorrect) playPronunciation(item.chinese);
+                    renderQuizTable();
+                    updateStats();
                 }
+                jumpToNextInput(index);
             }
         }
 
         function handleInputTyping(e) {
-            const index = e.target.getAttribute('data-index');
+            const index = parseInt(e.target.getAttribute('data-index'));
             const val = e.target.value;
             const item = currentQuizData[index];
 
@@ -979,12 +997,17 @@
                 isCorrect = validMeanings.some(m => cleanString(m) === cleanVal || cleanVal.includes(m));
             }
 
+            // Dù đúng hay sai: Khóa, cập nhật trạng thái và tự động nhảy sang ô tiếp theo
             if (isCorrect) {
                 item.status = 'correct';
                 playPronunciation(item.chinese);
-                renderQuizTable();
+            } else {
+                item.status = 'wrong';
             }
+
+            renderQuizTable();
             updateStats();
+            jumpToNextInput(index);
         }
 
         function updateStats() {
@@ -1002,7 +1025,7 @@
             document.getElementById('statRate').innerText = `${rate}%`;
             document.getElementById('progressBar').style.width = `${(correct / total) * 100}%`;
 
-            if (correct === total && total > 0) {
+            if (correct + wrong === total && total > 0) {
                 stopTimer();
             }
         }
