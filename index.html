@@ -178,8 +178,8 @@
         .btn-audio.muted { background: linear-gradient(135deg, #64748b, #475569); }
 
         .btn-speaker {
-            background: #eeef2;
-            border: 1px solid #cbd5e1;
+            background: #e0e7ff;
+            border: 1px solid #c7d2fe;
             border-radius: 50%;
             width: 28px;
             height: 28px;
@@ -191,7 +191,7 @@
             margin-left: 6px;
             transition: all 0.2s;
         }
-        .btn-speaker:hover { background: #e0e7ff; transform: scale(1.1); }
+        .btn-speaker:hover { background: #818cf8; color: white; transform: scale(1.1); }
         
         .main-layout { display: flex; gap: 20px; align-items: flex-start; }
 
@@ -386,6 +386,15 @@
             <!-- Nút Bật/Tắt Âm thanh -->
             <button class="btn btn-audio" id="btnAudioToggle">🔊 Phát âm: Bật</button>
             
+            <!-- Bộ chọn Giọng đọc tiếng Trung -->
+            <div class="control-box">
+                <label class="box-label">🎙️ Giọng đọc</label>
+                <select id="voiceSelect" style="max-width: 150px;">
+                    <option value="">Đang tải giọng...</option>
+                </select>
+                <button class="btn-speaker" onclick="playPronunciation('你好')" title="Thử giọng">🔊</button>
+            </div>
+
             <div class="control-box">
                 <label class="box-label">🎯 Chế độ</label>
                 <select id="modeSelect">
@@ -483,7 +492,7 @@
         const EMBEDDED_VOCAB_DATA = [
             {"chinese": "早饭 / 早餐", "type": "Danh từ", "pinyin": "zǎofàn / zǎocān", "meaning": "Bữa sáng, điểm tâm"},
             {"chinese": "午饭 / 晚餐", "type": "Danh từ", "pinyin": "wǔfàn / wǔcān", "meaning": "Bữa trưa"},
-            {"chinese": "因为……所以……", "type": "Liên từ", "pinyin": "yīnwèi……suǒyǐ……", "meaning": "Vì…… nên……"},
+            {"chinese": "เพราะว่า……ดังนั้น……", "type": "Liên từ", "pinyin": "yīnwèi……suǒyǐ……", "meaning": "Vì…… nên……"},
             {"chinese": "姐姐", "type": "Danh từ", "pinyin": "jiějie", "meaning": "Chị gái"}
         ];
 
@@ -494,14 +503,68 @@
         let isTimerRunning = false;
         let sequentialOffset = 0;
         let isAudioMuted = false;
+        let availableVoices = [];
+
+        // Nạp và Lọc các Giọng Đọc Tiếng Trung Chuẩn nhất
+        function populateVoices() {
+            if (!('speechSynthesis' in window)) return;
+            
+            const voices = window.speechSynthesis.getVoices();
+            const voiceSelect = document.getElementById('voiceSelect');
+            voiceSelect.innerHTML = '';
+
+            // Lọc các giọng Tiếng Trung (zh, zh-CN, zh-TW, zh-HK)
+            availableVoices = voices.filter(v => v.lang.includes('zh') || v.lang.includes('CN'));
+
+            if (availableVoices.length === 0) {
+                const opt = document.createElement('option');
+                opt.value = '';
+                opt.innerText = 'Giọng Mặc định';
+                voiceSelect.appendChild(opt);
+                return;
+            }
+
+            let bestVoiceIndex = 0;
+            availableVoices.forEach((voice, index) => {
+                const opt = document.createElement('option');
+                opt.value = index;
+                
+                let name = voice.name.replace('Microsoft ', '').replace('Google ', '');
+                opt.innerText = `${name} (${voice.lang})`;
+                voiceSelect.appendChild(opt);
+
+                // Ưu tiên chọn giọng Google hoặc Microsoft tự nhiên
+                if (voice.name.includes('Google') || voice.name.includes('Xiaoxiao') || voice.name.includes('Yunxi') || voice.name.includes('Natural')) {
+                    bestVoiceIndex = index;
+                }
+            });
+
+            voiceSelect.selectedIndex = bestVoiceIndex;
+        }
+
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.onvoiceschanged = populateVoices;
+        }
 
         function playPronunciation(text) {
             if (isAudioMuted || !text) return;
             window.speechSynthesis.cancel(); 
-            const cleanText = text.split('/')[0].trim(); 
+
+            const cleanText = text.split('/')[0].replace(/[^\u4e00-\u9fa5]/g, '').trim() || text.split('/')[0].trim(); 
             const utterance = new SpeechSynthesisUtterance(cleanText);
-            utterance.lang = 'zh-CN'; 
-            utterance.rate = 0.85; 
+            
+            const voiceSelect = document.getElementById('voiceSelect');
+            const selectedIdx = voiceSelect ? voiceSelect.value : '';
+
+            if (selectedIdx !== '' && availableVoices[selectedIdx]) {
+                utterance.voice = availableVoices[selectedIdx];
+                utterance.lang = availableVoices[selectedIdx].lang;
+            } else {
+                utterance.lang = 'zh-CN';
+            }
+
+            utterance.rate = 0.85; // Tốc độ nói vừa phải (dễ nghe)
+            utterance.pitch = 1.0;  // Cao độ tự nhiên
             window.speechSynthesis.speak(utterance);
         }
 
@@ -527,6 +590,7 @@
         }
 
         window.onload = function() {
+            populateVoices();
             const savedData = localStorage.getItem('hsk_vocab_data');
             if (savedData) {
                 try { 
@@ -594,7 +658,7 @@
             if (!file) return;
 
             const statusText = document.getElementById('loadingStatus');
-            if (statusText) { statusText.innerText = "⏳ Đang kiểm tra mã khóa..."; statusText.style.color = "var(--primary)"; }
+            if (statusText) { statusText.innerText = "⏳ Đang kiểm tra..."; statusText.style.color = "var(--primary)"; }
 
             const reader = new FileReader();
             reader.onload = function(e) {
@@ -679,7 +743,7 @@
                     localStorage.setItem('hsk_vocab_data', JSON.stringify(fullVocabData));
                     
                     if (statusText) { 
-                        statusText.innerText = `✅ Đã nạp thành công ${fullVocabData.length} từ!`; 
+                        statusText.innerText = `✅ Đã nạp ${fullVocabData.length} từ!`; 
                         statusText.style.color = "var(--success)"; 
                     }
                     
@@ -857,7 +921,7 @@
                 statusTd.innerText = 'Sai';
             }
 
-            // Tự động phát âm khi kiểm tra xong
+            // Tự động phát âm từ vừa nhập
             playPronunciation(item.chinese);
 
             updateStats();
