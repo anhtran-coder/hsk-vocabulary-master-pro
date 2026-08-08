@@ -11,23 +11,22 @@
         :root {
             --primary: #6366f1;
             --success: #10b981;
-            --success-light: rgba(209, 250, 229, 0.9);
+            --success-light: rgba(209, 250, 229, 0.95);
             --danger: #ef4444;
-            --danger-light: rgba(254, 226, 226, 0.9);
-            --card-bg: rgba(255, 255, 255, 0.92);
+            --danger-light: rgba(254, 226, 226, 0.95);
+            --card-bg: rgba(255, 255, 255, 0.95);
             --text-dark: #1e293b;
-            --header-bg-start: rgba(238, 242, 255, 0.95);
-            --header-bg-end: rgba(224, 231, 255, 0.95);
+            --header-bg-start: rgba(238, 242, 255, 0.98);
+            --header-bg-end: rgba(224, 231, 255, 0.98);
             --header-text: #3730a3;
-            --header-border: #c7d2fe;
         }
 
         body { 
             font-family: 'Inter', system-ui, -apple-system, sans-serif; 
             margin: 0; 
-            padding: 10px;
+            padding: 16px;
             color: var(--text-dark);
-            font-size: 13px; 
+            font-size: 14px; 
             box-sizing: border-box;
             position: relative;
             min-height: 100vh;
@@ -51,22 +50,22 @@
             100% { transform: translateY(110vh) rotate(360deg); opacity: 0.2; }
         }
 
-        .container-wrapper { position: relative; z-index: 1; max-width: 1250px; margin: 0 auto; }
+        .container-wrapper { position: relative; z-index: 1; max-width: 1400px; margin: 0 auto; }
 
         .app-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 14px;
         }
 
         .app-title {
-            font-size: 20px;
+            font-size: 24px;
             font-weight: 700;
             color: #1e1b4b;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             margin: 0;
             text-shadow: 0 2px 4px rgba(255, 255, 255, 0.8);
         }
@@ -74,77 +73,77 @@
         .app-title .pro-tag {
             background: linear-gradient(135deg, #4f46e5, #8b5cf6);
             color: white;
-            font-size: 9px;
-            padding: 2px 6px;
+            font-size: 11px;
+            padding: 3px 8px;
             border-radius: 8px;
             vertical-align: middle;
         }
 
         .controls { 
             display: flex; 
-            gap: 8px; 
+            gap: 10px; 
             flex-wrap: wrap; 
             align-items: center; 
-            background: rgba(255, 255, 255, 0.9); 
+            background: rgba(255, 255, 255, 0.95); 
             backdrop-filter: blur(16px);
-            padding: 10px 12px; 
+            padding: 12px 16px; 
             border-radius: 16px; 
             box-shadow: 0 8px 25px -8px rgba(99, 102, 241, 0.2);
-            margin-bottom: 12px;
+            margin-bottom: 16px;
             border: 2px solid rgba(255, 255, 255, 0.9);
         }
 
         .control-box {
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 6px;
             background: #ffffff;
-            padding: 5px 8px;
+            padding: 6px 10px;
             border-radius: 10px;
-            border: 1.5px solid #e2e8f0;
+            border: 1.5px solid #cbd5e1;
         }
 
         .controls label.box-label {
             font-weight: 600;
-            font-size: 11px;
+            font-size: 12px;
             color: #475569;
             white-space: nowrap;
             margin: 0;
         }
 
         .controls select, .controls input[type="number"] {
-            padding: 4px 6px;
+            padding: 5px 8px;
             border: 1.5px solid #cbd5e1;
             border-radius: 6px;
             outline: none;
             font-weight: 600;
             color: #0f172a;
             background: #f8fafc;
-            font-size: 11px;
+            font-size: 12px;
         }
 
         .range-container {
             display: inline-flex;
             align-items: center;
-            gap: 3px;
+            gap: 4px;
             background: #f8fafc;
             padding: 3px 6px;
             border-radius: 8px;
             border: 1.5px solid #cbd5e1;
         }
-        .range-container input { width: 35px; text-align: center; }
+        .range-container input { width: 42px; text-align: center; }
 
         .btn { 
-            padding: 7px 12px; 
+            padding: 8px 14px; 
             border: none; 
             border-radius: 10px; 
             cursor: pointer; 
             font-weight: 600; 
             color: white; 
-            font-size: 11px; 
+            font-size: 12px; 
             display: inline-flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             transition: transform 0.1s;
         }
@@ -155,60 +154,61 @@
         .btn-retry { background: linear-gradient(135deg, #f59e0b, #d97706); }
         .btn-reset { background: linear-gradient(135deg, #ef4444, #dc2626); }
         
-        .main-layout { display: flex; gap: 12px; align-items: flex-start; }
+        .main-layout { display: flex; gap: 16px; align-items: flex-start; }
 
         .table-container { 
             flex: 1; 
             background: var(--card-bg); 
             backdrop-filter: blur(10px);
-            border-radius: 14px; 
-            padding: 10px; 
-            box-shadow: 0 8px 25px -5px rgba(0,0,0,0.1);
+            border-radius: 16px; 
+            padding: 14px; 
+            box-shadow: 0 10px 30px -5px rgba(0,0,0,0.1);
             border: 2px solid rgba(244, 114, 182, 0.4);
             overflow-x: auto; 
         }
         
         /* DESKTOP TABLE VIEW */
-        table { width: 100%; border-collapse: separate; border-spacing: 0; min-width: 700px; }
+        table { width: 100%; border-collapse: separate; border-spacing: 0; min-width: 800px; }
         th { 
             background: linear-gradient(135deg, var(--header-bg-start), var(--header-bg-end)) !important;
             color: var(--header-text) !important;
             font-weight: 700 !important;
-            font-size: 11px !important;
+            font-size: 13px !important;
             text-transform: uppercase;
-            padding: 8px 6px !important;
+            padding: 12px 10px !important;
             border-bottom: 2px solid #f472b6 !important;
         }
-        td { border-bottom: 1px solid rgba(203, 213, 225, 0.6); padding: 8px 6px; text-align: center; }
+        td { border-bottom: 1px solid rgba(203, 213, 225, 0.6); padding: 12px 10px; text-align: center; vertical-align: middle; }
 
-        td.col-hanzi { font-family: 'Noto Sans SC', sans-serif; font-size: 20px; font-weight: 700; color: #9f1239; }
-        td.col-pinyin { color: #475569; font-style: italic; font-size: 12px; font-weight: 600; }
-        td.col-stt { color: #475569; font-weight: 600; font-size: 11px; }
-        td.col-type { color: #0284c7; font-size: 10px; font-weight: 600; }
-        td.col-viet { font-weight: 600; color: #1e293b; font-size: 12px; }
+        td.col-hanzi { font-family: 'Noto Sans SC', sans-serif; font-size: 24px; font-weight: 700; color: #9f1239; }
+        td.col-pinyin { color: #475569; font-style: italic; font-size: 14px; font-weight: 600; }
+        td.col-stt { color: #475569; font-weight: 600; font-size: 13px; }
+        td.col-type { color: #0284c7; font-size: 12px; font-weight: 600; }
+        td.col-viet { font-weight: 600; color: #1e293b; font-size: 14px; }
         
         .col-example { 
             text-align: left !important; 
-            font-size: 11px; 
-            padding: 6px 8px !important;
+            font-size: 12px; 
+            padding: 10px 12px !important;
             color: #334155;
-            background: rgba(248, 250, 252, 0.6);
-            border-radius: 6px;
+            background: rgba(248, 250, 252, 0.8);
+            border-radius: 8px;
         }
-        .example-cn { font-family: 'Noto Sans SC', sans-serif; font-weight: 600; color: #831843; display: block; }
-        .example-py { font-style: italic; color: #64748b; display: block; font-size: 10px; }
-        .example-vn { color: #334155; display: block; font-size: 10px; }
+        .example-cn { font-family: 'Noto Sans SC', sans-serif; font-weight: 600; color: #831843; display: block; font-size: 13px; }
+        .example-py { font-style: italic; color: #64748b; display: block; font-size: 11px; }
+        .example-vn { color: #334155; display: block; font-size: 12px; }
 
         input[type="text"] { 
-            width: 85%; 
-            padding: 6px 8px; 
+            width: 90%; 
+            padding: 10px 12px; 
             border: 1.5px solid #cbd5e1; 
-            border-radius: 6px; 
+            border-radius: 8px; 
             text-align: center; 
-            font-size: 12px; 
-            font-weight: 500;
+            font-size: 14px; 
+            font-weight: 600;
             outline: none;
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.98);
+            transition: all 0.2s;
         }
         input[type="text"]:focus { border-color: #ec4899; box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.2); }
         
@@ -220,11 +220,11 @@
 
         .vocab-card {
             background: #ffffff;
-            border: 1.5px solid #cbd5e1;
-            border-radius: 12px;
-            padding: 12px;
-            margin-bottom: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border: 2px solid #cbd5e1;
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 14px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
             position: relative;
         }
         .vocab-card.row-correct { background-color: var(--success-light) !important; border-color: #34d399; }
@@ -234,95 +234,98 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 8px;
-            border-bottom: 1px dashed #e2e8f0;
-            padding-bottom: 6px;
+            margin-bottom: 10px;
+            border-bottom: 1px dashed #cbd5e1;
+            padding-bottom: 8px;
         }
-        .card-stt { font-weight: 700; color: #6366f1; font-size: 12px; }
-        .card-type { background: #e0f2fe; color: #0284c7; padding: 2px 6px; border-radius: 6px; font-size: 10px; font-weight: 600; }
+        .card-stt { font-weight: 700; color: #6366f1; font-size: 13px; }
+        .card-type { background: #e0f2fe; color: #0284c7; padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; }
         
         .card-content-grid {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 8px;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 12px;
         }
-        .card-word-group { flex: 1; }
-        .card-hanzi { font-family: 'Noto Sans SC', sans-serif; font-size: 22px; font-weight: 700; color: #9f1239; line-height: 1.2; }
-        .card-pinyin { font-size: 12px; color: #64748b; font-style: italic; font-weight: 600; }
-        .card-meaning { font-size: 13px; font-weight: 600; color: #1e293b; margin-top: 2px; }
+        .card-word-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        .card-hanzi { font-family: 'Noto Sans SC', sans-serif; font-size: 28px; font-weight: 700; color: #9f1239; line-height: 1.2; }
+        .card-pinyin { font-size: 13px; color: #64748b; font-style: italic; font-weight: 600; }
+        .card-meaning { font-size: 15px; font-weight: 600; color: #1e293b; margin-top: 4px; }
 
-        .card-input-group { width: 110px; text-align: right; }
-        .card-input-group input { width: 100%; box-sizing: border-box; text-align: center; font-size: 13px; padding: 6px; }
+        .card-input-wrapper { width: 100%; }
+        .card-input-wrapper input { width: 100%; box-sizing: border-box; text-align: center; font-size: 16px; padding: 12px; }
 
         .card-example-box {
             background: #f8fafc;
-            border-radius: 6px;
-            padding: 6px 8px;
-            font-size: 11px;
+            border-radius: 8px;
+            padding: 10px 12px;
+            font-size: 12px;
             color: #334155;
-            border-left: 3px solid #cbd5e1;
+            border-left: 4px solid #cbd5e1;
         }
-        .vocab-card.row-correct .card-example-box { background: rgba(255,255,255,0.7); border-left-color: #10b981; }
-        .vocab-card.row-wrong .card-example-box { background: rgba(255,255,255,0.7); border-left-color: #ef4444; }
+        .vocab-card.row-correct .card-example-box { background: rgba(255,255,255,0.8); border-left-color: #10b981; }
+        .vocab-card.row-wrong .card-example-box { background: rgba(255,255,255,0.8); border-left-color: #ef4444; }
 
         .stats-dashboard { 
-            width: 230px; 
+            width: 280px; 
             background: var(--card-bg); 
             backdrop-filter: blur(10px);
-            border-radius: 14px; 
-            padding: 12px; 
-            box-shadow: 0 8px 25px -5px rgba(0,0,0,0.1);
+            border-radius: 16px; 
+            padding: 16px; 
+            box-shadow: 0 10px 30px -5px rgba(0,0,0,0.1);
             border: 2px solid rgba(244, 114, 182, 0.4);
             flex-shrink: 0;
         }
 
-        .stats-dashboard h3 { font-size: 11px; margin: 0 0 8px 0; text-transform: uppercase; color: #db2777; font-weight: 700; }
+        .stats-dashboard h3 { font-size: 12px; margin: 0 0 10px 0; text-transform: uppercase; color: #db2777; font-weight: 700; }
 
         .timer-box {
             background: linear-gradient(135deg, #e0e7ff, #fce7f3);
             border: 1.5px solid #f472b6;
-            border-radius: 8px;
-            padding: 6px;
+            border-radius: 10px;
+            padding: 8px;
             text-align: center;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
         }
-        .timer-box .timer-label { font-size: 9.5px; color: #4f46e5; font-weight: 700; text-transform: uppercase; }
-        .timer-box .timer-value { font-size: 16px; font-weight: 800; color: #db2777; margin-top: 1px; font-family: monospace; }
+        .timer-box .timer-label { font-size: 10px; color: #4f46e5; font-weight: 700; text-transform: uppercase; }
+        .timer-box .timer-value { font-size: 18px; font-weight: 800; color: #db2777; margin-top: 2px; font-family: monospace; }
 
-        .progress-bar-bg { width: 100%; height: 6px; background-color: rgba(203, 213, 225, 0.6); border-radius: 10px; overflow: hidden; margin-bottom: 10px; }
+        .progress-bar-bg { width: 100%; height: 8px; background-color: rgba(203, 213, 225, 0.6); border-radius: 10px; overflow: hidden; margin-bottom: 12px; }
         .progress-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #ec4899, #8b5cf6); transition: width 0.3s ease; }
 
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
-        .stat-card { background: rgba(255, 255, 255, 0.85); padding: 6px; border-radius: 6px; border: 1.5px solid #fbcfe8; text-align: center; }
-        .stat-card .label { font-size: 9.5px; color: #475569; margin-bottom: 2px; font-weight: 600; }
-        .stat-card .value { font-size: 14px; font-weight: 700; }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .stat-card { background: rgba(255, 255, 255, 0.9); padding: 8px; border-radius: 8px; border: 1.5px solid #fbcfe8; text-align: center; }
+        .stat-card .label { font-size: 10px; color: #475569; margin-bottom: 2px; font-weight: 600; }
+        .stat-card .value { font-size: 16px; font-weight: 700; }
 
-        .rate-card { margin-top: 8px; text-align: center; background: rgba(253, 242, 248, 0.9); padding: 8px; border-radius: 8px; border: 1.5px solid #f472b6; }
+        .rate-card { margin-top: 10px; text-align: center; background: rgba(253, 242, 248, 0.95); padding: 10px; border-radius: 10px; border: 1.5px solid #f472b6; }
         
         .contact-card {
-            margin-top: 10px;
+            margin-top: 12px;
             background: rgba(255, 255, 255, 0.95);
             border: 1.5px solid #cbd5e1;
-            border-radius: 8px;
-            padding: 6px 8px;
-            font-size: 10px;
+            border-radius: 10px;
+            padding: 8px 10px;
+            font-size: 11px;
             color: #334155;
         }
-        .contact-card .contact-title { font-weight: 700; color: #4338ca; margin-bottom: 3px; text-transform: uppercase; font-size: 9px; }
-        .contact-card .contact-item { display: flex; align-items: center; gap: 4px; margin-top: 2px; word-break: break-all; }
+        .contact-card .contact-title { font-weight: 700; color: #4338ca; margin-bottom: 4px; text-transform: uppercase; font-size: 10px; }
+        .contact-card .contact-item { display: flex; align-items: center; gap: 6px; margin-top: 3px; word-break: break-all; }
         .contact-card .contact-item a { color: #2563eb; text-decoration: none; font-weight: 600; }
 
-        .footer-owner { text-align: center; margin-top: 8px; padding-top: 6px; border-top: 1px dashed #cbd5e1; font-size: 9.5px; color: #475569; font-weight: 500; }
+        .footer-owner { text-align: center; margin-top: 10px; padding-top: 8px; border-top: 1px dashed #cbd5e1; font-size: 10px; color: #475569; font-weight: 500; }
 
         /* TỰ ĐỘNG CHUYỂN ĐỔI GIAO DIỆN KHI DÙNG ĐIỆN THOẠI (< 768px) */
         @media (max-width: 768px) {
-            body { padding: 4px; }
+            body { padding: 8px; }
             .main-layout { flex-direction: column; }
             .stats-dashboard { width: 100%; box-sizing: border-box; }
-            .controls { padding: 8px; gap: 6px; }
-            .control-box { padding: 4px 6px; }
+            .controls { padding: 10px; gap: 8px; }
+            .control-box { padding: 6px 8px; }
             
             #desktopTableWrapper { display: none; }
             #mobileCardContainer { display: block; }
@@ -375,7 +378,7 @@
 
             <div class="control-box">
                 <label class="box-label">📝 Số câu</label>
-                <input type="number" id="quizSize" value="10" min="1" style="width: 35px; text-align: center;">
+                <input type="number" id="quizSize" value="10" min="1" style="width: 42px; text-align: center;">
             </div>
 
             <div class="control-box">
@@ -390,7 +393,7 @@
             <button class="btn btn-new" id="btnNewQuiz">⚡ Đổi đề</button>
             <button class="btn btn-retry" id="btnRetryQuiz">♻️ Làm lại</button>
             <button class="btn btn-reset" id="btnReset">🗑️ Xóa</button>
-            <span id="loadingStatus" style="font-size: 11px; font-weight: 600; color: var(--success); margin-left: auto;"></span>
+            <span id="loadingStatus" style="font-size: 12px; font-weight: 600; color: var(--success); margin-left: auto;"></span>
         </div>
 
         <div class="main-layout">
@@ -429,12 +432,12 @@
                 <div class="stats-grid">
                     <div class="stat-card"><div class="label">Tổng số</div><div class="value" id="statTotal">0</div></div>
                     <div class="stat-card"><div class="label">Hoàn thành</div><div class="value" id="statDone">0</div></div>
-                    <div class="stat-card" style="border-color: #a7f3d0; background: rgba(240, 253, 244, 0.9);"><div class="label" style="color: #065f46;">Đúng</div><div class="value" style="color: var(--success);" id="statCorrect">0</div></div>
-                    <div class="stat-card" style="border-color: #fecaca; background: rgba(254, 242, 242, 0.9);"><div class="label" style="color: #991b1b;">Sai</div><div class="value" style="color: var(--danger);" id="statWrong">0</div></div>
+                    <div class="stat-card" style="border-color: #a7f3d0; background: rgba(240, 253, 244, 0.95);"><div class="label" style="color: #065f46;">Đúng</div><div class="value" style="color: var(--success);" id="statCorrect">0</div></div>
+                    <div class="stat-card" style="border-color: #fecaca; background: rgba(254, 242, 242, 0.95);"><div class="label" style="color: #991b1b;">Sai</div><div class="value" style="color: var(--danger);" id="statWrong">0</div></div>
                 </div>
                 <div class="rate-card">
-                    <div style="font-size: 9.5px; color: #be185d; font-weight: 700;">TỶ LỆ CHÍNH XÁC</div>
-                    <div style="font-size: 18px; font-weight: 700; color: #db2777; margin-top: 1px;" id="statRate">0.0%</div>
+                    <div style="font-size: 10px; color: #be185d; font-weight: 700;">TỶ LỆ CHÍNH XÁC</div>
+                    <div style="font-size: 20px; font-weight: 700; color: #db2777; margin-top: 2px;" id="statRate">0.0%</div>
                 </div>
 
                 <div class="contact-card">
@@ -492,7 +495,6 @@
                       .filter(s => s.length > 0);
         }
 
-        // Tự động tạo câu ví dụ thông minh nếu file Excel thiếu cột ví dụ
         function generateAutoExample(item) {
             const cn = item.chinese ? item.chinese.split('/')[0].trim() : '这个';
             const py = item.pinyin ? item.pinyin.split('/')[0].trim() : 'zhège';
@@ -704,7 +706,6 @@
                 sequentialOffset += size;
             }
 
-            // Đảm bảo mọi từ vựng đều có ví dụ tự động nếu thiếu
             currentQuizData = processedData.map(item => {
                 if (!item.example) {
                     return { ...item, example: generateAutoExample(item) };
@@ -775,7 +776,7 @@
                                onblur="checkAnswer(${index}, 'desk')"
                                onkeydown="handleKeyDown(event, ${index}, 'desk')">
                     </td>
-                    <td id="status_desk_${index}" style="font-weight:700;">-</td>
+                    <td id="status_desk_${index}" style="font-weight:700; font-size:16px;">-</td>
                 `;
                 desktopTbody.appendChild(tr);
 
@@ -786,18 +787,22 @@
                     <div class="card-header-row">
                         <span class="card-stt">Câu ${index + 1}</span>
                         <span class="card-type">${item.type || '-'}</span>
-                        <span id="status_mob_${index}" style="font-weight:700; font-size:14px;">-</span>
+                        <span id="status_mob_${index}" style="font-weight:700; font-size:16px;">-</span>
                     </div>
                     <div class="card-content-grid">
-                        <div class="card-word-group">
-                            <div id="chinese_mob_${index}" class="card-hanzi">${displayChinese}</div>
-                            <div id="pinyin_mob_${index}" class="card-pinyin">${displayPinyin}</div>
-                            <div id="meaning_mob_${index}" class="card-meaning">${displayMeaning}</div>
+                        <div class="card-word-info">
+                            <div>
+                                <div id="chinese_mob_${index}" class="card-hanzi">${displayChinese}</div>
+                                <div id="pinyin_mob_${index}" class="card-pinyin">${displayPinyin}</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div id="meaning_mob_${index}" class="card-meaning">${displayMeaning}</div>
+                            </div>
                         </div>
-                        <div class="card-input-group">
+                        <div class="card-input-wrapper">
                             <input type="text" id="input_mob_${index}" 
                                    enterkeyhint="next" 
-                                   placeholder="Nhập..."
+                                   placeholder="Nhập đáp án vào đây..."
                                    oninput="checkAndStartTimer()"
                                    onblur="checkAnswer(${index}, 'mob')"
                                    onkeydown="handleKeyDown(event, ${index}, 'mob')">
