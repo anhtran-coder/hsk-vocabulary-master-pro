@@ -395,6 +395,15 @@
             </div>
 
             <div class="control-box">
+                <label class="box-label">🗣️ Giọng đọc</label>
+                <select id="voiceSelect">
+                    <option value="google">1. Google TTS (Chuẩn)</option>
+                    <option value="edge">2. Microsoft Edge TTS (Hay & Mượt)</option>
+                    <option value="browser">3. Trịnh duyệt (Offline)</option>
+                </select>
+            </div>
+
+            <div class="control-box">
                 <label class="box-label">🔄 Trộn câu</label>
                 <select id="shuffleSelect">
                     <option value="sequential">🔢 Theo thứ tự</option>
@@ -494,6 +503,7 @@
         let isTimerRunning = false;
         let sequentialOffset = 0;
         let isMuted = false;
+        let currentAudio = null; // Quản lý luồng âm thanh để tránh bị nhại/chồng lấn
 
         function toggleMute() {
             isMuted = !isMuted;
@@ -501,20 +511,53 @@
             if (isMuted) {
                 btn.innerText = "🔇 Tắt Tiếng";
                 btn.classList.add('muted');
+                stopAllAudio();
             } else {
                 btn.innerText = "🔊 Bật Tiếng";
                 btn.classList.remove('muted');
             }
         }
 
-        // Dùng Google TTS Audio API - Giọng đọc chuẩn bản xứ và hoạt động cực tốt trên điện thoại
+        function stopAllAudio() {
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio = null;
+            }
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+            }
+        }
+
+        // Đa dạng nguồn giọng đọc thông minh và chống nhại lại âm thanh
         function speakText(text) {
             if (isMuted || !text) return;
-            // Lọc lấy đoạn chữ Hán chính đầu tiên nếu có ký tự gạch chéo
+            
+            // Dừng ngay âm thanh đang chạy trước đó để không bị nhại
+            stopAllAudio();
+
             const cleanText = text.split('/')[0].trim();
-            const url = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(cleanText)}&tl=zh-CN&client=tw-ob`;
-            const audio = new Audio(url);
-            audio.play().catch(e => console.log("Không thể phát âm thanh:", e));
+            const voiceType = document.getElementById('voiceSelect').value;
+
+            if (voiceType === 'google') {
+                const url = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(cleanText)}&tl=zh-CN&client=tw-ob`;
+                currentAudio = new Audio(url);
+                currentAudio.play().catch(e => console.log("Lỗi phát âm thanh:", e));
+            } 
+            else if (voiceType === 'edge') {
+                // Nguồn Edge TTS online thay thế chất lượng cao cực mượt
+                const url = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(cleanText)}&type=1`;
+                currentAudio = new Audio(url);
+                currentAudio.play().catch(e => console.log("Lỗi phát âm thanh:", e));
+            } 
+            else {
+                // Giọng hệ thống trình duyệt (SpeechSynthesis)
+                if ('speechSynthesis' in window) {
+                    const utterance = new SpeechSynthesisUtterance(cleanText);
+                    utterance.lang = 'zh-CN';
+                    utterance.rate = 0.85;
+                    window.speechSynthesis.speak(utterance);
+                }
+            }
         }
 
         function removePinyinTones(str) {
@@ -914,7 +957,7 @@
                 statusElem.style.color = 'var(--danger)';
             }
 
-            // Phát âm ngay khi gõ xong câu
+            // Phát âm chuẩn ngay khi gõ xong đáp án
             speakText(item.chinese);
 
             updateStats();
