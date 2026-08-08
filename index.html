@@ -167,7 +167,6 @@
             overflow-x: auto; 
         }
         
-        /* DESKTOP TABLE VIEW */
         table { width: 100%; border-collapse: separate; border-spacing: 0; min-width: 800px; }
         th { 
             background: linear-gradient(135deg, var(--header-bg-start), var(--header-bg-end)) !important;
@@ -215,7 +214,6 @@
         tr.row-correct td { background-color: var(--success-light) !important; color: #064e3b; }
         tr.row-wrong td { background-color: var(--danger-light) !important; color: #7f1d1d; }
 
-        /* MOBILE CARD VIEW CONTAINER */
         #mobileCardContainer { display: none; }
 
         .vocab-card {
@@ -319,7 +317,6 @@
 
         .footer-owner { text-align: center; margin-top: 10px; padding-top: 8px; border-top: 1px dashed #cbd5e1; font-size: 10px; color: #475569; font-weight: 500; }
 
-        /* TỰ ĐỘNG CHUYỂN ĐỔI GIAO DIỆN KHI DÙNG ĐIỆN THOẠI (< 768px) */
         @media (max-width: 768px) {
             body { padding: 8px; }
             .main-layout { flex-direction: column; }
@@ -335,16 +332,16 @@
 <body>
 
     <script>
-        const symbols = ['🌸', '🌺', '🌷', '🌻', '🍃', '❄️', '❅', '✨', '💮', '❄️'];
+        const hualiaoFuhao = ['🌸', '🌺', '🌷', '🌻', '🍃', '❄️', '❅', '✨', '💮', '❄️'];
         for (let i = 0; i < 25; i++) {
-            const div = document.createElement('div');
-            div.className = 'falling-decor';
-            div.innerHTML = symbols[Math.floor(Math.random() * symbols.length)];
-            div.style.left = Math.random() * 100 + 'vw';
-            div.style.animationDuration = (Math.random() * 5 + 5) + 's';
-            div.style.animationDelay = (Math.random() * 5) + 's';
-            div.style.fontSize = (Math.random() * 10 + 12) + 'px';
-            document.body.appendChild(div);
+            const zhuangshi = document.createElement('div');
+            zhuangshi.className = 'falling-decor';
+            zhuangshi.innerHTML = hualiaoFuhao[Math.floor(Math.random() * hualiaoFuhao.length)];
+            zhuangshi.style.left = Math.random() * 100 + 'vw';
+            zhuangshi.style.animationDuration = (Math.random() * 5 + 5) + 's';
+            zhuangshi.style.animationDelay = (Math.random() * 5) + 's';
+            zhuangshi.style.fontSize = (Math.random() * 10 + 12) + 'px';
+            document.body.appendChild(zhuangshi);
         }
     </script>
 
@@ -398,7 +395,6 @@
 
         <div class="main-layout">
             <div class="table-container">
-                <!-- GIAO DIỆN MÁY TÍNH (DESKTOP TABLE) -->
                 <div id="desktopTableWrapper">
                     <table>
                         <thead>
@@ -417,7 +413,6 @@
                     </table>
                 </div>
 
-                <!-- GIAO DIỆN ĐIỆN THOẠI (MOBILE CARD VIEW) -->
                 <div id="mobileCardContainer"></div>
             </div>
 
@@ -458,332 +453,333 @@
     </div>
 
     <script>
-        const SECRET_KEY = "CAMTU2019S2THANHAN2025";
+        // Toàn bộ logic bên dưới sử dụng tiếng Trung thuần túy cho định danh biến và hàm
+        const mimaMiyao = "CAMTU2019S2THANHAN2025";
 
-        const EMBEDDED_VOCAB_DATA = [
+        const cihuiCunchuMoren = [
             {"chinese": "早饭 / 早餐", "type": "Danh từ", "pinyin": "zǎofàn / zǎocān", "meaning": "Bữa sáng", "example": "Wǒ míngtiān zǎofàn chī miànbaō.\n我 明天 早饭 吃 面包。\nTôi ăn bánh mì vào bữa sáng ngày mai."},
             {"chinese": "午饭 / 晚餐", "type": "Danh từ", "pinyin": "wǔfàn / wǔcān", "meaning": "Bữa trưa", "example": "Tamen zài shítáng chī wǔfàn.\n他们 在 食堂 吃 午饭。\nHọ ăn trưa ở nhà ăn."},
             {"chinese": "因为……所以……", "type": "Liên từ", "pinyin": "yīnwèi……suǒyǐ……", "meaning": "Vì…… nên……", "example": "Yīnwèi xià yǔ, suǒyǐ wǒmen bù qù.\n因为 下 雨, 所以 我们 不 去.\nVì trời mưa nên chúng tôi không đi."},
             {"chinese": "姐姐", "type": "Danh từ", "pinyin": "jiějie", "meaning": "Chị gái", "example": "Wǒ yǒu yí gè jiějie.\n我 有 一 个 姐姐。\nTôi có một người chị gái."}
         ];
 
-        let fullVocabData = [];
-        let currentQuizData = [];
-        let timerInterval = null;
-        let secondsElapsed = 0;
-        let isTimerRunning = false;
-        let sequentialOffset = 0;
+        let quanBuCihuiShuju = [];
+        let dangQianLianxiShuju = [];
+        let jishiQiJishiQi = null;
+        let miaoShuGuoQu = 0;
+        let shiFouDangQianYunXing = false;
+        let shunXuPianYiLiang = 0;
 
-        function removePinyinTones(str) {
-            if (!str) return '';
-            return str.normalize('NFD')
-                      .replace(/[\u0300-\u036f]/g, '')
-                      .replace(/ü/g, 'v')
-                      .replace(/Ü/g, 'v')
-                      .toLowerCase();
+        function quChuPinyinShengdiao(wenben) {
+            if (!wenben) return '';
+            return wenben.normalize('NFD')
+                         .replace(/[\u0300-\u036f]/g, '')
+                         .replace(/ü/g, 'v')
+                         .replace(/Ü/g, 'v')
+                         .toLowerCase();
         }
 
-        function cleanString(str) {
-            if (!str) return '';
-            return str.toLowerCase().trim().replace(/\s+/g, ' ');
+        function qingLiWenben(wenben) {
+            if (!wenben) return '';
+            return wenben.toLowerCase().trim().replace(/\s+/g, ' ');
         }
 
-        function splitVariants(str) {
-            if (!str) return [];
-            return str.split(/[/,;|\n]+/)
-                      .map(s => cleanString(s))
-                      .filter(s => s.length > 0);
+        function chaiFenBianzheng(wenben) {
+            if (!wenben) return [];
+            return wenben.split(/[/,;|\n]+/)
+                         .map(s => qingLiWenben(s))
+                         .filter(s => s.length > 0);
         }
 
-        function generateAutoExample(item) {
-            const cn = item.chinese ? item.chinese.split('/')[0].trim() : '这个';
-            const py = item.pinyin ? item.pinyin.split('/')[0].trim() : 'zhège';
-            const vn = item.meaning ? item.meaning.split('/')[0].trim() : 'từ này';
+        function shengChengZidongLizi(xiangmu) {
+            const hanzizi = xiangmu.chinese ? xiangmu.chinese.split('/')[0].trim() : '这个';
+            const pinyinyin = xiangmu.pinyin ? xiangmu.pinyin.split('/')[0].trim() : 'zhège';
+            const yisiyi = xiangmu.meaning ? xiangmu.meaning.split('/')[0].trim() : 'từ này';
             
-            return `${py} shì ${vn}.\n${cn} 是 ${vn}。\nĐây là ${vn}.`;
+            return `${pinyinyin} shì ${yisiyi}.\n${hanzizi} 是 ${yisiyi}。\nĐây là ${yisiyi}.`;
         }
 
         window.onload = function() {
-            const savedData = localStorage.getItem('hsk_vocab_data_v4');
-            if (savedData) {
+            const baocunShuju = localStorage.getItem('hsk_vocab_data_v4');
+            if (baocunShuju) {
                 try { 
-                    fullVocabData = JSON.parse(savedData);
-                    if(!fullVocabData || fullVocabData.length === 0 || !fullVocabData[0].chinese) {
-                        fullVocabData = [...EMBEDDED_VOCAB_DATA];
+                    quanBuCihuiShuju = JSON.parse(baocunShuju);
+                    if(!quanBuCihuiShuju || quanBuCihuiShuju.length === 0 || !quanBuCihuiShuju[0].chinese) {
+                        quanBuCihuiShuju = [...cihuiCunchuMoren];
                     }
-                } catch(e) { fullVocabData = [...EMBEDDED_VOCAB_DATA]; }
+                } catch(e) { quanBuCihuiShuju = [...cihuiCunchuMoren]; }
             } else {
-                fullVocabData = [...EMBEDDED_VOCAB_DATA];
+                quanBuCihuiShuju = [...cihuiCunchuMoren];
             }
-            document.getElementById('rangeTo').value = fullVocabData.length;
+            document.getElementById('rangeTo').value = quanBuCihuiShuju.length;
             
-            document.getElementById('btnNewQuiz').addEventListener('click', startNewQuiz);
-            document.getElementById('btnRetryQuiz').addEventListener('click', retryCurrentQuiz);
-            document.getElementById('btnReset').addEventListener('click', resetAllData);
+            document.getElementById('btnNewQuiz').addEventListener('click', chuangJianXinLianXi);
+            document.getElementById('btnRetryQuiz').addEventListener('click', chongShiDangQianLianXi);
+            document.getElementById('btnReset').addEventListener('click', qingChuQuanBuShuju);
 
-            startNewQuiz();
+            chuangJianXinLianXi();
         };
 
-        function resetTimer() {
-            clearInterval(timerInterval);
-            timerInterval = null;
-            secondsElapsed = 0;
-            isTimerRunning = false;
-            updateTimerDisplay();
+        function chongZhiJishiQi() {
+            clearInterval(jishiQiJishiQi);
+            jishiQiJishiQi = null;
+            miaoShuGuoQu = 0;
+            shiFouDangQianYunXing = false;
+            gengXinJishiQiXianshi();
         }
 
-        function checkAndStartTimer() {
-            if (!isTimerRunning) {
-                isTimerRunning = true;
-                timerInterval = setInterval(() => {
-                    secondsElapsed++;
-                    updateTimerDisplay();
+        function jianChaBingKaiShiJishi() {
+            if (!shiFouDangQianYunXing) {
+                shiFouDangQianYunXing = true;
+                jishiQiJishiQi = setInterval(() => {
+                    miaoShuGuoQu++;
+                    gengXinJishiQiXianshi();
                 }, 1000);
             }
         }
 
-        function stopTimer() {
-            clearInterval(timerInterval);
-            isTimerRunning = false;
+        function tingZhiJishiQi() {
+            clearInterval(jishiQiJishiQi);
+            shiFouDangQianYunXing = false;
         }
 
-        function updateTimerDisplay() {
-            const mins = Math.floor(secondsElapsed / 60).toString().padStart(2, '0');
-            const secs = (secondsElapsed % 60).toString().padStart(2, '0');
-            document.getElementById('timerDisplay').innerText = `${mins}:${secs}`;
+        function gengXinJishiQiXianshi() {
+            const fenzhong = Math.floor(miaoShuGuoQu / 60).toString().padStart(2, '0');
+            const miaoshu = (miaoShuGuoQu % 60).toString().padStart(2, '0');
+            document.getElementById('timerDisplay').innerText = `${fenzhong}:${miaoshu}`;
         }
 
         document.getElementById('excelFile').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
+            const wenjian = e.target.files[0];
+            if (!wenjian) return;
 
-            const statusText = document.getElementById('loadingStatus');
-            if (statusText) { statusText.innerText = "⏳ Đang kiểm tra..."; statusText.style.color = "var(--primary)"; }
+            const zhuangtaiwenben = document.getElementById('loadingStatus');
+            if (zhuangtaiwenben) { zhuangtaiwenben.innerText = "⏳ Đang kiểm tra..."; zhuangtaiwenben.style.color = "var(--primary)"; }
 
-            const reader = new FileReader();
-            reader.onload = function(e) {
+            const dushiqi = new FileReader();
+            dushiqi.onload = function(e) {
                 try {
-                    const data = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(data, { type: 'array' });
-                    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+                    const shujutong = new Uint8Array(e.target.result);
+                    const gongzuobu = XLSX.read(shujutong, { type: 'array' });
+                    const gongzuobiao = gongzuobu.Sheets[gongzuobu.SheetNames[0]];
 
-                    const cellZ1 = worksheet['Z1'] ? worksheet['Z1'].v.toString().trim() : '';
-                    const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: "" });
+                    const geZiZ1 = gongzuobiao['Z1'] ? gongzuobiao['Z1'].v.toString().trim() : '';
+                    const hangLie = XLSX.utils.sheet_to_json(gongzuobiao, { header: 1, defval: "" });
 
-                    if (!rows || rows.length < 2) {
+                    if (!hangLie || hangLie.length < 2) {
                         alert("File Excel không có dữ liệu!");
                         return;
                     }
 
-                    let hasValidKey = false;
-                    if (cellZ1 === SECRET_KEY) {
-                        hasValidKey = true;
-                    } else if (rows[0]) {
-                        for (let col = 0; col < rows[0].length; col++) {
-                            if (rows[0][col] && rows[0][col].toString().trim() === SECRET_KEY) {
-                                hasValidKey = true;
+                    let youXiaoMima = false;
+                    if (geZiZ1 === mimaMiyao) {
+                        youXiaoMima = true;
+                    } else if (hangLie[0]) {
+                        for (let col = 0; col < hangLie[0].length; col++) {
+                            if (hangLie[0][col] && hangLie[0][col].toString().trim() === mimaMiyao) {
+                                youXiaoMima = true;
                                 break;
                             }
                         }
                     }
 
-                    if (!hasValidKey) {
+                    if (!youXiaoMima) {
                         alert("❌ TRUY CẬP BỊ TỪ CHỐI!\n\nFile Excel không hợp lệ hoặc sai mã khóa.");
                         document.getElementById('excelFile').value = '';
-                        if (statusText) statusText.innerText = "";
+                        if (zhuangtaiwenben) zhuangtaiwenben.innerText = "";
                         return;
                     }
 
-                    let headerRowIndex = 0;
-                    for (let i = 0; i < Math.min(rows.length, 5); i++) {
-                        const rowStr = rows[i].join(" ").toUpperCase();
-                        if (rowStr.includes("CHINESE") || rowStr.includes("PINYIN") || rowStr.includes("MEANING")) {
-                            headerRowIndex = i;
+                    let biaotiHangSuo = 0;
+                    for (let i = 0; i < Math.min(hangLie.length, 5); i++) {
+                        const hangZifu = hangLie[i].join(" ").toUpperCase();
+                        if (hangZifu.includes("CHINESE") || hangZifu.includes("PINYIN") || hangZifu.includes("MEANING")) {
+                            biaotiHangSuo = i;
                             break;
                         }
                     }
 
-                    const headers = rows[headerRowIndex].map(h => h.toString().trim().toUpperCase());
-                    let colChinese = -1, colType = -1, colPinyin = -1, colMeaning = -1, colExample = -1;
+                    const biaotilan = hangLie[biaotiHangSuo].map(h => h.toString().trim().toUpperCase());
+                    let lieChinese = -1, lieType = -1, liePinyin = -1, lieMeaning = -1, lieExample = -1;
 
-                    headers.forEach((h, idx) => {
+                    biaotilan.forEach((h, idx) => {
                         if (h.includes('INPUT')) return;
-                        if ((h.includes('CHENESE') || h.includes('CHINESE') || h.includes('HÁN')) && colChinese === -1) colChinese = idx;
-                        else if (h.includes('TYPE') || h.includes('LOẠI TỪ')) colType = idx;
-                        else if (h.includes('PINYIN') || h.includes('PHIÊN ÂM')) colPinyin = idx;
-                        else if (h.includes('MEANING') || h.includes('TIẾNG VIỆT') || h.includes('NGHĨA')) colMeaning = idx;
-                        else if (h.includes('EXAMPLE') || h.includes('VÍ DỤ') || h.includes('CÂU')) colExample = idx;
+                        if ((h.includes('CHENESE') || h.includes('CHINESE') || h.includes('HÁN')) && lieChinese === -1) lieChinese = idx;
+                        else if (h.includes('TYPE') || h.includes('LOẠI TỪ')) lieType = idx;
+                        else if (h.includes('PINYIN') || h.includes('PHIÊN ÂM')) liePinyin = idx;
+                        else if (h.includes('MEANING') || h.includes('TIẾNG VIỆT') || h.includes('NGHĨA')) lieMeaning = idx;
+                        else if (h.includes('EXAMPLE') || h.includes('VÍ DỤ') || h.includes('CÂU')) lieExample = idx;
                     });
 
-                    if (colChinese === -1) colChinese = 1;
-                    if (colType === -1) colType = 2;
-                    if (colPinyin === -1) colPinyin = 3;
-                    if (colMeaning === -1) colMeaning = 4;
-                    if (colExample === -1) colExample = 5;
+                    if (lieChinese === -1) lieChinese = 1;
+                    if (lieType === -1) lieType = 2;
+                    if (liePinyin === -1) liePinyin = 3;
+                    if (lieMeaning === -1) lieMeaning = 4;
+                    if (lieExample === -1) lieExample = 5;
 
-                    const parsedData = [];
-                    for (let i = headerRowIndex + 1; i < rows.length; i++) {
-                        const row = rows[i];
-                        if (!row || row.length === 0) continue;
+                    const jiexishuju = [];
+                    for (let i = biaotiHangSuo + 1; i < hangLie.length; i++) {
+                        const hang = hangLie[i];
+                        if (!hang || hang.length === 0) continue;
 
-                        const chinese = row[colChinese] ? row[colChinese].toString().trim() : '';
-                        const type    = row[colType]    ? row[colType].toString().trim() : '';
-                        const pinyin  = row[colPinyin]  ? row[colPinyin].toString().trim() : '';
-                        const meaning = row[colMeaning] ? row[colMeaning].toString().trim() : '';
-                        let example = row[colExample] ? row[colExample].toString().trim() : '';
+                        const chinese = hang[lieChinese] ? hang[lieChinese].toString().trim() : '';
+                        const type    = hang[lieType]    ? hang[lieType].toString().trim() : '';
+                        const pinyin  = hang[liePinyin]  ? hang[liePinyin].toString().trim() : '';
+                        const meaning = hang[lieMeaning] ? hang[lieMeaning].toString().trim() : '';
+                        let example = hang[lieExample] ? hang[lieExample].toString().trim() : '';
 
                         if (chinese || meaning) {
                             if (!example) {
-                                example = generateAutoExample({ chinese, pinyin, meaning });
+                                example = shengChengZidongLizi({ chinese, pinyin, meaning });
                             }
-                            parsedData.push({ chinese, type, pinyin, meaning, example });
+                            jiexishuju.push({ chinese, type, pinyin, meaning, example });
                         }
                     }
 
-                    if (parsedData.length === 0) {
+                    if (jiexishuju.length === 0) {
                         alert("Không tìm thấy dữ liệu từ vựng hợp lệ!");
                         return;
                     }
 
-                    fullVocabData = parsedData;
-                    localStorage.setItem('hsk_vocab_data_v4', JSON.stringify(fullVocabData));
+                    quanBuCihuiShuju = jiexishuju;
+                    localStorage.setItem('hsk_vocab_data_v4', JSON.stringify(quanBuCihuiShuju));
                     
-                    if (statusText) { 
-                        statusText.innerText = `✅ Nạp ${fullVocabData.length} từ!`; 
-                        statusText.style.color = "var(--success)"; 
+                    if (zhuangtaiwenben) { 
+                        zhuangtaiwenben.innerText = `✅ Nạp ${quanBuCihuiShuju.length} từ!`; 
+                        zhuangtaiwenben.style.color = "var(--success)"; 
                     }
                     
                     document.getElementById('rangeFrom').value = 1;
-                    document.getElementById('rangeTo').value = fullVocabData.length;
-                    sequentialOffset = 0;
+                    document.getElementById('rangeTo').value = quanBuCihuiShuju.length;
+                    shunXuPianYiLiang = 0;
                     
-                    startNewQuiz();
+                    chuangJianXinLianXi();
                 } catch (err) { alert("Lỗi khi đọc file Excel: " + err.message); }
             };
-            reader.readAsArrayBuffer(file);
+            dushiqi.readAsArrayBuffer(wenjian);
         });
 
-        function formatExampleHTML(exampleStr) {
-            if (!exampleStr) return '<span style="color:#94a3b8">Không có ví dụ</span>';
-            const lines = exampleStr.split('\n').filter(l => l.trim() !== '');
-            if (lines.length >= 3) {
-                return `<span class="example-py">${lines[0]}</span><span class="example-cn">${lines[1]}</span><span class="example-vn">${lines[2]}</span>`;
-            } else if (lines.length === 2) {
-                return `<span class="example-cn">${lines[0]}</span><span class="example-vn">${lines[1]}</span>`;
+        function geShiHuaLiziHTML(liziwenben) {
+            if (!liziwenben) return '<span style="color:#94a3b8">Không có ví dụ</span>';
+            const hangLie = liziwenben.split('\n').filter(l => l.trim() !== '');
+            if (hangLie.length >= 3) {
+                return `<span class="example-py">${hangLie[0]}</span><span class="example-cn">${hangLie[1]}</span><span class="example-vn">${hangLie[2]}</span>`;
+            } else if (hangLie.length === 2) {
+                return `<span class="example-cn">${hangLie[0]}</span><span class="example-vn">${hangLie[1]}</span>`;
             }
-            return `<span>${exampleStr}</span>`;
+            return `<span>${liziwenben}</span>`;
         }
 
-        function startNewQuiz() {
-            if (!fullVocabData || fullVocabData.length === 0) fullVocabData = [...EMBEDDED_VOCAB_DATA];
+        function chuangJianXinLianXi() {
+            if (!quanBuCihuiShuju || quanBuCihuiShuju.length === 0) quanBuCihuiShuju = [...cihuiCunchuMoren];
             
-            let fromIdx = parseInt(document.getElementById('rangeFrom').value) || 1;
-            let toIdx = parseInt(document.getElementById('rangeTo').value) || fullVocabData.length;
-            const size = parseInt(document.getElementById('quizSize').value) || 10;
-            const shuffleMode = document.getElementById('shuffleSelect').value;
+            let qishiShu = parseInt(document.getElementById('rangeFrom').value) || 1;
+            let jieshuShu = parseInt(document.getElementById('rangeTo').value) || quanBuCihuiShuju.length;
+            const xuanzeShuliang = parseInt(document.getElementById('quizSize').value) || 10;
+            const hunheMoshi = document.getElementById('shuffleSelect').value;
 
-            if (fromIdx < 1) fromIdx = 1;
-            if (toIdx > fullVocabData.length) toIdx = fullVocabData.length;
-            if (fromIdx > toIdx) { let temp = fromIdx; fromIdx = toIdx; toIdx = temp; }
+            if (qishiShu < 1) qishiShu = 1;
+            if (jieshuShu > quanBuCihuiShuju.length) jieshuShu = quanBuCihuiShuju.length;
+            if (qishiShu > jieshuShu) { let temp = qishiShu; qishiShu = jieshuShu; jieshuShu = temp; }
 
-            document.getElementById('rangeFrom').value = fromIdx;
-            document.getElementById('rangeTo').value = toIdx;
+            document.getElementById('rangeFrom').value = qishiShu;
+            document.getElementById('rangeTo').value = jieshuShu;
 
-            const slicedData = fullVocabData.slice(fromIdx - 1, toIdx);
+            const qiepianShuju = quanBuCihuiShuju.slice(qishiShu - 1, jieshuShu);
 
-            if (slicedData.length === 0) {
+            if (qiepianShuju.length === 0) {
                 alert("Khoảng câu chọn không hợp lệ!");
                 return;
             }
 
-            let processedData = [];
-            if (shuffleMode === 'random') {
-                const shuffled = [...slicedData].sort(() => 0.5 - Math.random());
-                processedData = shuffled.slice(0, Math.min(size, slicedData.length));
+            let chuliShuju = [];
+            if (hunheMoshi === 'random') {
+                const suijiShuju = [...qiepianShuju].sort(() => 0.5 - Math.random());
+                chuliShuju = suijiShuju.slice(0, Math.min(xuanzeShuliang, qiepianShuju.length));
             } else {
-                if (sequentialOffset >= slicedData.length) sequentialOffset = 0;
-                processedData = slicedData.slice(sequentialOffset, sequentialOffset + size);
-                sequentialOffset += size;
+                if (shunXuPianYiLiang >= qiepianShuju.length) shunXuPianYiLiang = 0;
+                chuliShuju = qiepianShuju.slice(shunXuPianYiLiang, shunXuPianYiLiang + xuanzeShuliang);
+                shunXuPianYiLiang += xuanzeShuliang;
             }
 
-            currentQuizData = processedData.map(item => {
+            dangQianLianxiShuju = chuliShuju.map(item => {
                 if (!item.example) {
-                    return { ...item, example: generateAutoExample(item) };
+                    return { ...item, example: shengChengZidongLizi(item) };
                 }
                 return item;
             });
 
-            resetTimer(); 
-            renderUI();
+            chongZhiJishiQi(); 
+            xuanRanJieMian();
         }
 
-        document.getElementById('shuffleSelect').addEventListener('change', function() { sequentialOffset = 0; });
-        document.getElementById('modeSelect').addEventListener('change', function() { renderUI(); });
+        document.getElementById('shuffleSelect').addEventListener('change', function() { shunXuPianYiLiang = 0; });
+        document.getElementById('modeSelect').addEventListener('change', function() { xuanRanJieMian(); });
 
-        function retryCurrentQuiz() { 
-            if (currentQuizData.length > 0) {
-                resetTimer();
-                renderUI();
+        function chongShiDangQianLianXi() { 
+            if (dangQianLianxiShuju.length > 0) {
+                chongZhiJishiQi();
+                xuanRanJieMian();
             } 
         }
 
-        function resetAllData() {
+        function qingChuQuanBuShuju() {
             if (confirm("Bạn có chắc chắn muốn xóa dữ liệu đã lưu?")) {
                 localStorage.removeItem('hsk_vocab_data_v4');
-                fullVocabData = [...EMBEDDED_VOCAB_DATA];
+                quanBuCihuiShuju = [...cihuiCunchuMoren];
                 document.getElementById('loadingStatus').innerText = "";
                 document.getElementById('rangeFrom').value = 1;
-                document.getElementById('rangeTo').value = fullVocabData.length;
-                sequentialOffset = 0;
-                startNewQuiz();
+                document.getElementById('rangeTo').value = quanBuCihuiShuju.length;
+                shunXuPianYiLiang = 0;
+                chuangJianXinLianXi();
             }
         }
 
-        function renderUI() {
-            const mode = document.getElementById('modeSelect').value;
+        function xuanRanJieMian() {
+            const moshi = document.getElementById('modeSelect').value;
             
-            const desktopTbody = document.getElementById('vocabTableDesktop');
-            desktopTbody.innerHTML = '';
+            const zhuoShiBiaoTi = document.getElementById('vocabTableDesktop');
+            zhuoShiBiaoTi.innerHTML = '';
 
-            const mobileContainer = document.getElementById('mobileCardContainer');
-            mobileContainer.innerHTML = '';
+            const shouJiKaPian = document.getElementById('mobileCardContainer');
+            shouJiKaPian.innerHTML = '';
 
-            currentQuizData.forEach((item, index) => {
-                let displayChinese = '***';
-                let displayPinyin  = '***';
-                let displayMeaning = '***';
-                let displayExample = '<span style="color:#94a3b8">Chưa hiển thị</span>';
+            dangQianLianxiShuju.forEach((item, index) => {
+                let xianshiChinese = '***';
+                let xianshiPinyin  = '***';
+                let xianshiMeaning = '***';
+                let xianshiExample = '<span style="color:#94a3b8">Chưa hiển thị</span>';
 
-                if (mode === 'chinese_to_meaning') {
-                    displayChinese = item.chinese || '---';
+                if (moshi === 'chinese_to_meaning') {
+                    xianshiChinese = item.chinese || '---';
                 } else {
-                    displayMeaning = item.meaning || '---';
+                    xianshiMeaning = item.meaning || '---';
                 }
 
-                const tr = document.createElement('tr');
-                tr.id = `row_desk_${index}`;
-                tr.innerHTML = `
+                const hangZhuoShi = document.createElement('tr');
+                hangZhuoShi.id = `row_desk_${index}`;
+                hangZhuoShi.innerHTML = `
                     <td class="col-stt">${index + 1}</td>
-                    <td id="chinese_desk_${index}" class="col-hanzi">${displayChinese}</td>
+                    <td id="chinese_desk_${index}" class="col-hanzi">${xianshiChinese}</td>
                     <td class="col-type">${item.type || '-'}</td>
-                    <td id="pinyin_desk_${index}" class="col-pinyin">${displayPinyin}</td>
-                    <td id="meaning_desk_${index}" class="col-viet">${displayMeaning}</td>
-                    <td id="example_desk_${index}" class="col-example">${displayExample}</td>
+                    <td id="pinyin_desk_${index}" class="col-pinyin">${xianshiPinyin}</td>
+                    <td id="meaning_desk_${index}" class="col-viet">${xianshiMeaning}</td>
+                    <td id="example_desk_${index}" class="col-example">${xianshiExample}</td>
                     <td>
                         <input type="text" id="input_desk_${index}" 
                                enterkeyhint="next" 
-                               oninput="checkAndStartTimer()"
-                               onblur="checkAnswer(${index}, 'desk')"
-                               onkeydown="handleKeyDown(event, ${index}, 'desk')">
+                               oninput="jianChaBingKaiShiJishi()"
+                               onblur="jianceDaan(${index}, 'desk')"
+                               onkeydown="chuLiAnJian(event, ${index}, 'desk')">
                     </td>
                     <td id="status_desk_${index}" style="font-weight:700; font-size:16px;">-</td>
                 `;
-                desktopTbody.appendChild(tr);
+                zhuoShiBiaoTi.appendChild(hangZhuoShi);
 
-                const card = document.createElement('div');
-                card.className = 'vocab-card';
-                card.id = `row_mob_${index}`;
-                card.innerHTML = `
+                const kapian = document.createElement('div');
+                kapian.className = 'vocab-card';
+                kapian.id = `row_mob_${index}`;
+                kapian.innerHTML = `
                     <div class="card-header-row">
                         <span class="card-stt">Câu ${index + 1}</span>
                         <span class="card-type">${item.type || '-'}</span>
@@ -792,142 +788,142 @@
                     <div class="card-content-grid">
                         <div class="card-word-info">
                             <div>
-                                <div id="chinese_mob_${index}" class="card-hanzi">${displayChinese}</div>
-                                <div id="pinyin_mob_${index}" class="card-pinyin">${displayPinyin}</div>
+                                <div id="chinese_mob_${index}" class="card-hanzi">${xianshiChinese}</div>
+                                <div id="pinyin_mob_${index}" class="card-pinyin">${xianshiPinyin}</div>
                             </div>
                             <div style="text-align: right;">
-                                <div id="meaning_mob_${index}" class="card-meaning">${displayMeaning}</div>
+                                <div id="meaning_mob_${index}" class="card-meaning">${xianshiMeaning}</div>
                             </div>
                         </div>
                         <div class="card-input-wrapper">
                             <input type="text" id="input_mob_${index}" 
                                    enterkeyhint="next" 
                                    placeholder="Nhập đáp án vào đây..."
-                                   oninput="checkAndStartTimer()"
-                                   onblur="checkAnswer(${index}, 'mob')"
-                                   onkeydown="handleKeyDown(event, ${index}, 'mob')">
+                                   oninput="jianChaBingKaiShiJishi()"
+                                   onblur="jianceDaan(${index}, 'mob')"
+                                   onkeydown="chuLiAnJian(event, ${index}, 'mob')">
                         </div>
                     </div>
-                    <div id="example_mob_${index}" class="card-example-box">${displayExample}</div>
+                    <div id="example_mob_${index}" class="card-example-box">${xianshiExample}</div>
                 `;
-                mobileContainer.appendChild(card);
+                shouJiKaPian.appendChild(kapian);
             });
-            updateStats();
+            gengXinTongJi();
         }
 
-        function handleKeyDown(event, index, viewType) {
-            checkAndStartTimer();
+        function chuLiAnJian(event, index, leixing) {
+            jianChaBingKaiShiJishi();
             if (event.key === 'Enter' || event.keyCode === 13) {
                 event.preventDefault();
-                checkAnswer(index, viewType);
+                jianceDaan(index, leixing);
                 
-                const nextInput = document.getElementById(`input_${viewType}_${index + 1}`);
-                if (nextInput) {
-                    nextInput.focus();
+                const xiayigeShuru = document.getElementById(`input_${leixing}_${index + 1}`);
+                if (xiayigeShuru) {
+                    xiayigeShuru.focus();
                 }
             }
         }
 
-        function checkAnswer(index, viewType) {
-            const item = currentQuizData[index];
-            const inputVal = document.getElementById(`input_${viewType}_${index}`).value;
-            const cleanedInput = cleanString(inputVal);
-            const mode = document.getElementById('modeSelect').value;
+        function jianceDaan(index, leixing) {
+            const item = dangQianLianxiShuju[index];
+            const shuruzhi = document.getElementById(`input_${leixing}_${index}`).value;
+            const qingliShuru = qingLiWenben(shuruzhi);
+            const moshi = document.getElementById('modeSelect').value;
 
-            document.getElementById(`input_desk_${index}`).value = inputVal;
-            document.getElementById(`input_mob_${index}`).value = inputVal;
+            document.getElementById(`input_desk_${index}`).value = shuruzhi;
+            document.getElementById(`input_mob_${index}`).value = shuruzhi;
             
-            const deskRow = document.getElementById(`row_desk_${index}`);
-            const mobCard = document.getElementById(`row_mob_${index}`);
-            const statusDesk = document.getElementById(`status_desk_${index}`);
-            const statusMob = document.getElementById(`status_mob_${index}`);
+            const zhuoShiHang = document.getElementById(`row_desk_${index}`);
+            const shouJiKaPian = document.getElementById(`row_mob_${index}`);
+            const zhuangtaiZhuoShi = document.getElementById(`status_desk_${index}`);
+            const zhuangtaiShouJi = document.getElementById(`status_mob_${index}`);
 
-            if (!cleanedInput) {
-                deskRow.className = '';
-                mobCard.className = 'vocab-card';
-                statusDesk.innerText = '-';
-                statusMob.innerText = '-';
-                updateStats();
+            if (!qingliShuru) {
+                zhuoShiHang.className = '';
+                shouJiKaPian.className = 'vocab-card';
+                zhuangtaiZhuoShi.innerText = '-';
+                zhuangtaiShouJi.innerText = '-';
+                gengXinTongJi();
                 return;
             }
 
-            let isCorrect = false;
+            let shiFouZhengque = false;
 
-            if (mode === 'chinese_only') {
-                const validChineseVariants = splitVariants(item.chinese);
-                isCorrect = validChineseVariants.some(v => cleanString(v) === cleanedInput);
-            } else if (mode === 'pinyin_to_chinese') {
-                const validChineseVariants = splitVariants(item.chinese);
-                const validPinyinVariants = splitVariants(item.pinyin);
-                const cleanedNoToneInput = removePinyinTones(cleanedInput);
+            if (moshi === 'chinese_only') {
+                const youxiaoChinese = chaiFenBianzheng(item.chinese);
+                shiFouZhengque = youxiaoChinese.some(v => qingLiWenben(v) === qingliShuru);
+            } else if (moshi === 'pinyin_to_chinese') {
+                const youxiaoChinese = chaiFenBianzheng(item.chinese);
+                const youxiaoPinyin = chaiFenBianzheng(item.pinyin);
+                const qingliWuShengdiao = quChuPinyinShengdiao(qingliShuru);
                 
-                isCorrect = validChineseVariants.some(v => cleanString(v) === cleanedInput) ||
-                            validPinyinVariants.some(p => cleanString(p) === cleanedInput || removePinyinTones(p) === cleanedNoToneInput);
-            } else if (mode === 'chinese_to_meaning') {
-                const validMeaningVariants = splitVariants(item.meaning);
-                isCorrect = validMeaningVariants.some(m => cleanString(m) === cleanedInput);
+                shiFouZhengque = youxiaoChinese.some(v => qingLiWenben(v) === qingliShuru) ||
+                                 youxiaoPinyin.some(p => qingLiWenben(p) === qingliShuru || quChuPinyinShengdiao(p) === qingliWuShengdiao);
+            } else if (moshi === 'chinese_to_meaning') {
+                const youxiaoMeaning = chaiFenBianzheng(item.meaning);
+                shiFouZhengque = youxiaoMeaning.some(m => qingLiWenben(m) === qingliShuru);
             }
 
-            if (isCorrect) {
-                deskRow.className = 'row-correct';
-                mobCard.className = 'vocab-card row-correct';
-                statusDesk.innerText = '✔️'; statusDesk.style.color = 'var(--success)';
-                statusMob.innerText = '✔️'; statusMob.style.color = 'var(--success)';
+            if (shiFouZhengque) {
+                zhuoShiHang.className = 'row-correct';
+                shouJiKaPian.className = 'vocab-card row-correct';
+                zhuangtaiZhuoShi.innerText = '✔️'; zhuangtaiZhuoShi.style.color = 'var(--success)';
+                zhuangtaiShouJi.innerText = '✔️'; zhuangtaiShouJi.style.color = 'var(--success)';
             } else {
-                deskRow.className = 'row-wrong';
-                mobCard.className = 'vocab-card row-wrong';
-                statusDesk.innerText = '❌'; statusDesk.style.color = 'var(--danger)';
-                statusMob.innerText = '❌'; statusMob.style.color = 'var(--danger)';
+                zhuoShiHang.className = 'row-wrong';
+                shouJiKaPian.className = 'vocab-card row-wrong';
+                zhuangtaiZhuoShi.innerText = '❌'; zhuangtaiZhuoShi.style.color = 'var(--danger)';
+                zhuangtaiShouJi.innerText = '❌'; zhuangtaiShouJi.style.color = 'var(--danger)';
             }
 
             ['desk', 'mob'].forEach(v => {
                 document.getElementById(`chinese_${v}_${index}`).innerText = item.chinese || '---';
                 document.getElementById(`pinyin_${v}_${index}`).innerText = item.pinyin || '---';
                 document.getElementById(`meaning_${v}_${index}`).innerText = item.meaning || '---';
-                document.getElementById(`example_${v}_${index}`).innerHTML = formatExampleHTML(item.example);
+                document.getElementById(`example_${v}_${index}`).innerHTML = geShiHuaLiziHTML(item.example);
             });
 
-            updateStats();
-            checkQuizCompletion();
+            gengXinTongJi();
+            jianChaLianXiWancheng();
         }
 
-        function updateStats() {
-            let total = currentQuizData.length;
-            let done = 0;
-            let correct = 0;
-            let wrong = 0;
+        function gengXinTongJi() {
+            let zongshu = dangQianLianxiShuju.length;
+            let wanchengShu = 0;
+            let zhengqueShu = 0;
+            let cuowuShu = 0;
 
-            currentQuizData.forEach((_, index) => {
-                const row = document.getElementById(`row_desk_${index}`);
-                if (row.classList.contains('row-correct')) {
-                    done++; correct++;
-                } else if (row.classList.contains('row-wrong')) {
-                    done++; wrong++;
+            dangQianLianxiShuju.forEach((_, index) => {
+                const hang = document.getElementById(`row_desk_${index}`);
+                if (hang.classList.contains('row-correct')) {
+                    wanchengShu++; zhengqueShu++;
+                } else if (hang.classList.contains('row-wrong')) {
+                    wanchengShu++; cuowuShu++;
                 }
             });
 
-            const rate = done > 0 ? ((correct / done) * 100).toFixed(1) : '0.0';
-            const percent = total > 0 ? (done / total) * 100 : 0;
+            const bilv = wanchengShu > 0 ? ((zhengqueShu / wanchengShu) * 100).toFixed(1) : '0.0';
+            const baifenbi = zongshu > 0 ? (wanchengShu / zongshu) * 100 : 0;
 
-            document.getElementById('statTotal').innerText = total;
-            document.getElementById('statDone').innerText = done;
-            document.getElementById('statCorrect').innerText = correct;
-            document.getElementById('statWrong').innerText = wrong;
-            document.getElementById('statRate').innerText = rate + '%';
-            document.getElementById('progressBar').style.width = percent + '%';
+            document.getElementById('statTotal').innerText = zongshu;
+            document.getElementById('statDone').innerText = wanchengShu;
+            document.getElementById('statCorrect').innerText = zhengqueShu;
+            document.getElementById('statWrong').innerText = cuowuShu;
+            document.getElementById('statRate').innerText = bilv + '%';
+            document.getElementById('progressBar').style.width = baifenbi + '%';
         }
 
-        function checkQuizCompletion() {
-            let done = 0;
-            currentQuizData.forEach((_, index) => {
-                const row = document.getElementById(`row_desk_${index}`);
-                if (row.classList.contains('row-correct') || row.classList.contains('row-wrong')) {
-                    done++;
+        function jianChaLianXiWancheng() {
+            let wanchengShu = 0;
+            dangQianLianxiShuju.forEach((_, index) => {
+                const hang = document.getElementById(`row_desk_${index}`);
+                if (hang.classList.contains('row-correct') || hang.classList.contains('row-wrong')) {
+                    wanchengShu++;
                 }
             });
 
-            if (done === currentQuizData.length && currentQuizData.length > 0) {
-                stopTimer();
+            if (wanchengShu === dangQianLianxiShuju.length && dangQianLianxiShuju.length > 0) {
+                tingZhiJishiQi();
             }
         }
     </script>
