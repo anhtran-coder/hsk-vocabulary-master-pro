@@ -493,32 +493,28 @@
         let secondsElapsed = 0;
         let isTimerRunning = false;
         let sequentialOffset = 0;
-        let isMuted = false; // Trạng thái bật/tắt tiếng
+        let isMuted = false;
 
-        // Hàm bật/tắt Mute
         function toggleMute() {
             isMuted = !isMuted;
             const btn = document.getElementById('btnMuteToggle');
             if (isMuted) {
                 btn.innerText = "🔇 Tắt Tiếng";
                 btn.classList.add('muted');
-                if ('speechSynthesis' in window) window.speechSynthesis.cancel();
             } else {
                 btn.innerText = "🔊 Bật Tiếng";
                 btn.classList.remove('muted');
             }
         }
 
-        // Hàm phát âm tiếng Trung
+        // Dùng Google TTS Audio API - Giọng đọc chuẩn bản xứ và hoạt động cực tốt trên điện thoại
         function speakText(text) {
             if (isMuted || !text) return;
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = 'zh-CN';
-                utterance.rate = 0.8;
-                window.speechSynthesis.speak(utterance);
-            }
+            // Lọc lấy đoạn chữ Hán chính đầu tiên nếu có ký tự gạch chéo
+            const cleanText = text.split('/')[0].trim();
+            const url = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(cleanText)}&tl=zh-CN&client=tw-ob`;
+            const audio = new Audio(url);
+            audio.play().catch(e => console.log("Không thể phát âm thanh:", e));
         }
 
         function removePinyinTones(str) {
@@ -918,7 +914,7 @@
                 statusElem.style.color = 'var(--danger)';
             }
 
-            // Tự động phát âm ngay lập tức khi kiểm tra xong đáp án
+            // Phát âm ngay khi gõ xong câu
             speakText(item.chinese);
 
             updateStats();
