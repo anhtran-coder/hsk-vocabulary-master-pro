@@ -209,11 +209,30 @@
 
         td.col-hanzi { 
             font-family: 'Noto Sans SC', 'Microsoft YaHei', 'PingFang SC', sans-serif;
-            font-size: 26px; 
+            font-size: 24px; 
             font-weight: 700 !important;
             color: #9f1239;
             letter-spacing: 1px;
         }
+
+        /* Nút loa thêm vào */
+        .speak-btn {
+            background: #6366f1;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 26px;
+            height: 26px;
+            cursor: pointer;
+            font-size: 13px;
+            margin-left: 6px;
+            vertical-align: middle;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .speak-btn:hover { background: #4f46e5; transform: scale(1.1); }
 
         td.col-pinyin { color: #475569; font-style: italic; font-size: 14px; font-weight: 600; }
         td.col-stt { color: #475569; font-weight: 600; }
@@ -222,11 +241,11 @@
         td.col-status { font-weight: 700; }
 
         .col-stt { width: 6%; }
-        .col-hanzi { width: 20%; }
+        .col-hanzi { width: 22%; }
         .col-type { width: 12%; }
         .col-pinyin { width: 16%; }
-        .col-viet { width: 21%; }
-        .col-input { width: 17%; }
+        .col-viet { width: 20%; }
+        .col-input { width: 16%; }
         .col-status { width: 8%; }
 
         input[type="text"] { 
@@ -324,7 +343,7 @@
             .col-status { display: none !important; }
             th { font-size: 11px !important; padding: 10px 2px !important; }
             td { padding: 10px 2px !important; font-size: 13px; }
-            td.col-hanzi { font-size: 20px; }
+            td.col-hanzi { font-size: 18px; }
             td.col-pinyin { font-size: 12px; }
             td.col-type { font-size: 11px; }
             td.col-viet { font-size: 12px; }
@@ -472,6 +491,18 @@
         let secondsElapsed = 0;
         let isTimerRunning = false;
         let sequentialOffset = 0;
+
+        // Hàm phát âm tiếng Trung (ĐÃ THÊM VÀO)
+        function speakText(text) {
+            if (!text) return;
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'zh-CN';
+                utterance.rate = 0.8;
+                window.speechSynthesis.speak(utterance);
+            }
+        }
 
         function removePinyinTones(str) {
             if (!str) return '';
@@ -726,9 +757,16 @@
                     displayMeaning = item.meaning || '---';
                 }
 
+                // Thêm nút loa vào phần hiển thị Chữ Hán
+                let chineseContent = displayChinese;
+                if (displayChinese !== '***') {
+                    const safeText = (item.chinese || '').replace(/'/g, "\\'");
+                    chineseContent = `${displayChinese} <button class="speak-btn" onclick="speakText('${safeText}')" title="Phát âm">🔊</button>`;
+                }
+
                 tr.innerHTML = `
                     <td class="col-stt">${index + 1}</td>
-                    <td id="chinese_${index}" class="col-hanzi">${displayChinese}</td>
+                    <td id="chinese_${index}" class="col-hanzi">${chineseContent}</td>
                     <td class="col-type">${item.type || '-'}</td>
                     <td id="pinyin_${index}" class="col-pinyin">${displayPinyin}</td>
                     <td id="meaning_${index}" class="col-viet">${displayMeaning}</td>
@@ -842,11 +880,14 @@
                 }
             }
 
+            // Khi hiện kết quả, cập nhật lại ô chữ Hán kèm nút loa
+            const safeText = (item.chinese || '').replace(/'/g, "\\'");
             if (mode === 'chinese_to_meaning') {
+                document.getElementById(`chinese_${index}`).innerHTML = `${item.chinese || '---'} <button class="speak-btn" onclick="speakText('${safeText}')" title="Phát âm">🔊</button>`;
                 document.getElementById(`pinyin_${index}`).innerText = item.pinyin || '---';
                 document.getElementById(`meaning_${index}`).innerText = item.meaning || '---';
             } else {
-                document.getElementById(`chinese_${index}`).innerText = item.chinese || '---';
+                document.getElementById(`chinese_${index}`).innerHTML = `${item.chinese || '---'} <button class="speak-btn" onclick="speakText('${safeText}')" title="Phát âm">🔊</button>`;
                 document.getElementById(`pinyin_${index}`).innerText = item.pinyin || '---';
             }
 
