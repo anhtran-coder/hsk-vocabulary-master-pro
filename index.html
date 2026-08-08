@@ -22,7 +22,9 @@
             --header-border: #c7d2fe;
         }
 
-        *, *::before, *::after { box-sizing: border-box; }
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
 
         html, body {
             width: 100%;
@@ -565,7 +567,6 @@
             if (!('speechSynthesis' in window)) return;
             const voices = window.speechSynthesis.getVoices();
             const voiceSelect = document.getElementById('voiceSelect');
-            if (!voiceSelect) return;
             voiceSelect.innerHTML = '';
 
             availableVoices = voices.filter(v => {
@@ -661,8 +662,7 @@
             } else {
                 fullVocabData = [...EMBEDDED_VOCAB_DATA];
             }
-            const rangeToInput = document.getElementById('rangeTo');
-            if (rangeToInput) rangeToInput.value = fullVocabData.length;
+            document.getElementById('rangeTo').value = fullVocabData.length;
             
             document.getElementById('btnNewQuiz').addEventListener('click', startNewQuiz);
             document.getElementById('btnRetryQuiz').addEventListener('click', retryCurrentQuiz);
@@ -711,186 +711,75 @@
         function updateTimerDisplay() {
             const mins = Math.floor(secondsElapsed / 60).toString().padStart(2, '0');
             const secs = (secondsElapsed % 60).toString().padStart(2, '0');
-            const timerEl = document.getElementById('timerDisplay');
-            if (timerEl) timerEl.innerText = `${mins}:${secs}`;
+            document.getElementById('timerDisplay').innerText = `${mins}:${secs}`;
         }
-
-        document.getElementById('excelFile').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            const statusText = document.getElementById('loadingStatus');
-            if (statusText) { statusText.innerText = "⏳ Đang kiểm tra..."; statusText.style.color = "var(--primary)"; }
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const data = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(data, { type: 'array' });
-                    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-
-                    const cellZ1 = worksheet['Z1'] ? worksheet['Z1'].v.toString().trim() : '';
-                    const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: "" });
-
-                    if (!rows || rows.length < 2) {
-                        alert("File Excel không có dữ liệu!");
-                        return;
-                    }
-
-                    let hasValidKey = false;
-                    if (cellZ1 === SECRET_KEY) {
-                        hasValidKey = true;
-                    } else if (rows[0]) {
-                        for (let col = 0; col < rows[0].length; col++) {
-                            if (rows[0][col] && rows[0][col].toString().trim() === SECRET_KEY) {
-                                hasValidKey = true;
-                                break;
-                            }
-                        }
-                    }
-
-                    if (!hasValidKey) {
-                        alert("❌ TRUY CẬP BỊ TỪ CHỐI!\n\nFile Excel này KHÔNG HỢP LỆ hoặc mã khóa ở ô Z1 không đúng.");
-                        document.getElementById('excelFile').value = '';
-                        if (statusText) statusText.innerText = "";
-                        return;
-                    }
-
-                    let headerRowIndex = 0;
-                    for (let i = 0; i < Math.min(rows.length, 5); i++) {
-                        const rowStr = rows[i].join(" ").toUpperCase();
-                        if (rowStr.includes("CHENESE") || rowStr.includes("CHINESE") || rowStr.includes("PINYIN") || rowStr.includes("MEANING")) {
-                            headerRowIndex = i;
-                            break;
-                        }
-                    }
-
-                    const headers = rows[headerRowIndex].map(h => h.toString().trim().toUpperCase());
-                    let colChinese = -1, colType = -1, colPinyin = -1, colMeaning = -1;
-
-                    headers.forEach((h, idx) => {
-                        if (h.includes('INPUT')) return;
-                        if ((h.includes('CHENESE') || h.includes('CHINESE') || h.includes('HÁN')) && colChinese === -1) colChinese = idx;
-                        else if (h.includes('TYPE') || h.includes('LOẠI TỪ')) colType = idx;
-                        else if (h.includes('PINYIN') || h.includes('PHIÊN ÂM')) colPinyin = idx;
-                        else if (h.includes('MEANING') || h.includes('TIẾNG VIỆT') || h.includes('NGHĨA')) colMeaning = idx;
-                    });
-
-                    if (colChinese === -1 || colPinyin === -1 || colMeaning === -1) {
-                        alert("Không tìm thấy các cột dữ liệu tiêu chuẩn (Chinese, Pinyin, Meaning) trong file Excel!");
-                        return;
-                    }
-
-                    let loadedData = [];
-                    for (let i = headerRowIndex + 1; i < rows.length; i++) {
-                        const r = rows[i];
-                        if (!r || r.length === 0) continue;
-                        const chinese = r[colChinese] ? r[colChinese].toString().trim() : '';
-                        const type = colType !== -1 && r[colType] ? r[colType].toString().trim() : '';
-                        const pinyin = r[colPinyin] ? r[colPinyin].toString().trim() : '';
-                        const meaning = r[colMeaning] ? r[colMeaning].toString().trim() : '';
-
-                        if (chinese && meaning) {
-                            loadedData.push({ chinese, type, pinyin, meaning });
-                        }
-                    }
-
-                    if (loadedData.length > 0) {
-                        fullVocabData = loadedData;
-                        localStorage.setItem('hsk_vocab_data', JSON.stringify(fullVocabData));
-                        document.getElementById('rangeTo').value = fullVocabData.length;
-                        document.getElementById('rangeFrom').value = 1;
-                        sequentialOffset = 0;
-                        if (statusText) {
-                            statusText.innerText = `✅ Đã tải ${fullVocabData.length} từ thành công!`;
-                            setTimeout(() => { statusText.innerText = ""; }, 3000);
-                        }
-                        startNewQuiz();
-                    } else {
-                        alert("Không đọc được từ vựng nào từ file Excel!");
-                    }
-                } catch (err) {
-                    console.error(err);
-                    alert("Lỗi khi đọc file Excel!");
-                }
-            };
-            reader.readAsArrayBuffer(file);
-        });
 
         function startNewQuiz() {
             resetTimer();
-            const quizSizeInput = document.getElementById('quizSize');
-            const rangeFromInput = document.getElementById('rangeFrom');
-            const rangeToInput = document.getElementById('rangeTo');
-            const shuffleSelect = document.getElementById('shuffleSelect');
+            const fromInput = parseInt(document.getElementById('rangeFrom').value) || 1;
+            const toInput = parseInt(document.getElementById('rangeTo').value) || fullVocabData.length;
+            const quizSize = parseInt(document.getElementById('quizSize').value) || 10;
+            const shuffleMode = document.getElementById('shuffleSelect').value;
 
-            let quizSize = parseInt(quizSizeInput.value) || 10;
-            let fromIdx = parseInt(rangeFromInput.value) || 1;
-            let toIdx = parseInt(rangeToInput.value) || fullVocabData.length;
-
-            fromIdx = Math.max(1, Math.min(fromIdx, fullVocabData.length));
-            toIdx = Math.max(fromIdx, Math.min(toIdx, fullVocabData.length));
-
-            let subset = fullVocabData.slice(fromIdx - 1, toIdx);
-            if (subset.length === 0) subset = [...fullVocabData];
-
-            let shuffleMode = shuffleSelect ? shuffleSelect.value : 'sequential';
-            let selectedItems = [];
-
-            if (shuffleMode === 'random') {
-                let shuffled = [...subset].sort(() => Math.random() - 0.5);
-                selectedItems = shuffled.slice(0, Math.min(quizSize, shuffled.length));
-            } else {
-                if (sequentialOffset >= subset.length) sequentialOffset = 0;
-                let chunk = subset.slice(sequentialOffset, sequentialOffset + quizSize);
-                if (chunk.length < quizSize) {
-                    let remaining = quizSize - chunk.length;
-                    chunk = chunk.concat(subset.slice(0, remaining));
-                    sequentialOffset = remaining;
-                } else {
-                    sequentialOffset += quizSize;
-                }
-                selectedItems = chunk;
+            let startIdx = Math.max(0, fromInput - 1);
+            let endIdx = Math.min(fullVocabData.length, toInput);
+            if (startIdx >= endIdx) {
+                startIdx = 0;
+                endIdx = fullVocabData.length;
             }
 
-            currentQuizData = selectedItems.map(item => ({
+            let pool = fullVocabData.slice(startIdx, endIdx);
+            if (pool.length === 0) pool = [...fullVocabData];
+
+            let selected = [];
+            if (shuffleMode === 'random') {
+                let shuffled = [...pool].sort(() => Math.random() - 0.5);
+                selected = shuffled.slice(0, Math.min(quizSize, shuffled.length));
+            } else {
+                if (sequentialOffset >= pool.length) sequentialOffset = 0;
+                let count = Math.min(quizSize, pool.length);
+                for (let i = 0; i < count; i++) {
+                    selected.push(pool[(sequentialOffset + i) % pool.length]);
+                }
+                sequentialOffset = (sequentialOffset + count) % pool.length;
+            }
+
+            currentQuizData = selected.map((item, index) => ({
                 ...item,
+                originalIndex: startIdx + index + 1,
                 userAnswer: '',
-                status: 'pending',
-                wrongHint: ''
+                status: 'unanswered', // unanswered, correct, wrong
+                attempts: 0
             }));
 
             renderQuizTable();
-            updateDashboardStats();
+            updateStats();
         }
 
         function retryCurrentQuiz() {
             resetTimer();
             currentQuizData.forEach(item => {
                 item.userAnswer = '';
-                item.status = 'pending';
-                item.wrongHint = '';
+                item.status = 'unanswered';
+                item.attempts = 0;
             });
             renderQuizTable();
-            updateDashboardStats();
+            updateStats();
         }
 
         function resetAllData() {
-            if (confirm("Bạn có chắc chắn muốn xóa dữ liệu tùy chỉnh và về mặc định không?")) {
+            if (confirm("Bạn có chắc chắn muốn xóa toàn bộ dữ liệu tùy chỉnh và trở về dữ liệu mặc định không?")) {
                 localStorage.removeItem('hsk_vocab_data');
                 fullVocabData = [...EMBEDDED_VOCAB_DATA];
-                document.getElementById('rangeFrom').value = 1;
                 document.getElementById('rangeTo').value = fullVocabData.length;
-                sequentialOffset = 0;
                 startNewQuiz();
+                alert("Đã khôi phục dữ liệu gốc thành công!");
             }
         }
 
         function renderQuizTable() {
             const tbody = document.getElementById('vocabTable');
-            if (!tbody) return;
             tbody.innerHTML = '';
-
             const mode = document.getElementById('modeSelect').value;
 
             currentQuizData.forEach((item, index) => {
@@ -898,141 +787,169 @@
                 if (item.status === 'correct') tr.className = 'row-correct';
                 else if (item.status === 'wrong') tr.className = 'row-wrong';
 
-                let hanziDisplay = item.chinese;
-                let pinyinDisplay = item.pinyin;
-                let vietDisplay = item.meaning;
-                let inputPlaceholder = "";
+                // STT
+                const tdStt = document.createElement('td');
+                tdStt.className = 'col-stt';
+                tdStt.innerText = index + 1;
+                tr.appendChild(tdStt);
 
+                // Chữ Hán
+                const tdHanzi = document.createElement('td');
+                tdHanzi.className = 'col-hanzi';
                 if (mode === 'chinese_only') {
-                    inputPlaceholder = "Gõ chữ Hán...";
-                } else if (mode === 'pinyin_to_chinese') {
-                    inputPlaceholder = "Gõ Pinyin hoặc Hán...";
-                } else if (mode === 'chinese_to_meaning') {
-                    inputPlaceholder = "Gõ nghĩa tiếng Việt...";
+                    tdHanzi.innerHTML = `❓ <button class="btn-speaker" onclick="playPronunciation('${item.chinese}')" title="Nghe đọc">🔊</button>`;
+                } else {
+                    tdHanzi.innerHTML = `${item.chinese} <button class="btn-speaker" onclick="playPronunciation('${item.chinese}')" title="Nghe đọc">🔊</button>`;
                 }
+                tr.appendChild(tdHanzi);
 
-                let statusSymbol = '⏳';
-                if (item.status === 'correct') statusSymbol = '✅';
-                else if (item.status === 'wrong') statusSymbol = '❌';
+                // Loại từ
+                const tdType = document.createElement('td');
+                tdType.className = 'col-type';
+                tdType.innerText = item.type || '';
+                tr.appendChild(tdType);
 
-                let wrongHintHtml = item.status === 'wrong' && item.wrongHint ? `<span class="wrong-ans-hint">Đúng: ${item.wrongHint}</span>` : '';
+                // Pinyin
+                const tdPinyin = document.createElement('td');
+                tdPinyin.className = 'col-pinyin';
+                if (mode === 'pinyin_to_chinese') {
+                    tdPinyin.innerText = item.pinyin || '';
+                } else {
+                    tdPinyin.innerText = (mode === 'chinese_only') ? (item.pinyin || '') : (item.pinyin || '');
+                }
+                tr.appendChild(tdPinyin);
 
-                tr.innerHTML = `
-                    <td class="col-stt">${index + 1}</td>
-                    <td class="col-hanzi">
-                        ${hanziDisplay}
-                        <button class="btn-speaker" onclick="playPronunciation('${item.chinese}')" title="Phát âm">🔊</button>
-                    </td>
-                    <td class="col-type">${item.type || '-'}</td>
-                    <td class="col-pinyin">${pinyinDisplay}</td>
-                    <td class="col-viet">${vietDisplay}</td>
-                    <td class="col-input">
-                        <input type="text" id="input-${index}" value="${item.userAnswer}" placeholder="${inputPlaceholder}" ${item.status === 'correct' ? 'disabled' : ''}>
-                        ${wrongHintHtml}
-                    </td>
-                    <td class="col-status">${statusSymbol}</td>
-                `;
+                // Tiếng Việt
+                const tdViet = document.createElement('td');
+                tdViet.className = 'col-viet';
+                if (mode === 'chinese_to_meaning') {
+                    tdViet.innerText = '❓';
+                } else {
+                    tdViet.innerText = item.meaning || '';
+                }
+                tr.appendChild(tdViet);
+
+                // Ô nhập
+                const tdInput = document.createElement('td');
+                tdInput.className = 'col-input';
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.value = item.userAnswer;
+                input.disabled = (item.status === 'correct');
+                
+                input.addEventListener('input', (e) => {
+                    item.userAnswer = e.target.value;
+                    checkAndStartTimer();
+                });
+
+                input.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        evaluateAnswer(index, input.value);
+                    }
+                });
+
+                tdInput.appendChild(input);
+
+                if (item.status === 'wrong') {
+                    const hintSpan = document.createElement('span');
+                    hintSpan.className = 'wrong-ans-hint';
+                    if (mode === 'chinese_only') hintSpan.innerText = `Đ/A: ${item.chinese}`;
+                    else if (mode === 'pinyin_to_chinese') hintSpan.innerText = `Đ/A: ${item.chinese}`;
+                    else hintSpan.innerText = `Đ/A: ${item.meaning}`;
+                    tdInput.appendChild(hintSpan);
+                }
+                tr.appendChild(tdInput);
+
+                // Trạng thái
+                const tdStatus = document.createElement('td');
+                tdStatus.className = 'col-status';
+                if (item.status === 'correct') tdStatus.innerHTML = '✅';
+                else if (item.status === 'wrong') tdStatus.innerHTML = '❌';
+                else tdStatus.innerHTML = '⏳';
+                tr.appendChild(tdStatus);
 
                 tbody.appendChild(tr);
-
-                const inputEl = document.getElementById(`input-${index}`);
-                if (inputEl) {
-                    inputEl.addEventListener('input', checkAndStartTimer);
-                    inputEl.addEventListener('keypress', function(e) {
-                        if (e.key === 'Enter') {
-                            handleAnswerSubmit(index, inputEl.value);
-                            const nextInput = document.getElementById(`input-${index + 1}`);
-                            if (nextInput && !nextInput.disabled) {
-                                nextInput.focus();
-                            } else {
-                                inputEl.blur();
-                            }
-                        }
-                    });
-                    inputEl.addEventListener('blur', function(e) {
-                        handleAnswerSubmit(index, e.target.value);
-                    });
-                }
             });
         }
 
-        function handleAnswerSubmit(index, val) {
+        function evaluateAnswer(index, val) {
             const item = currentQuizData[index];
-            if (item.status === 'correct') return;
-
-            item.userAnswer = val;
             const mode = document.getElementById('modeSelect').value;
-
-            if (!val.trim()) {
-                item.status = 'pending';
-                item.wrongHint = '';
-                renderQuizTable();
-                updateDashboardStats();
-                return;
-            }
+            const cleanedVal = cleanString(val);
+            if (!cleanedVal) return;
 
             let isCorrect = false;
 
             if (mode === 'chinese_only') {
-                let userClean = cleanString(val);
-                let validVariants = splitVariants(item.chinese);
-                isCorrect = validVariants.some(v => cleanString(v) === userClean);
-                item.wrongHint = item.chinese;
+                const validVariants = splitVariants(item.chinese);
+                isCorrect = validVariants.some(v => cleanString(v) === cleanedVal);
             } else if (mode === 'pinyin_to_chinese') {
-                let userClean = cleanString(val);
-                let userNoTone = removePinyinTones(userClean);
-                let validHanzi = splitVariants(item.chinese);
-                let validPinyin = splitVariants(item.pinyin);
-
-                isCorrect = validHanzi.some(h => cleanString(h) === userClean) ||
-                            validPinyin.some(p => cleanString(p) === userClean || removePinyinTones(p) === userNoTone);
-                item.wrongHint = `${item.chinese} (${item.pinyin})`;
+                const validHanzi = splitVariants(item.chinese);
+                const validPinyin = splitVariants(item.pinyin);
+                const validNoTonePinyin = validPinyin.map(p => removePinyinTones(p));
+                isCorrect = validHanzi.includes(cleanedVal) || 
+                            validPinyin.includes(cleanedVal) || 
+                            validNoTonePinyin.includes(removePinyinTones(cleanedVal));
             } else if (mode === 'chinese_to_meaning') {
-                let userClean = cleanString(val);
-                let userNoTone = removePinyinTones(userClean);
-                let validMeaning = splitVariants(item.meaning);
-
-                isCorrect = validMeaning.some(m => cleanString(m) === userClean || removePinyinTones(m) === userNoTone);
-                item.wrongHint = item.meaning;
+                const validMeanings = splitVariants(item.meaning);
+                isCorrect = validMeanings.some(m => cleanString(m) === cleanedVal);
             }
 
             if (isCorrect) {
                 item.status = 'correct';
-                item.wrongHint = '';
                 playPronunciation(item.chinese);
             } else {
                 item.status = 'wrong';
+                item.attempts++;
             }
 
             renderQuizTable();
-            updateDashboardStats();
+            updateStats();
 
+            // Tự động focus sang ô tiếp theo nếu đúng
+            if (isCorrect) {
+                const inputs = document.querySelectorAll('#vocabTable input');
+                if (inputs[index + 1]) {
+                    inputs[index + 1].focus();
+                }
+            }
+
+            // Kiểm tra xem đã hoàn thành tất cả chưa
             const allDone = currentQuizData.every(i => i.status === 'correct');
             if (allDone) {
                 stopTimer();
+                setTimeout(() => {
+                    alert(`🎉 Chúc mừng bạn đã hoàn thành xuất sắc bài tập trong thời gian ${document.getElementById('timerDisplay').innerText}!`);
+                }, 200);
             }
         }
 
-        function updateDashboardStats() {
+        function updateStats() {
             const total = currentQuizData.length;
-            const correct = currentQuizData.filter(i => i.status === 'correct').length;
-            const wrong = currentQuizData.filter(i => i.status === 'wrong').length;
-            const done = correct + wrong;
+            let done = 0;
+            let correct = 0;
+            let wrong = 0;
+
+            currentQuizData.forEach(item => {
+                if (item.status === 'correct') {
+                    done++;
+                    correct++;
+                } else if (item.status === 'wrong') {
+                    done++;
+                    wrong++;
+                }
+            });
+
+            document.getElementById('statTotal').innerText = total;
+            document.getElementById('statDone').innerText = done;
+            document.getElementById('statCorrect').innerText = correct;
+            document.getElementById('statWrong').innerText = wrong;
+
             const rate = total > 0 ? ((correct / total) * 100).toFixed(1) : '0.0';
+            document.getElementById('statRate').innerText = rate + '%';
 
-            const stTotal = document.getElementById('statTotal');
-            const stDone = document.getElementById('statDone');
-            const stCorrect = document.getElementById('statCorrect');
-            const stWrong = document.getElementById('statWrong');
-            const stRate = document.getElementById('statRate');
-            const progressBar = document.getElementById('progressBar');
-
-            if (stTotal) stTotal.innerText = total;
-            if (stDone) stDone.innerText = done;
-            if (stCorrect) stCorrect.innerText = correct;
-            if (stWrong) stWrong.innerText = wrong;
-            if (stRate) stRate.innerText = `${rate}%`;
-            if (progressBar) progressBar.style.width = `${(correct / (total || 1)) * 100}%`;
+            const percent = total > 0 ? (done / total) * 100 : 0;
+            document.getElementById('progressBar').style.width = percent + '%';
         }
     </script>
 </body>
