@@ -1,1026 +1,482 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>HSK Vocabulary Master - Hệ Thống Luyện Từ Vựng HSK</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@500;700;900&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+const SECRET_KEY = "CAMTU2019S2THANHAN2025";
 
-    <style>
-        :root {
-            --primary: #6366f1;
-            --success: #10b981;
-            --success-light: rgba(209, 250, 229, 0.85);
-            --danger: #ef4444;
-            --danger-light: rgba(254, 226, 226, 0.85);
-            --card-bg: rgba(255, 255, 255, 0.88);
-            --text-dark: #1e293b;
-            --header-bg-start: rgba(238, 242, 255, 0.95);
-            --header-bg-end: rgba(224, 231, 255, 0.95);
-            --header-text: #3730a3;
-            --header-border: #c7d2fe;
+const EMBEDDED_VOCAB_DATA = [
+    {"chinese": "早饭 / 早餐", "type": "Danh từ", "pinyin": "zǎofàn / zǎocān", "meaning": "Bữa sáng, điểm tâm"},
+    {"chinese": "午饭 / 晚餐", "type": "Danh từ", "pinyin": "wǔfàn / wǔcān", "meaning": "Bữa trưa"},
+    {"chinese": "因为……所以……", "type": "Liên từ", "pinyin": "yīnwèi……suǒyǐ……", "meaning": "Vì…… nên……"},
+    {"chinese": "姐姐", "type": "Danh từ", "pinyin": "jiějie", "meaning": "Chị gái"}
+];
+
+let fullVocabData = [];
+let currentQuizData = [];
+let timerInterval = null;
+let secondsElapsed = 0;
+let isTimerRunning = false;
+let sequentialOffset = 0;
+let isAudioMuted = false;
+let availableVoices = [];
+
+function populateVoices() {
+    if (!('speechSynthesis' in window)) return;
+    const voices = window.speechSynthesis.getVoices();
+    const voiceSelect = document.getElementById('voiceSelect');
+    voiceSelect.innerHTML = '';
+
+    availableVoices = voices.filter(v => {
+        const lang = v.lang.toLowerCase();
+        const name = v.name.toLowerCase();
+        if (lang.includes('zh-hk') || lang.includes('yue') || name.includes('cantonese') || name.includes('粵語')) {
+            return false;
         }
+        return lang.includes('zh') || lang.includes('cn');
+    });
 
-        *, *::before, *::after {
-            box-sizing: border-box;
+    if (availableVoices.length === 0) {
+        const opt = document.createElement('option');
+        opt.value = '';
+        opt.innerText = 'Giọng Mặc định';
+        voiceSelect.appendChild(opt);
+        return;
+    }
+
+    let bestVoiceIndex = 0;
+    availableVoices.forEach((voice, index) => {
+        const opt = document.createElement('option');
+        opt.value = index;
+        let name = voice.name.replace('Microsoft ', '').replace('Google ', '');
+        opt.innerText = `${name} (${voice.lang})`;
+        voiceSelect.appendChild(opt);
+
+        if (voice.name.includes('Google') || voice.name.includes('Xiaoxiao') || voice.name.includes('Yunxi') || voice.name.includes('Natural')) {
+            bestVoiceIndex = index;
         }
+    });
 
-        html, body {
-            width: 100%;
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
-        }
+    voiceSelect.selectedIndex = bestVoiceIndex;
+}
 
-        body { 
-            font-family: 'Inter', system-ui, -apple-system, sans-serif; 
-            padding: 20px;
-            color: var(--text-dark);
-            font-size: 14px; 
-            position: relative;
-            min-height: 100vh;
-            background: linear-gradient(135deg, #fbcfe8 0%, #e0e7ff 50%, #bae6fd 100%);
-        }
+if ('speechSynthesis' in window) {
+    window.speechSynthesis.onvoiceschanged = populateVoices;
+}
 
-        .falling-decor {
-            position: fixed;
-            top: -10vh;
-            z-index: 0;
-            user-select: none;
-            pointer-events: none;
-            animation: fall linear infinite;
-            font-size: 24px;
-            opacity: 0.8;
-        }
+function playPronunciation(text) {
+    if (isAudioMuted || !text) return;
+    window.speechSynthesis.cancel(); 
 
-        @keyframes fall {
-            0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(110vh) rotate(360deg); opacity: 0.2; }
-        }
+    const cleanText = text.split('/')[0].replace(/[^\u4e00-\u9fa5]/g, '').trim() || text.split('/')[0].trim(); 
+    const utterance = new SpeechSynthesisUtterance(cleanText);
+    
+    const voiceSelect = document.getElementById('voiceSelect');
+    const selectedIdx = voiceSelect ? voiceSelect.value : '';
 
-        .container-wrapper { 
-            position: relative; 
-            z-index: 1; 
-            max-width: 1200px; 
-            margin: 0 auto; 
-            width: 100%;
-        }
+    if (selectedIdx !== '' && availableVoices[selectedIdx]) {
+        utterance.voice = availableVoices[selectedIdx];
+        utterance.lang = availableVoices[selectedIdx].lang;
+    } else {
+        utterance.lang = 'zh-CN';
+    }
 
-        .app-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
+    utterance.rate = 0.85; 
+    utterance.pitch = 1.0;  
+    window.speechSynthesis.speak(utterance);
+}
 
-        .app-title {
-            font-size: 26px;
-            font-weight: 700;
-            color: #1e1b4b;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin: 0;
-            text-shadow: 0 2px 4px rgba(255, 255, 255, 0.8);
-        }
+function removePinyinTones(str) {
+    if (!str) return '';
+    return str.normalize('NFD')
+              .replace(/[\u0300-\u036f]/g, '')
+              .replace(/ü/g, 'v')
+              .replace(/Ü/g, 'v')
+              .toLowerCase();
+}
 
-        .app-title .pro-tag {
-            background: linear-gradient(135deg, #4f46e5, #8b5cf6);
-            color: white;
-            font-size: 11px;
-            padding: 4px 10px;
-            border-radius: 12px;
-            vertical-align: middle;
-            box-shadow: 0 2px 5px rgba(79, 70, 229, 0.3);
-        }
+function cleanString(str) {
+    if (!str) return '';
+    return str.toLowerCase().trim().replace(/\s+/g, ' ');
+}
 
-        .controls { 
-            display: flex; 
-            gap: 10px; 
-            flex-wrap: wrap; 
-            align-items: center; 
-            background: rgba(255, 255, 255, 0.85); 
-            backdrop-filter: blur(16px);
-            padding: 16px 18px; 
-            border-radius: 20px; 
-            box-shadow: 0 12px 35px -8px rgba(99, 102, 241, 0.2);
-            margin-bottom: 20px;
-            border: 2px solid rgba(255, 255, 255, 0.9);
-            width: 100%;
-        }
+function splitVariants(str) {
+    if (!str) return [];
+    return str.split(/[/,;|\n]+/)
+              .map(s => cleanString(s))
+              .filter(s => s.length > 0);
+}
 
-        .control-box {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: #ffffff;
-            padding: 8px 12px;
-            border-radius: 12px;
-            border: 1.5px solid #e2e8f0;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
-            transition: all 0.2s ease;
-            flex-shrink: 0;
-        }
-
-        .control-box:hover { border-color: #cbd5e1; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-
-        .controls label.box-label {
-            font-weight: 600;
-            font-size: 13px;
-            color: #475569;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            white-space: nowrap;
-            margin: 0;
-        }
-
-        .controls select, .controls input[type="number"] {
-            padding: 6px 10px;
-            border: 1.5px solid #cbd5e1;
-            border-radius: 8px;
-            outline: none;
-            font-weight: 600;
-            color: #0f172a;
-            background: #f8fafc;
-            transition: all 0.2s;
-            font-size: 13px;
-        }
-
-        .controls select:focus, .controls input:focus {
-            border-color: #6366f1;
-            background: #ffffff;
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
-        }
-
-        .range-container {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: #f8fafc;
-            padding: 4px 8px;
-            border-radius: 10px;
-            border: 1.5px solid #cbd5e1;
-        }
-        .range-container input { width: 60px; text-align: center; }
-
-        .btn { 
-            padding: 10px 16px; 
-            border: none; 
-            border-radius: 12px; 
-            cursor: pointer; 
-            font-weight: 600; 
-            color: white; 
-            font-size: 13px; 
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
-            position: relative;
-            overflow: hidden;
-            flex-shrink: 0;
-        }
-
-        .btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.18); }
-
-        .btn-excel { background: linear-gradient(135deg, #059669, #047857); box-shadow: 0 4px 15px rgba(5, 150, 105, 0.35); }
-        .btn-new { background: linear-gradient(135deg, #6366f1, #4f46e5); box-shadow: 0 4px 15px rgba(99, 102, 241, 0.35); }
-        .btn-retry { background: linear-gradient(135deg, #f59e0b, #d97706); box-shadow: 0 4px 15px rgba(245, 158, 11, 0.35); }
-        .btn-reset { background: linear-gradient(135deg, #ef4444, #dc2626); box-shadow: 0 4px 15px rgba(239, 68, 68, 0.35); }
-        .btn-audio { background: linear-gradient(135deg, #8b5cf6, #6d28d9); box-shadow: 0 4px 15px rgba(139, 92, 246, 0.35); }
-        .btn-audio.muted { background: linear-gradient(135deg, #64748b, #475569); }
-
-        .btn-speaker {
-            background: #e0e7ff;
-            border: 1px solid #c7d2fe;
-            border-radius: 50%;
-            width: 28px;
-            height: 28px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 13px;
-            margin-left: 6px;
-            transition: all 0.2s;
-            flex-shrink: 0;
-        }
-        .btn-speaker:hover { background: #818cf8; color: white; transform: scale(1.1); }
-        
-        .main-layout { 
-            display: flex; 
-            gap: 20px; 
-            align-items: flex-start; 
-            width: 100%;
-        }
-
-        .table-container { 
-            flex: 1; 
-            background: var(--card-bg); 
-            backdrop-filter: blur(10px);
-            border-radius: 16px; 
-            padding: 16px; 
-            box-shadow: 0 10px 30px -5px rgba(0,0,0,0.1);
-            border: 2px solid rgba(244, 114, 182, 0.4);
-            overflow-x: auto; 
-        }
-        
-        table { width: 100%; border-collapse: separate; border-spacing: 0; table-layout: fixed; }
-
-        th { 
-            background: linear-gradient(135deg, var(--header-bg-start), var(--header-bg-end)) !important;
-            color: var(--header-text) !important;
-            font-weight: 700 !important;
-            font-size: 13px !important;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            padding: 12px 8px !important;
-            border-top: 1.5px solid var(--header-border) !important;
-            border-bottom: 2px solid #f472b6 !important;
-        }
-
-        th:first-child { border-left: 1.5px solid var(--header-border); border-top-left-radius: 10px; border-bottom-left-radius: 10px; }
-        th:last-child { border-right: 1.5px solid var(--header-border); border-top-right-radius: 10px; border-bottom-right-radius: 10px; }
-
-        td { border-bottom: 1px solid rgba(203, 213, 225, 0.6); padding: 12px 6px; text-align: center; word-wrap: break-word; }
-
-        td.col-hanzi { 
-            font-family: 'Noto Sans SC', 'Microsoft YaHei', 'PingFang SC', sans-serif;
-            font-size: 26px; 
-            font-weight: 700 !important;
-            color: #9f1239;
-            letter-spacing: 1px;
-        }
-
-        td.col-pinyin { color: #475569; font-style: italic; font-size: 14px; font-weight: 600; }
-        td.col-stt { color: #475569; font-weight: 600; }
-        td.col-type { color: #0284c7; font-size: 12px; font-weight: 600; }
-        td.col-viet { font-weight: 600; color: #1e293b; }
-        td.col-status { font-weight: 700; }
-
-        .col-stt { width: 6%; }
-        .col-hanzi { width: 20%; }
-        .col-type { width: 12%; }
-        .col-pinyin { width: 16%; }
-        .col-viet { width: 21%; }
-        .col-input { width: 17%; }
-        .col-status { width: 8%; }
-
-        input[type="text"] { 
-            width: 85%; 
-            padding: 8px 10px; 
-            border: 1.5px solid #cbd5e1; 
-            border-radius: 8px; 
-            text-align: center; 
-            font-size: 15px; 
-            font-weight: 500;
-            outline: none;
-            background: rgba(255, 255, 255, 0.95);
-        }
-
-        input[type="text"]:focus {
-            border-color: #ec4899;
-            background: #ffffff;
-            box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.25);
-        }
-
-        input[type="text"]:disabled {
-            background-color: #f1f5f9;
-            color: #475569;
-            cursor: not-allowed;
-            border-color: #cbd5e1;
-            font-weight: 600;
-        }
-
-        .wrong-ans-hint {
-            color: #dc2626;
-            font-weight: 700;
-            font-size: 13px;
-            display: block;
-            margin-top: 2px;
-        }
-        
-        tr.row-correct td { background-color: var(--success-light) !important; color: #064e3b; }
-        tr.row-wrong td { background-color: var(--danger-light) !important; color: #7f1d1d; }
-
-        .stats-dashboard { 
-            width: 250px; 
-            background: var(--card-bg); 
-            backdrop-filter: blur(10px);
-            border-radius: 16px; 
-            padding: 18px; 
-            box-shadow: 0 10px 30px -5px rgba(0,0,0,0.1);
-            border: 2px solid rgba(244, 114, 182, 0.4);
-            flex-shrink: 0;
-        }
-
-        .stats-dashboard h3 { font-size: 13px; margin: 0 0 12px 0; text-transform: uppercase; color: #db2777; font-weight: 700; }
-
-        .timer-box {
-            background: linear-gradient(135deg, #e0e7ff, #fce7f3);
-            border: 1.5px solid #f472b6;
-            border-radius: 12px;
-            padding: 10px;
-            text-align: center;
-            margin-bottom: 14px;
-        }
-        .timer-box .timer-label { font-size: 11px; color: #4f46e5; font-weight: 700; text-transform: uppercase; }
-        .timer-box .timer-value { font-size: 20px; font-weight: 800; color: #db2777; margin-top: 2px; font-family: monospace; }
-
-        .progress-bar-bg { width: 100%; height: 8px; background-color: rgba(203, 213, 225, 0.6); border-radius: 10px; overflow: hidden; margin-bottom: 16px; }
-        .progress-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #ec4899, #8b5cf6); transition: width 0.4s ease; }
-
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .stat-card { background: rgba(255, 255, 255, 0.85); padding: 10px; border-radius: 10px; border: 1.5px solid #fbcfe8; text-align: center; }
-        .stat-card .label { font-size: 11px; color: #475569; margin-bottom: 4px; font-weight: 600; }
-        .stat-card .value { font-size: 16px; font-weight: 700; }
-
-        .rate-card { margin-top: 12px; text-align: center; background: rgba(253, 242, 248, 0.9); padding: 12px; border-radius: 12px; border: 1.5px solid #f472b6; }
-        
-        .contact-card {
-            margin-top: 14px;
-            background: rgba(255, 255, 255, 0.95);
-            border: 1.5px solid #cbd5e1;
-            border-radius: 12px;
-            padding: 10px 12px;
-            font-size: 11px;
-            color: #334155;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-        }
-        .contact-card .contact-title {
-            font-weight: 700;
-            color: #4338ca;
-            margin-bottom: 6px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            text-transform: uppercase;
-            font-size: 10px;
-            letter-spacing: 0.3px;
-        }
-        .contact-card .contact-item {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            margin-top: 4px;
-            word-break: break-all;
-        }
-        .contact-card .contact-item a { color: #2563eb; text-decoration: none; font-weight: 600; }
-        .contact-card .contact-item a:hover { text-decoration: underline; }
-
-        .footer-owner { text-align: center; margin-top: 14px; padding-top: 10px; border-top: 1px dashed #cbd5e1; font-size: 11px; color: #475569; font-weight: 500; }
-
-        /* TỐI ƯU GIAO DIỆN TRÊN ĐIỆN THOẠI (MOBILE) */
-        @media screen and (max-width: 950px) {
-            body { padding: 8px 6px; }
-            .app-title { font-size: 20px; }
-            
-            /* Bố cục lại các nút và control box thành 2 cột cân đối, giao diện gọn gàng */
-            .controls {
-                display: grid;
-                grid-template-columns: repeat(2, 1fr);
-                gap: 8px;
-                padding: 10px;
-                border-radius: 14px;
-                margin-bottom: 12px;
+window.onload = function() {
+    populateVoices();
+    const savedData = localStorage.getItem('hsk_vocab_data');
+    if (savedData) {
+        try { 
+            fullVocabData = JSON.parse(savedData);
+            if(!fullVocabData || fullVocabData.length === 0 || !fullVocabData[0].chinese) {
+                fullVocabData = [...EMBEDDED_VOCAB_DATA];
             }
-            .control-box { 
-                padding: 6px 8px; 
-                border-radius: 10px; 
-                font-size: 11px; 
-                width: 100%; 
-                justify-content: space-between; 
-            }
-            .controls label.box-label { font-size: 11px; gap: 4px; }
-            .controls select, .controls input[type="number"] { padding: 4px 6px; font-size: 11px; }
-            
-            .range-container { padding: 3px 6px; width: 100%; justify-content: space-between; }
-            .range-container input { width: 45px !important; }
-            
-            /* Đưa các nút chức năng (chọn excel, đổi đề, làm lại, xóa) tràn đều hoặc chiếm 1 cột riêng biệt hợp lý */
-            .btn { 
-                padding: 8px 10px; 
-                font-size: 11px; 
-                border-radius: 10px; 
-                justify-content: center; 
-                width: 100%; 
-                box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-            }
-            
-            .main-layout { flex-direction: column; gap: 12px; }
-            .table-container { padding: 4px; border-radius: 12px; width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-            .stats-dashboard { width: 100%; padding: 12px; border-radius: 14px; }
-            .timer-box { padding: 6px; margin-bottom: 8px; }
-            .timer-box .timer-value { font-size: 16px; }
-            .stat-card { padding: 6px; }
-            .stat-card .value { font-size: 14px; }
-            .rate-card { padding: 8px; margin-top: 8px; }
-            
-            /* Ẩn cột trạng thái trên mobile để tiết kiệm diện tích ngang */
-            .col-status { display: none !important; }
-            
-            th { font-size: 10px !important; padding: 6px 2px !important; }
-            td { padding: 6px 2px !important; font-size: 11px; }
-            td.col-hanzi { font-size: 15px; }
-            td.col-pinyin { font-size: 10px; }
-            td.col-type { font-size: 9px; }
-            td.col-viet { font-size: 10px; }
-            
-            /* Phân bổ lại tỉ lệ các cột cho vừa vặn màn hình điện thoại */
-            .col-stt { width: 8%; }
-            .col-hanzi { width: 24%; }
-            .col-type { width: 13%; }
-            .col-pinyin { width: 17%; }
-            .col-viet { width: 21%; }
-            .col-input { width: 17%; }
-            
-            input[type="text"] { font-size: 11px; padding: 4px 2px; width: 100%; }
+        } catch(e) { fullVocabData = [...EMBEDDED_VOCAB_DATA]; }
+    } else {
+        fullVocabData = [...EMBEDDED_VOCAB_DATA];
+    }
+    document.getElementById('rangeTo').value = fullVocabData.length;
+    
+    document.getElementById('btnNewQuiz').addEventListener('click', startNewQuiz);
+    document.getElementById('btnRetryQuiz').addEventListener('click', retryCurrentQuiz);
+    document.getElementById('btnReset').addEventListener('click', resetAllData);
+    document.getElementById('modeSelect').addEventListener('change', renderQuizTable);
+    
+    const btnAudio = document.getElementById('btnAudioToggle');
+    btnAudio.addEventListener('click', function() {
+        isAudioMuted = !isAudioMuted;
+        if (isAudioMuted) {
+            btnAudio.innerText = "🔇 Phát âm: Tắt";
+            btnAudio.classList.add('muted');
+            window.speechSynthesis.cancel();
+        } else {
+            btnAudio.innerText = "🔊 Phát âm: Bật";
+            btnAudio.classList.remove('muted');
         }
-    </style>
-</head>
-<body>
+    });
 
-    <script>
-        const symbols = ['🌸', '🌺', '🌷', '🌻', '🍃', '❄️', '❅', '✨', '💮', '❄️'];
-        for (let i = 0; i < 35; i++) {
-            const div = document.createElement('div');
-            div.className = 'falling-decor';
-            div.innerHTML = symbols[Math.floor(Math.random() * symbols.length)];
-            div.style.left = Math.random() * 100 + 'vw';
-            div.style.animationDuration = (Math.random() * 5 + 5) + 's';
-            div.style.animationDelay = (Math.random() * 5) + 's';
-            div.style.fontSize = (Math.random() * 14 + 16) + 'px';
-            document.body.appendChild(div);
-        }
-    </script>
+    startNewQuiz();
+};
 
-    <div class="container-wrapper">
-        <div class="app-header">
-            <h2 class="app-title">🌸 HSK Vocabulary Master <span class="pro-tag">PRO</span></h2>
-        </div>
+function resetTimer() {
+    clearInterval(timerInterval);
+    timerInterval = null;
+    secondsElapsed = 0;
+    isTimerRunning = false;
+    updateTimerDisplay();
+}
 
-        <div class="controls">
-            <label class="btn btn-excel">
-                📁 Chọn Excel
-                <input type="file" id="excelFile" accept=".xlsx, .xls" style="display: none;">
-            </label>
+function checkAndStartTimer() {
+    if (!isTimerRunning) {
+        isTimerRunning = true;
+        timerInterval = setInterval(() => {
+            secondsElapsed++;
+            updateTimerDisplay();
+        }, 1000);
+    }
+}
 
-            <button class="btn btn-audio" id="btnAudioToggle">🔊 Phát âm: Bật</button>
-            
-            <div class="control-box">
-                <label class="box-label">🎙️ Giọng</label>
-                <select id="voiceSelect" style="max-width: 100px;">
-                    <option value="">Đang tải...</option>
-                </select>
-                <button class="btn-speaker" onclick="playPronunciation('你好')" title="Thử giọng">🔊</button>
-            </div>
+function stopTimer() {
+    clearInterval(timerInterval);
+    isTimerRunning = false;
+}
 
-            <div class="control-box">
-                <label class="box-label">🎯 Chế độ</label>
-                <select id="modeSelect">
-                    <option value="chinese_only">1. Gõ Chữ Hán</option>
-                    <option value="pinyin_to_chinese">2. Gõ Hán/Pinyin</option>
-                    <option value="chinese_to_meaning">3. Gõ Tiếng Việt</option>
-                </select>
-            </div>
+function updateTimerDisplay() {
+    const mins = Math.floor(secondsElapsed / 60).toString().padStart(2, '0');
+    const secs = (secondsElapsed % 60).toString().padStart(2, '0');
+    document.getElementById('timerDisplay').innerText = `${mins}:${secs}`;
+}
 
-            <div class="control-box">
-                <label class="box-label">🔄 Trộn câu</label>
-                <select id="shuffleSelect">
-                    <option value="sequential">🔢 Thứ tự</option>
-                    <option value="random">🔀 Ngẫu nhiên</option>
-                </select>
-            </div>
+document.getElementById('excelFile').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
 
-            <div class="control-box">
-                <label class="box-label">📝 Số câu</label>
-                <input type="number" id="quizSize" value="10" min="1" style="width: 50px; text-align: center;">
-            </div>
+    const statusText = document.getElementById('loadingStatus');
+    if (statusText) { statusText.innerText = "⏳ Đang kiểm tra..."; statusText.style.color = "var(--primary)"; }
 
-            <div class="control-box" style="grid-column: span 2;">
-                <label class="box-label">📊 Khoảng từ</label>
-                <div class="range-container">
-                    <input type="number" id="rangeFrom" placeholder="Từ" min="1" value="1">
-                    <span>-</span>
-                    <input type="number" id="rangeTo" placeholder="Đến" min="1" value="100">
-                </div>
-            </div>
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+            const worksheet = workbook.Sheets[workbook.SheetNames[0]];
 
-            <button class="btn btn-new" id="btnNewQuiz">⚡ Đổi đề</button>
-            <button class="btn btn-retry" id="btnRetryQuiz">♻️ Làm lại</button>
-            <button class="btn btn-reset" id="btnReset">🗑️ Xóa dữ liệu</button>
-            <span id="loadingStatus" style="font-size: 11px; font-weight: 600; color: var(--success); width: 100%; text-align: center;"></span>
-        </div>
+            const cellZ1 = worksheet['Z1'] ? worksheet['Z1'].v.toString().trim() : '';
+            const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: "" });
 
-        <div class="main-layout">
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th class="col-stt">STT</th>
-                            <th class="col-hanzi">Chữ Hán</th>
-                            <th class="col-type">Loại từ</th>
-                            <th class="col-pinyin">Pinyin</th>
-                            <th class="col-viet">Tiếng Việt</th>
-                            <th class="col-input">Ô Nhập</th>
-                            <th class="col-status">Trạng thái</th>
-                        </tr>
-                    </thead>
-                    <tbody id="vocabTable"></tbody>
-                </table>
-            </div>
-
-            <div class="stats-dashboard">
-                <div class="timer-box">
-                    <div class="timer-label">⏱ Thời gian làm bài</div>
-                    <div class="timer-value" id="timerDisplay">00:00</div>
-                </div>
-
-                <h3>📊 Tiến độ bài tập</h3>
-                <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressBar"></div></div>
-                <div class="stats-grid">
-                    <div class="stat-card"><div class="label">Tổng câu</div><div class="value" id="statTotal">0</div></div>
-                    <div class="stat-card"><div class="label">Đã xong</div><div class="value" id="statDone">0</div></div>
-                    <div class="stat-card" style="border-color: #a7f3d0; background: rgba(240, 253, 244, 0.9);"><div class="label" style="color: #065f46;">Đúng</div><div class="value" style="color: var(--success);" id="statCorrect">0</div></div>
-                    <div class="stat-card" style="border-color: #fecaca; background: rgba(254, 242, 242, 0.9);"><div class="label" style="color: #991b1b;">Sai</div><div class="value" style="color: var(--danger);" id="statWrong">0</div></div>
-                </div>
-                <div class="rate-card">
-                    <div style="font-size: 11px; color: #be185d; font-weight: 700;">TỶ LỆ CHÍNH XÁC</div>
-                    <div style="font-size: 20px; font-weight: 700; color: #db2777; margin-top: 2px;" id="statRate">0.0%</div>
-                </div>
-
-                <div class="contact-card">
-                    <div class="contact-title">💬 Trung tâm Hỗ trợ & Góp ý</div>
-                    <div class="contact-item">
-                        <span>✉️</span>
-                        <span>Email: <a href="mailto:tuan91.at@gmail.com">tuan91.at@gmail.com</a></span>
-                    </div>
-                    <div class="contact-item">
-                        <span>📞</span>
-                        <span>Hotline: <a href="tel:0917241091">0917 241 091</a></span>
-                    </div>
-                </div>
-
-                <div class="footer-owner">Bản quyền thuộc sở hữu:<br><b>TRẦN ANH TUẤN - C7 CB K139-140</b></div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        const SECRET_KEY = "CAMTU2019S2THANHAN2025";
-
-        const EMBEDDED_VOCAB_DATA = [
-            {"chinese": "早饭 / 早餐", "type": "Danh từ", "pinyin": "zǎofàn / zǎocān", "meaning": "Bữa sáng, điểm tâm"},
-            {"chinese": "午饭 / 晚餐", "type": "Danh từ", "pinyin": "wǔfàn / wǔcān", "meaning": "Bữa trưa"},
-            {"chinese": "因为……所以……", "type": "Liên từ", "pinyin": "yīnwèi……suǒyǐ……", "meaning": "Vì…… nên……"},
-            {"chinese": "姐姐", "type": "Danh từ", "pinyin": "jiějie", "meaning": "Chị gái"}
-        ];
-
-        let fullVocabData = [];
-        let currentQuizData = [];
-        let timerInterval = null;
-        let secondsElapsed = 0;
-        let isTimerRunning = false;
-        let sequentialOffset = 0;
-        let isAudioMuted = false;
-        let availableVoices = [];
-
-        function populateVoices() {
-            if (!('speechSynthesis' in window)) return;
-            const voices = window.speechSynthesis.getVoices();
-            const voiceSelect = document.getElementById('voiceSelect');
-            voiceSelect.innerHTML = '';
-
-            availableVoices = voices.filter(v => {
-                const lang = v.lang.toLowerCase();
-                const name = v.name.toLowerCase();
-                if (lang.includes('zh-hk') || lang.includes('yue') || name.includes('cantonese') || name.includes('粵語')) {
-                    return false;
-                }
-                return lang.includes('zh') || lang.includes('cn');
-            });
-
-            if (availableVoices.length === 0) {
-                const opt = document.createElement('option');
-                opt.value = '';
-                opt.innerText = 'Giọng Mặc định';
-                voiceSelect.appendChild(opt);
+            if (!rows || rows.length < 2) {
+                alert("File Excel không có dữ liệu!");
                 return;
             }
 
-            let bestVoiceIndex = 0;
-            availableVoices.forEach((voice, index) => {
-                const opt = document.createElement('option');
-                opt.value = index;
-                let name = voice.name.replace('Microsoft ', '').replace('Google ', '');
-                opt.innerText = `${name} (${voice.lang})`;
-                voiceSelect.appendChild(opt);
-
-                if (voice.name.includes('Google') || voice.name.includes('Xiaoxiao') || voice.name.includes('Yunxi') || voice.name.includes('Natural')) {
-                    bestVoiceIndex = index;
-                }
-            });
-
-            voiceSelect.selectedIndex = bestVoiceIndex;
-        }
-
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.onvoiceschanged = populateVoices;
-        }
-
-        function playPronunciation(text) {
-            if (isAudioMuted || !text) return;
-            window.speechSynthesis.cancel(); 
-
-            const cleanText = text.split('/')[0].replace(/[^\u4e00-\u9fa5]/g, '').trim() || text.split('/')[0].trim(); 
-            const utterance = new SpeechSynthesisUtterance(cleanText);
-            
-            const voiceSelect = document.getElementById('voiceSelect');
-            const selectedIdx = voiceSelect ? voiceSelect.value : '';
-
-            if (selectedIdx !== '' && availableVoices[selectedIdx]) {
-                utterance.voice = availableVoices[selectedIdx];
-                utterance.lang = availableVoices[selectedIdx].lang;
-            } else {
-                utterance.lang = 'zh-CN';
-            }
-
-            utterance.rate = 0.85; 
-            utterance.pitch = 1.0;  
-            window.speechSynthesis.speak(utterance);
-        }
-
-        function removePinyinTones(str) {
-            if (!str) return '';
-            return str.normalize('NFD')
-                      .replace(/[\u0300-\u036f]/g, '')
-                      .replace(/ü/g, 'v')
-                      .replace(/Ü/g, 'v')
-                      .toLowerCase();
-        }
-
-        function cleanString(str) {
-            if (!str) return '';
-            return str.toLowerCase().trim().replace(/\s+/g, ' ');
-        }
-
-        function splitVariants(str) {
-            if (!str) return [];
-            return str.split(/[/,;|\n]+/)
-                      .map(s => cleanString(s))
-                      .filter(s => s.length > 0);
-        }
-
-        window.onload = function() {
-            populateVoices();
-            const savedData = localStorage.getItem('hsk_vocab_data');
-            if (savedData) {
-                try { 
-                    fullVocabData = JSON.parse(savedData);
-                    if(!fullVocabData || fullVocabData.length === 0 || !fullVocabData[0].chinese) {
-                        fullVocabData = [...EMBEDDED_VOCAB_DATA];
-                    }
-                } catch(e) { fullVocabData = [...EMBEDDED_VOCAB_DATA]; }
-            } else {
-                fullVocabData = [...EMBEDDED_VOCAB_DATA];
-            }
-            document.getElementById('rangeTo').value = fullVocabData.length;
-            
-            document.getElementById('btnNewQuiz').addEventListener('click', startNewQuiz);
-            document.getElementById('btnRetryQuiz').addEventListener('click', retryCurrentQuiz);
-            document.getElementById('btnReset').addEventListener('click', resetAllData);
-            document.getElementById('modeSelect').addEventListener('change', renderQuizTable);
-            
-            const btnAudio = document.getElementById('btnAudioToggle');
-            btnAudio.addEventListener('click', function() {
-                isAudioMuted = !isAudioMuted;
-                if (isAudioMuted) {
-                    btnAudio.innerText = "🔇 Phát âm: Tắt";
-                    btnAudio.classList.add('muted');
-                    window.speechSynthesis.cancel();
-                } else {
-                    btnAudio.innerText = "🔊 Phát âm: Bật";
-                    btnAudio.classList.remove('muted');
-                }
-            });
-
-            startNewQuiz();
-        };
-
-        function resetTimer() {
-            clearInterval(timerInterval);
-            timerInterval = null;
-            secondsElapsed = 0;
-            isTimerRunning = false;
-            updateTimerDisplay();
-        }
-
-        function checkAndStartTimer() {
-            if (!isTimerRunning) {
-                isTimerRunning = true;
-                timerInterval = setInterval(() => {
-                    secondsElapsed++;
-                    updateTimerDisplay();
-                }, 1000);
-            }
-        }
-
-        function stopTimer() {
-            clearInterval(timerInterval);
-            isTimerRunning = false;
-        }
-
-        function updateTimerDisplay() {
-            const mins = Math.floor(secondsElapsed / 60).toString().padStart(2, '0');
-            const secs = (secondsElapsed % 60).toString().padStart(2, '0');
-            document.getElementById('timerDisplay').innerText = `${mins}:${secs}`;
-        }
-
-        document.getElementById('excelFile').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            const statusText = document.getElementById('loadingStatus');
-            if (statusText) { statusText.innerText = "⏳ Đang kiểm tra..."; statusText.style.color = "var(--primary)"; }
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const data = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(data, { type: 'array' });
-                    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-
-                    const cellZ1 = worksheet['Z1'] ? worksheet['Z1'].v.toString().trim() : '';
-                    const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: "" });
-
-                    if (!rows || rows.length < 2) {
-                        alert("File Excel không có dữ liệu!");
-                        return;
-                    }
-
-                    let hasValidKey = false;
-                    if (cellZ1 === SECRET_KEY) {
+            let hasValidKey = false;
+            if (cellZ1 === SECRET_KEY) {
+                hasValidKey = true;
+            } else if (rows[0]) {
+                for (let col = 0; col < rows[0].length; col++) {
+                    if (rows[0][col] && rows[0][col].toString().trim() === SECRET_KEY) {
                         hasValidKey = true;
-                    } else if (rows[0]) {
-                        for (let col = 0; col < rows[0].length; col++) {
-                            if (rows[0][col] && rows[0][col].toString().trim() === SECRET_KEY) {
-                                hasValidKey = true;
-                                break;
-                            }
-                        }
+                        break;
                     }
-
-                    if (!hasValidKey) {
-                        alert("❌ TRUY CẬP BỊ TỪ CHỐI!\n\nFile Excel này KHÔNG HỢP LỆ hoặc mã khóa ở ô Z1 không đúng.");
-                        document.getElementById('excelFile').value = '';
-                        if (statusText) statusText.innerText = "";
-                        return;
-                    }
-
-                    let headerRowIndex = 0;
-                    for (let i = 0; i < Math.min(rows.length, 5); i++) {
-                        const rowStr = rows[i].join(" ").toUpperCase();
-                        if (rowStr.includes("CHENESE") || rowStr.includes("CHINESE") || rowStr.includes("PINYIN") || rowStr.includes("MEANING")) {
-                            headerRowIndex = i;
-                            break;
-                        }
-                    }
-
-                    const headers = rows[headerRowIndex].map(h => h.toString().trim().toUpperCase());
-                    let colChinese = -1, colType = -1, colPinyin = -1, colMeaning = -1;
-
-                    headers.forEach((h, idx) => {
-                        if (h.includes('INPUT')) return;
-                        if ((h.includes('CHENESE') || h.includes('CHINESE') || h.includes('HÁN')) && colChinese === -1) colChinese = idx;
-                        else if (h.includes('TYPE') || h.includes('LOẠI TỪ')) colType = idx;
-                        else if (h.includes('PINYIN') || h.includes('PHIÊN ÂM')) colPinyin = idx;
-                        else if (h.includes('MEANING') || h.includes('NGHĨA') || h.includes('VIỆT')) colMeaning = idx;
-                    });
-
-                    if (colChinese === -1) colChinese = 1;
-                    if (colType === -1) colType = 2;
-                    if (colPinyin === -1) colPinyin = 3;
-                    if (colMeaning === -1) colMeaning = 4;
-
-                    let loadedData = [];
-                    for (let i = headerRowIndex + 1; i < rows.length; i++) {
-                        const r = rows[i];
-                        if (!r) continue;
-                        const chinese = r[colChinese] !== undefined ? r[colChinese].toString().trim() : '';
-                        const type = r[colType] !== undefined ? r[colType].toString().trim() : '';
-                        const pinyin = r[colPinyin] !== undefined ? r[colPinyin].toString().trim() : '';
-                        const meaning = r[colMeaning] !== undefined ? r[colMeaning].toString().trim() : '';
-
-                        if (chinese || meaning) {
-                            loadedData.push({ chinese, type, pinyin, meaning });
-                        }
-                    }
-
-                    if (loadedData.length > 0) {
-                        fullVocabData = loadedData;
-                        localStorage.setItem('hsk_vocab_data', JSON.stringify(fullVocabData));
-                        document.getElementById('rangeFrom').value = 1;
-                        document.getElementById('rangeTo').value = fullVocabData.length;
-                        sequentialOffset = 0;
-                        if (statusText) statusText.innerText = `✅ Đã tải ${fullVocabData.length} từ!`;
-                        startNewQuiz();
-                    } else {
-                        alert("Không tìm thấy dữ liệu từ vựng hợp lệ trong file!");
-                        if (statusText) statusText.innerText = "";
-                    }
-                } catch (err) {
-                    alert("Lỗi đọc file Excel: " + err.message);
-                    if (statusText) statusText.innerText = "";
                 }
-            };
-            reader.readAsArrayBuffer(file);
-        });
-
-        function startNewQuiz() {
-            resetTimer();
-            if (fullVocabData.length === 0) return;
-
-            let fromIdx = parseInt(document.getElementById('rangeFrom').value) || 1;
-            let toIdx = parseInt(document.getElementById('rangeTo').value) || fullVocabData.length;
-            let quizSize = parseInt(document.getElementById('quizSize').value) || 10;
-            let shuffleMode = document.getElementById('shuffleSelect').value;
-
-            fromIdx = Math.max(1, Math.min(fromIdx, fullVocabData.length));
-            toIdx = Math.max(fromIdx, Math.min(toIdx, fullVocabData.length));
-            
-            let sliceData = [];
-            for (let i = fromIdx - 1; i < toIdx; i++) {
-                sliceData.push({ ...fullVocabData[i], originalIndex: i + 1 });
             }
 
-            if (shuffleMode === 'random') {
-                sliceData.sort(() => Math.random() - 0.5);
-                currentQuizData = sliceData.slice(0, quizSize);
-            } else {
-                if (sequentialOffset >= sliceData.length) {
-                    sequentialOffset = 0;
-                }
-                currentQuizData = sliceData.slice(sequentialOffset, sequentialOffset + quizSize);
-                sequentialOffset += quizSize;
-            }
-
-            renderQuizTable();
-        }
-
-        function retryCurrentQuiz() {
-            resetTimer();
-            renderQuizTable();
-        }
-
-        function resetAllData() {
-            if (confirm("Bạn có chắc muốn xóa dữ liệu tùy chỉnh và quay về bộ từ mặc định không?")) {
-                localStorage.removeItem('hsk_vocab_data');
-                fullVocabData = [...EMBEDDED_VOCAB_DATA];
+            if (!hasValidKey) {
+                alert("❌ TRUY CẬP BỊ TỪ CHỐI!\n\nFile Excel này KHÔNG HỢP LỆ hoặc mã khóa ở ô Z1 không đúng.");
                 document.getElementById('excelFile').value = '';
+                if (statusText) statusText.innerText = "";
+                return;
+            }
+
+            let headerRowIndex = 0;
+            for (let i = 0; i < Math.min(rows.length, 5); i++) {
+                const rowStr = rows[i].join(" ").toUpperCase();
+                if (rowStr.includes("CHENESE") || rowStr.includes("CHINESE") || rowStr.includes("PINYIN") || rowStr.includes("MEANING")) {
+                    headerRowIndex = i;
+                    break;
+                }
+            }
+
+            const headers = rows[headerRowIndex].map(h => h.toString().trim().toUpperCase());
+            let colChinese = -1, colType = -1, colPinyin = -1, colMeaning = -1;
+
+            headers.forEach((h, idx) => {
+                if (h.includes('INPUT')) return;
+                if ((h.includes('CHENESE') || h.includes('CHINESE') || h.includes('HÁN')) && colChinese === -1) colChinese = idx;
+                else if (h.includes('TYPE') || h.includes('LOẠI TỪ')) colType = idx;
+                else if (h.includes('PINYIN') || h.includes('PHIÊN ÂM')) colPinyin = idx;
+                else if (h.includes('MEANING') || h.includes('TIẾNG VIỆT') || h.includes('NGHĨA')) colMeaning = idx;
+            });
+
+            if (colChinese === -1 || colPinyin === -1 || colMeaning === -1) {
+                alert("Không tìm thấy đủ các cột dữ liệu (Chinese, Pinyin, Meaning). Vui lòng kiểm tra lại tiêu đề!");
+                return;
+            }
+
+            let newVocab = [];
+            for (let i = headerRowIndex + 1; i < rows.length; i++) {
+                const r = rows[i];
+                if (!r) continue;
+                const chinese = r[colChinese] ? r[colChinese].toString().trim() : '';
+                const pinyin = r[colPinyin] ? r[colPinyin].toString().trim() : '';
+                const meaning = r[colMeaning] ? r[colMeaning].toString().trim() : '';
+                const type = (colType !== -1 && r[colType]) ? r[colType].toString().trim() : 'Từ vựng';
+
+                if (chinese && meaning) {
+                    newVocab.push({ chinese, type, pinyin, meaning });
+                }
+            }
+
+            if (newVocab.length > 0) {
+                fullVocabData = newVocab;
+                localStorage.setItem('hsk_vocab_data', JSON.stringify(fullVocabData));
+                sequentialOffset = 0;
                 document.getElementById('rangeFrom').value = 1;
                 document.getElementById('rangeTo').value = fullVocabData.length;
-                sequentialOffset = 0;
-                document.getElementById('loadingStatus').innerText = "🗑️ Đã khôi phục mặc định!";
+                if (statusText) {
+                    statusText.innerText = `✅ Đã tải ${fullVocabData.length} từ từ Excel!`;
+                    setTimeout(() => { statusText.innerText = ""; }, 3000);
+                }
                 startNewQuiz();
-            }
-        }
-
-        function renderQuizTable() {
-            const tbody = document.getElementById('vocabTable');
-            tbody.innerHTML = '';
-            const mode = document.getElementById('modeSelect').value;
-
-            currentQuizData.forEach((item, index) => {
-                const tr = document.createElement('tr');
-                tr.id = `row-${index}`;
-
-                let html = `
-                    <td class="col-stt">${item.originalIndex || (index + 1)}</td>
-                    <td class="col-hanzi">
-                        ${item.chinese}
-                        <button class="btn-speaker" onclick="playPronunciation('${item.chinese.replace(/'/g, "\\'")}')" title="Phát âm">🔊</button>
-                    </td>
-                    <td class="col-type">${item.type || '-'}</td>
-                    <td class="col-pinyin">${mode === 'pinyin_to_chinese' ? '<i>(Ẩn)</i>' : (item.pinyin || '-')}</td>
-                    <td class="col-viet">${mode === 'chinese_to_meaning' ? '<i>(Ẩn nghĩa)</i>' : (item.meaning || '-')}</td>
-                    <td class="col-input">
-                        <input type="text" id="input-${index}" placeholder="Nhập..." autocomplete="off" oninput="checkAndStartTimer()" onkeydown="handleKeyDown(event, ${index})">
-                        <span id="hint-${index}"></span>
-                    </td>
-                    <td class="col-status" id="status-${index}">⏳</td>
-                `;
-                tr.innerHTML = html;
-                tbody.appendChild(tr);
-            });
-
-            updateStats();
-        }
-
-        function handleKeyDown(event, currentIndex) {
-            if (event.key === 'Enter') {
-                event.preventDefault();
-                checkAnswer(currentIndex);
-
-                let nextInput = document.getElementById(`input-${currentIndex + 1}`);
-                if (nextInput && !nextInput.disabled) {
-                    nextInput.focus();
-                }
-            }
-        }
-
-        function checkAnswer(index) {
-            const inputEl = document.getElementById(`input-${index}`);
-            const rowEl = document.getElementById(`row-${index}`);
-            const statusEl = document.getElementById(`status-${index}`);
-            const hintEl = document.getElementById(`hint-${index}`);
-            
-            if (inputEl.disabled) return;
-
-            const userVal = inputEl.value.trim();
-            if (!userVal) return;
-
-            const item = currentQuizData[index];
-            const mode = document.getElementById('modeSelect').value;
-
-            let isCorrect = false;
-            let correctReferenceText = '';
-
-            if (mode === 'chinese_only') {
-                correctReferenceText = item.chinese;
-                let validAnswers = splitVariants(item.chinese);
-                let cleanUserVal = cleanString(userVal);
-                isCorrect = validAnswers.includes(cleanUserVal);
-            } 
-            else if (mode === 'pinyin_to_chinese') {
-                correctReferenceText = `${item.chinese} (${item.pinyin})`;
-                let validHanzi = splitVariants(item.chinese);
-                let validPinyin = splitVariants(item.pinyin);
-                let cleanUserVal = cleanString(userVal);
-                let cleanUserValNoTone = removePinyinTones(cleanUserVal);
-
-                let matchHanzi = validHanzi.includes(cleanUserVal);
-                let matchPinyin = validPinyin.includes(cleanUserVal) || validPinyin.map(p => removePinyinTones(p)).includes(cleanUserValNoTone);
-
-                isCorrect = matchHanzi || matchPinyin;
-            } 
-            else if (mode === 'chinese_to_meaning') {
-                correctReferenceText = item.meaning;
-                let validMeanings = splitVariants(item.meaning);
-                let cleanUserVal = cleanString(userVal);
-                isCorrect = validMeanings.some(m => cleanUserVal.includes(m) || m.includes(cleanUserVal));
-            }
-
-            if (isCorrect) {
-                rowEl.className = 'row-correct';
-                statusEl.innerText = '✅';
-                inputEl.disabled = true;
-                hintEl.innerHTML = '';
-                playPronunciation(item.chinese);
             } else {
-                rowEl.className = 'row-wrong';
-                statusEl.innerText = '❌';
-                hintEl.innerHTML = `<span class="wrong-ans-hint">ĐD: ${correctReferenceText}</span>`;
+                alert("Không đọc được dữ liệu từ vựng hợp lệ nào trong file!");
             }
+        } catch (err) {
+            console.error(err);
+            alert("Lỗi khi đọc file Excel: " + err.message);
+        }
+    };
+    reader.readAsArrayBuffer(file);
+});
 
-            updateStats();
+function startNewQuiz() {
+    if (!fullVocabData || fullVocabData.length === 0) return;
+
+    let fromIdx = parseInt(document.getElementById('rangeFrom').value) || 1;
+    let toIdx = parseInt(document.getElementById('rangeTo').value) || fullVocabData.length;
+    let quizSize = parseInt(document.getElementById('quizSize').value) || 10;
+    const shuffleMode = document.getElementById('shuffleSelect').value;
+
+    fromIdx = Math.max(1, Math.min(fromIdx, fullVocabData.length));
+    toIdx = Math.max(fromIdx, Math.min(toIdx, fullVocabData.length));
+    document.getElementById('rangeFrom').value = fromIdx;
+    document.getElementById('rangeTo').value = toIdx;
+
+    const availableSlice = fullVocabData.slice(fromIdx - 1, toIdx);
+    let selectedItems = [];
+
+    if (shuffleMode === 'random') {
+        let temp = [...availableSlice];
+        for (let i = temp.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [temp[i], temp[j]] = [temp[j], temp[i]];
+        }
+        selectedItems = temp.slice(0, quizSize);
+    } else {
+        if (sequentialOffset >= availableSlice.length) {
+            sequentialOffset = 0;
+        }
+        selectedItems = availableSlice.slice(sequentialOffset, sequentialOffset + quizSize);
+        sequentialOffset += quizSize;
+    }
+
+    currentQuizData = selectedItems.map((item, idx) => ({
+        ...item,
+        originalIndex: fromIdx + (shuffleMode === 'random' ? fullVocabData.indexOf(item) : (sequentialOffset - quizSize + idx)),
+        userAnswer: '',
+        status: 'pending', // pending, correct, wrong
+        wrongCount: 0
+    }));
+
+    resetTimer();
+    renderQuizTable();
+    updateDashboardStats();
+}
+
+function retryCurrentQuiz() {
+    if (!currentQuizData || currentQuizData.length === 0) return;
+    currentQuizData.forEach(item => {
+        item.userAnswer = '';
+        item.status = 'pending';
+        item.wrongCount = 0;
+    });
+    resetTimer();
+    renderQuizTable();
+    updateDashboardStats();
+}
+
+function resetAllData() {
+    if (confirm("Bạn có chắc muốn xóa toàn bộ dữ liệu hiện tại và khôi phục về mặc định?")) {
+        localStorage.removeItem('hsk_vocab_data');
+        fullVocabData = [...EMBEDDED_VOCAB_DATA];
+        document.getElementById('rangeFrom').value = 1;
+        document.getElementById('rangeTo').value = fullVocabData.length;
+        sequentialOffset = 0;
+        startNewQuiz();
+    }
+}
+
+function renderQuizTable() {
+    const tbody = document.getElementById('vocabTable');
+    tbody.innerHTML = '';
+    const mode = document.getElementById('modeSelect').value;
+
+    currentQuizData.forEach((item, index) => {
+        const tr = document.createElement('tr');
+        if (item.status === 'correct') tr.className = 'row-correct';
+        else if (item.status === 'wrong') tr.className = 'row-wrong';
+
+        let promptDisplay = '';
+        if (mode === 'chinese_only') {
+            promptDisplay = `
+                <span style="font-size: 18px; font-weight: 700; color: #9f1239;">${item.chinese}</span>
+                <button class="btn-speaker" onclick="playPronunciation('${item.chinese}')" title="Nghe phát âm">🔊</button>
+            `;
+        } else if (mode === 'pinyin_to_chinese') {
+            promptDisplay = `<span style="font-style: italic; font-weight: 600; color: #475569;">${item.pinyin}</span>`;
+        } else if (mode === 'chinese_to_meaning') {
+            promptDisplay = `
+                <span style="font-size: 18px; font-weight: 700; color: #9f1239;">${item.chinese}</span>
+                <button class="btn-speaker" onclick="playPronunciation('${item.chinese}')" title="Nghe phát âm">🔊</button>
+            `;
         }
 
-        function updateStats() {
-            let total = currentQuizData.length;
-            let done = 0;
-            let correct = 0;
-            let wrong = 0;
+        tr.innerHTML = `
+            <td class="col-stt">${index + 1}</td>
+            <td class="col-hanzi">${promptDisplay}</td>
+            <td class="col-type">${item.type}</td>
+            <td class="col-pinyin">${mode === 'pinyin_to_chinese' ? '' : item.pinyin}</td>
+            <td class="col-viet">${mode === 'chinese_to_meaning' ? '' : item.meaning}</td>
+            <td class="col-input">
+                <input type="text" id="input-${index}" value="${item.userAnswer}" placeholder="Nhập đáp án..." ${item.status === 'correct' ? 'disabled' : ''}>
+                <div id="hint-${index}"></div>
+            </td>
+            <td class="col-status" id="status-${index}">
+                ${item.status === 'correct' ? '✅ Đúng' : item.status === 'wrong' ? '❌ Sai' : '⏳'}
+            </td>
+        `;
+        tbody.appendChild(tr);
 
-            currentQuizData.forEach((_, index) => {
-                const row = document.getElementById(`row-${index}`);
-                if (row.classList.contains('row-correct')) {
-                    done++;
-                    correct++;
-                } else if (row.classList.contains('row-wrong')) {
-                    done++;
-                    wrong++;
-                }
-            });
-
-            document.getElementById('statTotal').innerText = total;
-            document.getElementById('statDone').innerText = done;
-            document.getElementById('statCorrect').innerText = correct;
-            document.getElementById('statWrong').innerText = wrong;
-
-            let rate = done > 0 ? ((correct / done) * 100).toFixed(1) : '0.0';
-            document.getElementById('statRate').innerText = rate + '%';
-
-            let percent = total > 0 ? (done / total) * 100 : 0;
-            document.getElementById('progressBar').style.width = percent + '%';
-
-            if (done === total && total > 0) {
-                stopTimer();
+        const inputElem = document.getElementById(`input-${index}`);
+        inputElem.addEventListener('input', checkAndStartTimer);
+        inputElem.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                handleAnswerSubmit(index);
             }
+        });
+        inputElem.addEventListener('blur', function() {
+            handleAnswerSubmit(index);
+        });
+    });
+}
+
+function handleAnswerSubmit(index) {
+    const item = currentQuizData[index];
+    if (item.status === 'correct') return;
+
+    const inputElem = document.getElementById(`input-${index}`);
+    if (!inputElem) return;
+
+    const userVal = inputElem.value.trim();
+    item.userAnswer = userVal;
+    if (!userVal) return;
+
+    const mode = document.getElementById('modeSelect').value;
+    let isCorrect = false;
+
+    if (mode === 'chinese_only') {
+        const correctVariants = splitVariants(item.chinese);
+        isCorrect = correctVariants.some(v => cleanString(userVal) === cleanString(v));
+    } else if (mode === 'pinyin_to_chinese') {
+        const chineseVariants = splitVariants(item.chinese);
+        const pinyinVariants = splitVariants(item.pinyin).map(p => removePinyinTones(p));
+        const cleanUser = cleanString(userVal);
+        const userWithoutTones = removePinyinTones(userVal);
+
+        isCorrect = chineseVariants.some(c => cleanUser === cleanString(c)) ||
+                    pinyinVariants.some(p => userWithoutTones === p);
+    } else if (mode === 'chinese_to_meaning') {
+        const meaningVariants = splitVariants(item.meaning);
+        isCorrect = meaningVariants.some(m => cleanString(userVal) === cleanString(m));
+    }
+
+    const hintContainer = document.getElementById(`hint-${index}`);
+
+    if (isCorrect) {
+        item.status = 'correct';
+        inputElem.disabled = true;
+        hintContainer.innerHTML = '';
+        if (mode !== 'chinese_to_meaning') {
+            playPronunciation(item.chinese);
         }
-    </script>
-</body>
-</html>
+    } else {
+        item.status = 'wrong';
+        item.wrongCount++;
+        if (mode === 'chinese_only' || mode === 'pinyin_to_chinese') {
+            hintContainer.innerHTML = `<span class="wrong-ans-hint">Gợi ý: ${item.chinese} (${item.pinyin})</span>`;
+        } else {
+            hintContainer.innerHTML = `<span class="wrong-ans-hint">Gợi ý: ${item.meaning}</span>`;
+        }
+    }
+
+    renderQuizTable();
+    updateDashboardStats();
+
+    // Auto focus next input
+    if (isCorrect && index < currentQuizData.length - 1) {
+        const nextInput = document.getElementById(`input-${index + 1}`);
+        if (nextInput && !nextInput.disabled) {
+            nextInput.focus();
+        }
+    }
+}
+
+function updateDashboardStats() {
+    const total = currentQuizData.length;
+    let done = 0, correct = 0, wrong = 0;
+
+    currentQuizData.forEach(item => {
+        if (item.status === 'correct') {
+            done++;
+            correct++;
+        } else if (item.status === 'wrong') {
+            done++;
+            wrong++;
+        }
+    });
+
+    document.getElementById('statTotal').innerText = total;
+    document.getElementById('statDone').innerText = done;
+    document.getElementById('statCorrect').innerText = correct;
+    document.getElementById('statWrong').innerText = wrong;
+
+    const rate = done > 0 ? ((correct / done) * 100).toFixed(1) : '0.0';
+    document.getElementById('statRate').innerText = `${rate}%`;
+
+    const progressPercent = total > 0 ? (done / total) * 100 : 0;
+    document.getElementById('progressBar').style.width = `${progressPercent}%`;
+
+    if (done === total && total > 0) {
+        stopTimer();
+    }
+}
