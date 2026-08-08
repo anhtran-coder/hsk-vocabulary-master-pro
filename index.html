@@ -11,10 +11,10 @@
         :root {
             --primary: #6366f1;
             --success: #10b981;
-            --success-light: rgba(209, 250, 229, 0.85);
+            --success-light: rgba(209, 250, 229, 0.9);
             --danger: #ef4444;
-            --danger-light: rgba(254, 226, 226, 0.85);
-            --card-bg: rgba(255, 255, 255, 0.90);
+            --danger-light: rgba(254, 226, 226, 0.9);
+            --card-bg: rgba(255, 255, 255, 0.92);
             --text-dark: #1e293b;
             --header-bg-start: rgba(238, 242, 255, 0.95);
             --header-bg-end: rgba(224, 231, 255, 0.95);
@@ -25,7 +25,7 @@
         body { 
             font-family: 'Inter', system-ui, -apple-system, sans-serif; 
             margin: 0; 
-            padding: 12px;
+            padding: 10px;
             color: var(--text-dark);
             font-size: 13px; 
             box-sizing: border-box;
@@ -42,8 +42,8 @@
             user-select: none;
             pointer-events: none;
             animation: fall linear infinite;
-            font-size: 20px;
-            opacity: 0.8;
+            font-size: 18px;
+            opacity: 0.7;
         }
 
         @keyframes fall {
@@ -57,18 +57,16 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
-            flex-wrap: wrap;
-            gap: 8px;
+            margin-bottom: 10px;
         }
 
         .app-title {
-            font-size: 22px;
+            font-size: 20px;
             font-weight: 700;
             color: #1e1b4b;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             margin: 0;
             text-shadow: 0 2px 4px rgba(255, 255, 255, 0.8);
         }
@@ -76,94 +74,88 @@
         .app-title .pro-tag {
             background: linear-gradient(135deg, #4f46e5, #8b5cf6);
             color: white;
-            font-size: 10px;
-            padding: 3px 8px;
-            border-radius: 10px;
+            font-size: 9px;
+            padding: 2px 6px;
+            border-radius: 8px;
             vertical-align: middle;
-            box-shadow: 0 2px 5px rgba(79, 70, 229, 0.3);
         }
 
         .controls { 
             display: flex; 
-            gap: 10px; 
+            gap: 8px; 
             flex-wrap: wrap; 
             align-items: center; 
             background: rgba(255, 255, 255, 0.9); 
             backdrop-filter: blur(16px);
-            padding: 12px 16px; 
-            border-radius: 20px; 
-            box-shadow: 0 10px 30px -8px rgba(99, 102, 241, 0.2);
-            margin-bottom: 14px;
+            padding: 10px 12px; 
+            border-radius: 16px; 
+            box-shadow: 0 8px 25px -8px rgba(99, 102, 241, 0.2);
+            margin-bottom: 12px;
             border: 2px solid rgba(255, 255, 255, 0.9);
         }
 
         .control-box {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
             background: #ffffff;
-            padding: 6px 10px;
-            border-radius: 12px;
+            padding: 5px 8px;
+            border-radius: 10px;
             border: 1.5px solid #e2e8f0;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
         }
 
         .controls label.box-label {
             font-weight: 600;
-            font-size: 12px;
+            font-size: 11px;
             color: #475569;
-            display: flex;
-            align-items: center;
-            gap: 4px;
             white-space: nowrap;
             margin: 0;
         }
 
         .controls select, .controls input[type="number"] {
-            padding: 5px 8px;
+            padding: 4px 6px;
             border: 1.5px solid #cbd5e1;
-            border-radius: 8px;
+            border-radius: 6px;
             outline: none;
             font-weight: 600;
             color: #0f172a;
             background: #f8fafc;
-            font-size: 12px;
+            font-size: 11px;
         }
 
         .range-container {
             display: inline-flex;
             align-items: center;
-            gap: 4px;
+            gap: 3px;
             background: #f8fafc;
-            padding: 4px 8px;
-            border-radius: 10px;
+            padding: 3px 6px;
+            border-radius: 8px;
             border: 1.5px solid #cbd5e1;
         }
-        .range-container input { width: 40px; text-align: center; }
+        .range-container input { width: 35px; text-align: center; }
 
         .btn { 
-            padding: 8px 16px; 
+            padding: 7px 12px; 
             border: none; 
-            border-radius: 12px; 
+            border-radius: 10px; 
             cursor: pointer; 
             font-weight: 600; 
             color: white; 
-            font-size: 12px; 
+            font-size: 11px; 
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            transition: all 0.2s ease;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            gap: 5px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.1s;
         }
-
-        .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.15); }
+        .btn:active { transform: scale(0.96); }
 
         .btn-excel { background: linear-gradient(135deg, #059669, #047857); }
         .btn-new { background: linear-gradient(135deg, #6366f1, #4f46e5); }
         .btn-retry { background: linear-gradient(135deg, #f59e0b, #d97706); }
         .btn-reset { background: linear-gradient(135deg, #ef4444, #dc2626); }
         
-        .main-layout { display: flex; gap: 14px; align-items: flex-start; }
+        .main-layout { display: flex; gap: 12px; align-items: flex-start; }
 
         .table-container { 
             flex: 1; 
@@ -176,149 +168,165 @@
             overflow-x: auto; 
         }
         
-        table { width: 100%; border-collapse: separate; border-spacing: 0; min-width: 650px; }
-
+        /* DESKTOP TABLE VIEW */
+        table { width: 100%; border-collapse: separate; border-spacing: 0; min-width: 700px; }
         th { 
             background: linear-gradient(135deg, var(--header-bg-start), var(--header-bg-end)) !important;
             color: var(--header-text) !important;
             font-weight: 700 !important;
-            font-size: 12px !important;
+            font-size: 11px !important;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            padding: 10px 6px !important;
-            border-top: 1.5px solid var(--header-border) !important;
+            padding: 8px 6px !important;
             border-bottom: 2px solid #f472b6 !important;
         }
+        td { border-bottom: 1px solid rgba(203, 213, 225, 0.6); padding: 8px 6px; text-align: center; }
 
-        th:first-child { border-left: 1.5px solid var(--header-border); border-top-left-radius: 8px; border-bottom-left-radius: 8px; }
-        th:last-child { border-right: 1.5px solid var(--header-border); border-top-right-radius: 8px; border-bottom-right-radius: 8px; }
-
-        td { border-bottom: 1px solid rgba(203, 213, 225, 0.6); padding: 10px 6px; text-align: center; }
-
-        td.col-hanzi { 
-            font-family: 'Noto Sans SC', sans-serif;
-            font-size: 22px; 
-            font-weight: 700 !important;
-            color: #9f1239;
-        }
-
-        td.col-pinyin { color: #475569; font-style: italic; font-size: 13px; font-weight: 600; }
-        td.col-stt { color: #475569; font-weight: 600; font-size: 12px; }
-        td.col-type { color: #0284c7; font-size: 11px; font-weight: 600; }
-        td.col-viet { font-weight: 600; color: #1e293b; font-size: 13px; }
+        td.col-hanzi { font-family: 'Noto Sans SC', sans-serif; font-size: 20px; font-weight: 700; color: #9f1239; }
+        td.col-pinyin { color: #475569; font-style: italic; font-size: 12px; font-weight: 600; }
+        td.col-stt { color: #475569; font-weight: 600; font-size: 11px; }
+        td.col-type { color: #0284c7; font-size: 10px; font-weight: 600; }
+        td.col-viet { font-weight: 600; color: #1e293b; font-size: 12px; }
         
         .col-example { 
             text-align: left !important; 
-            font-size: 11.5px; 
-            padding: 8px 10px !important;
+            font-size: 11px; 
+            padding: 6px 8px !important;
             color: #334155;
             background: rgba(248, 250, 252, 0.6);
             border-radius: 6px;
         }
         .example-cn { font-family: 'Noto Sans SC', sans-serif; font-weight: 600; color: #831843; display: block; }
-        .example-py { font-style: italic; color: #64748b; display: block; font-size: 11px; }
-        .example-vn { color: #334155; display: block; font-size: 11px; }
-
-        .col-stt { width: 5%; }
-        .col-hanzi { width: 16%; }
-        .col-type { width: 10%; }
-        .col-pinyin { width: 14%; }
-        .col-viet { width: 16%; }
-        .col-example { width: 22%; }
-        .col-input { width: 12%; }
-        .col-status { width: 5%; }
+        .example-py { font-style: italic; color: #64748b; display: block; font-size: 10px; }
+        .example-vn { color: #334155; display: block; font-size: 10px; }
 
         input[type="text"] { 
-            width: 90%; 
-            padding: 7px 8px; 
+            width: 85%; 
+            padding: 6px 8px; 
             border: 1.5px solid #cbd5e1; 
-            border-radius: 8px; 
+            border-radius: 6px; 
             text-align: center; 
-            font-size: 13px; 
+            font-size: 12px; 
             font-weight: 500;
             outline: none;
             background: rgba(255, 255, 255, 0.95);
         }
-
-        input[type="text"]:focus {
-            border-color: #ec4899;
-            background: #ffffff;
-            box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.2);
-        }
+        input[type="text"]:focus { border-color: #ec4899; box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.2); }
         
         tr.row-correct td { background-color: var(--success-light) !important; color: #064e3b; }
         tr.row-wrong td { background-color: var(--danger-light) !important; color: #7f1d1d; }
 
+        /* MOBILE CARD VIEW CONTAINER */
+        #mobileCardContainer { display: none; }
+
+        .vocab-card {
+            background: #ffffff;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            position: relative;
+        }
+        .vocab-card.row-correct { background-color: var(--success-light) !important; border-color: #34d399; }
+        .vocab-card.row-wrong { background-color: var(--danger-light) !important; border-color: #f87171; }
+
+        .card-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            border-bottom: 1px dashed #e2e8f0;
+            padding-bottom: 6px;
+        }
+        .card-stt { font-weight: 700; color: #6366f1; font-size: 12px; }
+        .card-type { background: #e0f2fe; color: #0284c7; padding: 2px 6px; border-radius: 6px; font-size: 10px; font-weight: 600; }
+        
+        .card-content-grid {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        .card-word-group { flex: 1; }
+        .card-hanzi { font-family: 'Noto Sans SC', sans-serif; font-size: 22px; font-weight: 700; color: #9f1239; line-height: 1.2; }
+        .card-pinyin { font-size: 12px; color: #64748b; font-style: italic; font-weight: 600; }
+        .card-meaning { font-size: 13px; font-weight: 600; color: #1e293b; margin-top: 2px; }
+
+        .card-input-group { width: 110px; text-align: right; }
+        .card-input-group input { width: 100%; box-sizing: border-box; text-align: center; font-size: 13px; padding: 6px; }
+
+        .card-example-box {
+            background: #f8fafc;
+            border-radius: 6px;
+            padding: 6px 8px;
+            font-size: 11px;
+            color: #334155;
+            border-left: 3px solid #cbd5e1;
+        }
+        .vocab-card.row-correct .card-example-box { background: rgba(255,255,255,0.7); border-left-color: #10b981; }
+        .vocab-card.row-wrong .card-example-box { background: rgba(255,255,255,0.7); border-left-color: #ef4444; }
+
         .stats-dashboard { 
-            width: 240px; 
+            width: 230px; 
             background: var(--card-bg); 
             backdrop-filter: blur(10px);
             border-radius: 14px; 
-            padding: 14px; 
+            padding: 12px; 
             box-shadow: 0 8px 25px -5px rgba(0,0,0,0.1);
             border: 2px solid rgba(244, 114, 182, 0.4);
             flex-shrink: 0;
         }
 
-        .stats-dashboard h3 { font-size: 12px; margin: 0 0 10px 0; text-transform: uppercase; color: #db2777; font-weight: 700; }
+        .stats-dashboard h3 { font-size: 11px; margin: 0 0 8px 0; text-transform: uppercase; color: #db2777; font-weight: 700; }
 
         .timer-box {
             background: linear-gradient(135deg, #e0e7ff, #fce7f3);
             border: 1.5px solid #f472b6;
-            border-radius: 10px;
-            padding: 8px;
+            border-radius: 8px;
+            padding: 6px;
             text-align: center;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
-        .timer-box .timer-label { font-size: 10px; color: #4f46e5; font-weight: 700; text-transform: uppercase; }
-        .timer-box .timer-value { font-size: 18px; font-weight: 800; color: #db2777; margin-top: 2px; font-family: monospace; }
+        .timer-box .timer-label { font-size: 9.5px; color: #4f46e5; font-weight: 700; text-transform: uppercase; }
+        .timer-box .timer-value { font-size: 16px; font-weight: 800; color: #db2777; margin-top: 1px; font-family: monospace; }
 
-        .progress-bar-bg { width: 100%; height: 7px; background-color: rgba(203, 213, 225, 0.6); border-radius: 10px; overflow: hidden; margin-bottom: 12px; }
-        .progress-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #ec4899, #8b5cf6); transition: width 0.4s ease; }
+        .progress-bar-bg { width: 100%; height: 6px; background-color: rgba(203, 213, 225, 0.6); border-radius: 10px; overflow: hidden; margin-bottom: 10px; }
+        .progress-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #ec4899, #8b5cf6); transition: width 0.3s ease; }
 
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        .stat-card { background: rgba(255, 255, 255, 0.85); padding: 8px; border-radius: 8px; border: 1.5px solid #fbcfe8; text-align: center; }
-        .stat-card .label { font-size: 10px; color: #475569; margin-bottom: 3px; font-weight: 600; }
-        .stat-card .value { font-size: 15px; font-weight: 700; }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+        .stat-card { background: rgba(255, 255, 255, 0.85); padding: 6px; border-radius: 6px; border: 1.5px solid #fbcfe8; text-align: center; }
+        .stat-card .label { font-size: 9.5px; color: #475569; margin-bottom: 2px; font-weight: 600; }
+        .stat-card .value { font-size: 14px; font-weight: 700; }
 
-        .rate-card { margin-top: 10px; text-align: center; background: rgba(253, 242, 248, 0.9); padding: 10px; border-radius: 10px; border: 1.5px solid #f472b6; }
+        .rate-card { margin-top: 8px; text-align: center; background: rgba(253, 242, 248, 0.9); padding: 8px; border-radius: 8px; border: 1.5px solid #f472b6; }
         
         .contact-card {
-            margin-top: 12px;
+            margin-top: 10px;
             background: rgba(255, 255, 255, 0.95);
             border: 1.5px solid #cbd5e1;
-            border-radius: 10px;
-            padding: 8px 10px;
-            font-size: 10.5px;
+            border-radius: 8px;
+            padding: 6px 8px;
+            font-size: 10px;
             color: #334155;
         }
-        .contact-card .contact-title {
-            font-weight: 700;
-            color: #4338ca;
-            margin-bottom: 4px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            text-transform: uppercase;
-            font-size: 9.5px;
-        }
-        .contact-card .contact-item {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            margin-top: 3px;
-            word-break: break-all;
-        }
+        .contact-card .contact-title { font-weight: 700; color: #4338ca; margin-bottom: 3px; text-transform: uppercase; font-size: 9px; }
+        .contact-card .contact-item { display: flex; align-items: center; gap: 4px; margin-top: 2px; word-break: break-all; }
         .contact-card .contact-item a { color: #2563eb; text-decoration: none; font-weight: 600; }
 
-        .footer-owner { text-align: center; margin-top: 10px; padding-top: 8px; border-top: 1px dashed #cbd5e1; font-size: 10px; color: #475569; font-weight: 500; }
+        .footer-owner { text-align: center; margin-top: 8px; padding-top: 6px; border-top: 1px dashed #cbd5e1; font-size: 9.5px; color: #475569; font-weight: 500; }
 
-        @media (max-width: 900px) {
-            body { padding: 6px; }
+        /* TỰ ĐỘNG CHUYỂN ĐỔI GIAO DIỆN KHI DÙNG ĐIỆN THOẠI (< 768px) */
+        @media (max-width: 768px) {
+            body { padding: 4px; }
             .main-layout { flex-direction: column; }
             .stats-dashboard { width: 100%; box-sizing: border-box; }
-            .controls { padding: 10px; gap: 8px; }
-            .control-box { padding: 5px 8px; }
+            .controls { padding: 8px; gap: 6px; }
+            .control-box { padding: 4px 6px; }
+            
+            /* Ẩn bảng desktop, hiện dạng card di động */
+            #desktopTableWrapper { display: none; }
+            #mobileCardContainer { display: block; }
         }
     </style>
 </head>
@@ -326,14 +334,14 @@
 
     <script>
         const symbols = ['🌸', '🌺', '🌷', '🌻', '🍃', '❄️', '❅', '✨', '💮', '❄️'];
-        for (let i = 0; i < 30; i++) {
+        for (let i = 0; i < 25; i++) {
             const div = document.createElement('div');
             div.className = 'falling-decor';
             div.innerHTML = symbols[Math.floor(Math.random() * symbols.length)];
             div.style.left = Math.random() * 100 + 'vw';
             div.style.animationDuration = (Math.random() * 5 + 5) + 's';
             div.style.animationDelay = (Math.random() * 5) + 's';
-            div.style.fontSize = (Math.random() * 12 + 14) + 'px';
+            div.style.fontSize = (Math.random() * 10 + 12) + 'px';
             document.body.appendChild(div);
         }
     </script>
@@ -368,7 +376,7 @@
 
             <div class="control-box">
                 <label class="box-label">📝 Số câu</label>
-                <input type="number" id="quizSize" value="10" min="1" style="width: 40px; text-align: center;">
+                <input type="number" id="quizSize" value="10" min="1" style="width: 35px; text-align: center;">
             </div>
 
             <div class="control-box">
@@ -383,26 +391,32 @@
             <button class="btn btn-new" id="btnNewQuiz">⚡ Đổi đề</button>
             <button class="btn btn-retry" id="btnRetryQuiz">♻️ Làm lại</button>
             <button class="btn btn-reset" id="btnReset">🗑️ Xóa</button>
-            <span id="loadingStatus" style="font-size: 12px; font-weight: 600; color: var(--success); margin-left: auto;"></span>
+            <span id="loadingStatus" style="font-size: 11px; font-weight: 600; color: var(--success); margin-left: auto;"></span>
         </div>
 
         <div class="main-layout">
             <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th class="col-stt">STT</th>
-                            <th class="col-hanzi">Chữ Hán</th>
-                            <th class="col-type">Loại từ</th>
-                            <th class="col-pinyin">Pinyin</th>
-                            <th class="col-viet">Tiếng Việt</th>
-                            <th class="col-example">Ví dụ</th>
-                            <th class="col-input">Ô Nhập</th>
-                            <th class="col-status">Trạng thái</th>
-                        </tr>
-                    </thead>
-                    <tbody id="vocabTable"></tbody>
-                </table>
+                <!-- GIAO DIỆN MÁY TÍNH (DESKTOP TABLE) -->
+                <div id="desktopTableWrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 5%;">STT</th>
+                                <th style="width: 16%;">Chữ Hán</th>
+                                <th style="width: 10%;">Loại từ</th>
+                                <th style="width: 14%;">Pinyin</th>
+                                <th style="width: 16%;">Tiếng Việt</th>
+                                <th style="width: 22%;">Ví dụ</th>
+                                <th style="width: 12%;">Ô Nhập</th>
+                                <th style="width: 5%;">Trạng thái</th>
+                            </tr>
+                        </thead>
+                        <tbody id="vocabTableDesktop"></tbody>
+                    </table>
+                </div>
+
+                <!-- GIAO DIỆN ĐIỆN THOẠI (MOBILE CARD VIEW - KHÔNG CẦN CUỘN NGANG) -->
+                <div id="mobileCardContainer"></div>
             </div>
 
             <div class="stats-dashboard">
@@ -420,8 +434,8 @@
                     <div class="stat-card" style="border-color: #fecaca; background: rgba(254, 242, 242, 0.9);"><div class="label" style="color: #991b1b;">Sai</div><div class="value" style="color: var(--danger);" id="statWrong">0</div></div>
                 </div>
                 <div class="rate-card">
-                    <div style="font-size: 10px; color: #be185d; font-weight: 700;">TỶ LỆ CHÍNH XÁC</div>
-                    <div style="font-size: 20px; font-weight: 700; color: #db2777; margin-top: 2px;" id="statRate">0.0%</div>
+                    <div style="font-size: 9.5px; color: #be185d; font-weight: 700;">TỶ LỆ CHÍNH XÁC</div>
+                    <div style="font-size: 18px; font-weight: 700; color: #db2777; margin-top: 1px;" id="statRate">0.0%</div>
                 </div>
 
                 <div class="contact-card">
@@ -480,7 +494,7 @@
         }
 
         window.onload = function() {
-            const savedData = localStorage.getItem('hsk_vocab_data_v2');
+            const savedData = localStorage.getItem('hsk_vocab_data_v3');
             if (savedData) {
                 try { 
                     fullVocabData = JSON.parse(savedData);
@@ -619,7 +633,7 @@
                     }
 
                     fullVocabData = parsedData;
-                    localStorage.setItem('hsk_vocab_data_v2', JSON.stringify(fullVocabData));
+                    localStorage.setItem('hsk_vocab_data_v3', JSON.stringify(fullVocabData));
                     
                     if (statusText) { 
                         statusText.innerText = `✅ Nạp ${fullVocabData.length} từ!`; 
@@ -681,22 +695,22 @@
 
             currentQuizData = processedData;
             resetTimer(); 
-            renderTable();
+            renderUI();
         }
 
         document.getElementById('shuffleSelect').addEventListener('change', function() { sequentialOffset = 0; });
-        document.getElementById('modeSelect').addEventListener('change', function() { renderTable(); });
+        document.getElementById('modeSelect').addEventListener('change', function() { renderUI(); });
 
         function retryCurrentQuiz() { 
             if (currentQuizData.length > 0) {
                 resetTimer();
-                renderTable();
+                renderUI();
             } 
         }
 
         function resetAllData() {
             if (confirm("Bạn có chắc chắn muốn xóa dữ liệu đã lưu?")) {
-                localStorage.removeItem('hsk_vocab_data_v2');
+                localStorage.removeItem('hsk_vocab_data_v3');
                 fullVocabData = [...EMBEDDED_VOCAB_DATA];
                 document.getElementById('loadingStatus').innerText = "";
                 document.getElementById('rangeFrom').value = 1;
@@ -706,15 +720,18 @@
             }
         }
 
-        function renderTable() {
-            const tbody = document.getElementById('vocabTable');
+        function renderUI() {
             const mode = document.getElementById('modeSelect').value;
-            tbody.innerHTML = '';
+            
+            // 1. Render Desktop Table
+            const desktopTbody = document.getElementById('vocabTableDesktop');
+            desktopTbody.innerHTML = '';
+
+            // 2. Render Mobile Cards
+            const mobileContainer = document.getElementById('mobileCardContainer');
+            mobileContainer.innerHTML = '';
 
             currentQuizData.forEach((item, index) => {
-                const tr = document.createElement('tr');
-                tr.id = `row_${index}`;
-                
                 let displayChinese = '***';
                 let displayPinyin  = '***';
                 let displayMeaning = '***';
@@ -726,57 +743,93 @@
                     displayMeaning = item.meaning || '---';
                 }
 
+                // Append Desktop Row
+                const tr = document.createElement('tr');
+                tr.id = `row_desk_${index}`;
                 tr.innerHTML = `
                     <td class="col-stt">${index + 1}</td>
-                    <td id="chinese_${index}" class="col-hanzi">${displayChinese}</td>
+                    <td id="chinese_desk_${index}" class="col-hanzi">${displayChinese}</td>
                     <td class="col-type">${item.type || '-'}</td>
-                    <td id="pinyin_${index}" class="col-pinyin">${displayPinyin}</td>
-                    <td id="meaning_${index}" class="col-viet">${displayMeaning}</td>
-                    <td id="example_${index}" class="col-example">${displayExample}</td>
-                    <td class="col-input">
-                        <input type="text" id="input_${index}" 
+                    <td id="pinyin_desk_${index}" class="col-pinyin">${displayPinyin}</td>
+                    <td id="meaning_desk_${index}" class="col-viet">${displayMeaning}</td>
+                    <td id="example_desk_${index}" class="col-example">${displayExample}</td>
+                    <td>
+                        <input type="text" id="input_desk_${index}" 
                                enterkeyhint="next" 
                                oninput="checkAndStartTimer()"
-                               onblur="checkAnswer(${index})"
-                               onkeydown="handleKeyDown(event, ${index})">
+                               onblur="checkAnswer(${index}, 'desk')"
+                               onkeydown="handleKeyDown(event, ${index}, 'desk')">
                     </td>
-                    <td id="status_${index}" class="col-status">-</td>
+                    <td id="status_desk_${index}" style="font-weight:700;">-</td>
                 `;
-                tbody.appendChild(tr);
+                desktopTbody.appendChild(tr);
+
+                // Append Mobile Card
+                const card = document.createElement('div');
+                card.className = 'vocab-card';
+                card.id = `row_mob_${index}`;
+                card.innerHTML = `
+                    <div class="card-header-row">
+                        <span class="card-stt">Câu ${index + 1}</span>
+                        <span class="card-type">${item.type || '-'}</span>
+                        <span id="status_mob_${index}" style="font-weight:700; font-size:14px;">-</span>
+                    </div>
+                    <div class="card-content-grid">
+                        <div class="card-word-group">
+                            <div id="chinese_mob_${index}" class="card-hanzi">${displayChinese}</div>
+                            <div id="pinyin_mob_${index}" class="card-pinyin">${displayPinyin}</div>
+                            <div id="meaning_mob_${index}" class="card-meaning">${displayMeaning}</div>
+                        </div>
+                        <div class="card-input-group">
+                            <input type="text" id="input_mob_${index}" 
+                                   enterkeyhint="next" 
+                                   placeholder="Nhập..."
+                                   oninput="checkAndStartTimer()"
+                                   onblur="checkAnswer(${index}, 'mob')"
+                                   onkeydown="handleKeyDown(event, ${index}, 'mob')">
+                        </div>
+                    </div>
+                    <div id="example_mob_${index}" class="card-example-box">${displayExample}</div>
+                `;
+                mobileContainer.appendChild(card);
             });
             updateStats();
         }
 
-        function handleKeyDown(event, index) {
+        function handleKeyDown(event, index, viewType) {
             checkAndStartTimer();
             if (event.key === 'Enter' || event.keyCode === 13) {
                 event.preventDefault();
-                checkAnswer(index);
+                checkAnswer(index, viewType);
                 
-                const nextInput = document.getElementById(`input_${index + 1}`);
+                // Tự động chuyển focus xuống ô nhập tiếp theo ở cả Desktop và Mobile
+                const nextInput = document.getElementById(`input_${viewType}_${index + 1}`);
                 if (nextInput) {
                     nextInput.focus();
                 }
             }
         }
 
-        function checkAnswer(index) {
+        function checkAnswer(index, viewType) {
             const item = currentQuizData[index];
-            const inputVal = document.getElementById(`input_${index}`).value;
+            const inputVal = document.getElementById(`input_${viewType}_${index}`).value;
             const cleanedInput = cleanString(inputVal);
             const mode = document.getElementById('modeSelect').value;
+
+            // Đồng bộ giá trị ô nhập giữa 2 bên
+            document.getElementById(`input_desk_${index}`).value = inputVal;
+            document.getElementById(`input_mob_${index}`).value = inputVal;
             
-            const rowElem = document.getElementById(`row_${index}`);
-            const statusElem = document.getElementById(`status_${index}`);
-            
-            const chineseElem = document.getElementById(`chinese_${index}`);
-            const pinyinElem = document.getElementById(`pinyin_${index}`);
-            const meaningElem = document.getElementById(`meaning_${index}`);
-            const exampleElem = document.getElementById(`example_${index}`);
+            const deskRow = document.getElementById(`row_desk_${index}`);
+            const mobCard = document.getElementById(`row_mob_${index}`);
+            const statusDesk = document.getElementById(`status_desk_${index}`);
+            const statusMob = document.getElementById(`status_mob_${index}`);
 
             if (!cleanedInput) {
-                rowElem.className = '';
-                statusElem.innerText = '-';
+                deskRow.className = '';
+                mobCard.className = 'vocab-card';
+                statusDesk.innerText = '-';
+                statusMob.innerText = '-';
                 updateStats();
                 return;
             }
@@ -799,20 +852,24 @@
             }
 
             if (isCorrect) {
-                rowElem.className = 'row-correct';
-                statusElem.innerText = '✔️';
-                statusElem.style.color = 'var(--success)';
+                deskRow.className = 'row-correct';
+                mobCard.className = 'vocab-card row-correct';
+                statusDesk.innerText = '✔️'; statusDesk.style.color = 'var(--success)';
+                statusMob.innerText = '✔️'; statusMob.style.color = 'var(--success)';
             } else {
-                rowElem.className = 'row-wrong';
-                statusElem.innerText = '❌';
-                statusElem.style.color = 'var(--danger)';
+                deskRow.className = 'row-wrong';
+                mobCard.className = 'vocab-card row-wrong';
+                statusDesk.innerText = '❌'; statusDesk.style.color = 'var(--danger)';
+                statusMob.innerText = '❌'; statusMob.style.color = 'var(--danger)';
             }
 
-            // Mở khóa hiện đầy đủ thông tin chữ Hán, Pinyin, nghĩa và câu ví dụ khi người dùng đã nhập đáp án
-            chineseElem.innerText = item.chinese || '---';
-            pinyinElem.innerText = item.pinyin || '---';
-            meaningElem.innerText = item.meaning || '---';
-            exampleElem.innerHTML = formatExampleHTML(item.example);
+            // Hiện thông tin đầy đủ sau khi gõ
+            ['desk', 'mob'].forEach(v => {
+                document.getElementById(`chinese_${v}_${index}`).innerText = item.chinese || '---';
+                document.getElementById(`pinyin_${v}_${index}`).innerText = item.pinyin || '---';
+                document.getElementById(`meaning_${v}_${index}`).innerText = item.meaning || '---';
+                document.getElementById(`example_${v}_${index}`).innerHTML = formatExampleHTML(item.example);
+            });
 
             updateStats();
             checkQuizCompletion();
@@ -825,13 +882,11 @@
             let wrong = 0;
 
             currentQuizData.forEach((_, index) => {
-                const row = document.getElementById(`row_${index}`);
+                const row = document.getElementById(`row_desk_${index}`);
                 if (row.classList.contains('row-correct')) {
-                    done++;
-                    correct++;
+                    done++; correct++;
                 } else if (row.classList.contains('row-wrong')) {
-                    done++;
-                    wrong++;
+                    done++; wrong++;
                 }
             });
 
@@ -849,7 +904,7 @@
         function checkQuizCompletion() {
             let done = 0;
             currentQuizData.forEach((_, index) => {
-                const row = document.getElementById(`row_${index}`);
+                const row = document.getElementById(`row_desk_${index}`);
                 if (row.classList.contains('row-correct') || row.classList.contains('row-wrong')) {
                     done++;
                 }
