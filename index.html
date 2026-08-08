@@ -195,7 +195,6 @@
         }
         .example-cn { font-family: 'Noto Sans SC', sans-serif; font-weight: 600; color: #831843; display: block; font-size: 13px; }
         .example-py { font-style: italic; color: #64748b; display: block; font-size: 11px; }
-        .example-vn { color: #334155; display: block; font-size: 12px; }
 
         input[type="text"] { 
             width: 90%; 
@@ -453,14 +452,13 @@
     </div>
 
     <script>
-        // Toàn bộ logic bên dưới sử dụng tiếng Trung thuần túy cho định danh biến và hàm
         const mimaMiyao = "CAMTU2019S2THANHAN2025";
 
         const cihuiCunchuMoren = [
-            {"chinese": "早饭 / 早餐", "type": "Danh từ", "pinyin": "zǎofàn / zǎocān", "meaning": "Bữa sáng", "example": "Wǒ míngtiān zǎofàn chī miànbaō.\n我 明天 早饭 吃 面包。\nTôi ăn bánh mì vào bữa sáng ngày mai."},
-            {"chinese": "午饭 / 晚餐", "type": "Danh từ", "pinyin": "wǔfàn / wǔcān", "meaning": "Bữa trưa", "example": "Tamen zài shítáng chī wǔfàn.\n他们 在 食堂 吃 午饭。\nHọ ăn trưa ở nhà ăn."},
-            {"chinese": "因为……所以……", "type": "Liên từ", "pinyin": "yīnwèi……suǒyǐ……", "meaning": "Vì…… nên……", "example": "Yīnwèi xià yǔ, suǒyǐ wǒmen bù qù.\n因为 下 雨, 所以 我们 不 去.\nVì trời mưa nên chúng tôi không đi."},
-            {"chinese": "姐姐", "type": "Danh từ", "pinyin": "jiějie", "meaning": "Chị gái", "example": "Wǒ yǒu yí gè jiějie.\n我 有 一 个 姐姐。\nTôi có một người chị gái."}
+            {"chinese": "早饭 / 早餐", "type": "Danh từ", "pinyin": "zǎofàn / zǎocān", "meaning": "Bữa sáng", "example": "zǎofàn\nWǒ míngtiān zǎofàn chī miànbaō.\n我 明天 早饭 吃 面包。"},
+            {"chinese": "午饭 / 晚餐", "type": "Danh từ", "pinyin": "wǔfàn / wǔcān", "meaning": "Bữa trưa", "example": "wǔfàn\nTamen zài shítáng chī wǔfàn.\n他们 在 食堂 吃 午饭。"},
+            {"chinese": "因为……所以……", "type": "Liên từ", "pinyin": "yīnwèi……suǒyǐ……", "meaning": "Vì…… nên……", "example": "yīnwèi\nYīnwèi xià yǔ, suǒyǐ wǒmen bù qù.\n因为 下 雨, 所以 我们 不 去。"},
+            {"chinese": "姐姐", "type": "Danh từ", "pinyin": "jiějie", "meaning": "Chị gái", "example": "jiějie\nWǒ yǒu yí gè jiějie.\n我 有 一 个 姐姐。"}
         ];
 
         let quanBuCihuiShuju = [];
@@ -494,9 +492,9 @@
         function shengChengZidongLizi(xiangmu) {
             const hanzizi = xiangmu.chinese ? xiangmu.chinese.split('/')[0].trim() : '这个';
             const pinyinyin = xiangmu.pinyin ? xiangmu.pinyin.split('/')[0].trim() : 'zhège';
-            const yisiyi = xiangmu.meaning ? xiangmu.meaning.split('/')[0].trim() : 'từ này';
             
-            return `${pinyinyin} shì ${yisiyi}.\n${hanzizi} 是 ${yisiyi}。\nĐây là ${yisiyi}.`;
+            // Sử dụng hoàn toàn tiếng Trung 100% cho ví dụ tự động
+            return `${pinyinyin}\nzhè shì ${hanzizi} de lìjù.\n这 是 ${hanzizi} 的 例句。`;
         }
 
         window.onload = function() {
@@ -663,9 +661,9 @@
             if (!liziwenben) return '<span style="color:#94a3b8">Không có ví dụ</span>';
             const hangLie = liziwenben.split('\n').filter(l => l.trim() !== '');
             if (hangLie.length >= 3) {
-                return `<span class="example-py">${hangLie[0]}</span><span class="example-cn">${hangLie[1]}</span><span class="example-vn">${hangLie[2]}</span>`;
+                return `<span class="example-py">${hangLie[0]}</span><span class="example-cn">${hangLie[1]}</span><span class="example-cn" style="font-weight:normal; font-size:12px; color:#334155;">${hangLie[2]}</span>`;
             } else if (hangLie.length === 2) {
-                return `<span class="example-cn">${hangLie[0]}</span><span class="example-vn">${hangLie[1]}</span>`;
+                return `<span class="example-cn">${hangLie[0]}</span><span class="example-cn" style="font-weight:normal; font-size:12px; color:#334155;">${hangLie[1]}</span>`;
             }
             return `<span>${liziwenben}</span>`;
         }
