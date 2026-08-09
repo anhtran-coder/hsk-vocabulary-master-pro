@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>HSK Vocabulary Master - MP3 Audio</title>
+    <title>HSK Vocabulary Master - Click Audio</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@500;700;900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
@@ -60,10 +60,24 @@
         table { width: 100%; border-collapse: separate; border-spacing: 0; table-layout: fixed; }
         th { background: linear-gradient(135deg, var(--header-bg-start), var(--header-bg-end)) !important; color: var(--header-text) !important; font-weight: 700 !important; font-size: 13px !important; text-transform: uppercase; padding: 12px 8px !important; border-bottom: 2px solid #f472b6 !important; }
         td { border-bottom: 1px solid rgba(203, 213, 225, 0.6); padding: 12px 6px; text-align: center; word-wrap: break-word; }
-        td.col-hanzi { font-family: 'Noto Sans SC', sans-serif; font-size: 24px; font-weight: 700 !important; color: #9f1239; }
+        td.col-hanzi { font-family: 'Noto Sans SC', sans-serif; font-size: 22px; font-weight: 700 !important; color: #9f1239; }
 
-        .audio-btn { background: #fbcfe8; border: none; border-radius: 50%; width: 28px; height: 28px; cursor: pointer; font-size: 12px; display: inline-flex; align-items: center; justify-content: center; margin-left: 6px; vertical-align: middle; }
-        .audio-btn:hover { background: #f472b6; transform: scale(1.1); }
+        .audio-btn { 
+            background: linear-gradient(135deg, #ec4899, #db2777); 
+            color: white; 
+            border: none; 
+            border-radius: 10px; 
+            padding: 6px 12px; 
+            cursor: pointer; 
+            font-size: 12px; 
+            font-weight: 600;
+            display: inline-flex; 
+            align-items: center; 
+            gap: 4px;
+            margin-top: 6px;
+            box-shadow: 0 2px 5px rgba(236, 72, 153, 0.3);
+        }
+        .audio-btn:active { transform: scale(0.95); }
 
         td.col-pinyin { color: #475569; font-style: italic; font-size: 14px; font-weight: 600; }
         td.col-stt { color: #475569; font-weight: 600; }
@@ -71,11 +85,11 @@
         td.col-viet { font-weight: 600; color: #1e293b; }
 
         .col-stt { width: 6%; }
-        .col-hanzi { width: 22%; }
+        .col-hanzi { width: 24%; }
         .col-type { width: 12%; }
         .col-pinyin { width: 16%; }
         .col-viet { width: 19%; }
-        .col-input { width: 17%; }
+        .col-input { width: 15%; }
         .col-status { width: 8%; }
 
         input[type="text"] { width: 85%; padding: 8px 10px; border: 1.5px solid #cbd5e1; border-radius: 8px; text-align: center; font-size: 15px; font-weight: 500; outline: none; background: rgba(255, 255, 255, 0.95); }
@@ -105,7 +119,7 @@
             .col-status { display: none !important; }
             th { font-size: 11px !important; padding: 10px 2px !important; }
             td { padding: 10px 2px !important; font-size: 13px; }
-            td.col-hanzi { font-size: 18px; }
+            td.col-hanzi { font-size: 16px; }
             input[type="text"] { font-size: 13px; padding: 6px 2px; width: 95%; }
         }
     </style>
@@ -114,7 +128,7 @@
 
     <div class="container-wrapper">
         <div class="app-header">
-            <h2 class="app-title">🌸 HSK Master <span class="pro-tag">MP3 AUDIO ENGINE</span></h2>
+            <h2 class="app-title">🌸 HSK Master <span class="pro-tag">CLICK AUDIO ENGINE</span></h2>
         </div>
 
         <div class="controls">
@@ -210,7 +224,7 @@
         let currentQuizData = [];
         let timerInterval = null, secondsElapsed = 0, isTimerRunning = false, sequentialOffset = 0;
 
-        // HÀM PHÁT ÂM THANH BẰNG MP3 ONLINE (KHÔNG BAO GIỜ LỖI TRÊN ĐIỆN THOẠI)
+        // HÀM PHÁT ÂM THANH TRỰC TIẾP KHI CÓ THAO TÁC CHẠM CHUẨN XÁC
         function speakText(text) {
             let pureText = text.split(/[/,;|\n]+/)[0].trim();
             pureText = pureText.split(' ')[0].replace(/[…….,;:!?()]/g, '');
@@ -365,11 +379,16 @@
                 tr.id = `row_${index}`;
                 let displayChinese = (mode === 'chinese_to_meaning') ? item.chinese : '***';
                 let displayMeaning = (mode === 'chinese_to_meaning') ? '***' : item.meaning;
-                let audioBtnHtml = (mode === 'chinese_to_meaning') ? `<button class="audio-btn" onclick="speakText('${item.chinese.replace(/'/g, "\\'")}')">🔊</button>` : '';
+                
+                // Luôn hiển thị nút bấm Nghe rõ ràng để người dùng tự click phá bỏ chặn của điện thoại
+                let audioBtnHtml = `<button class="audio-btn" onclick="speakText('${item.chinese.replace(/'/g, "\\'")}')">🔊 Nghe</button>`;
 
                 tr.innerHTML = `
                     <td class="col-stt">${index + 1}</td>
-                    <td class="col-hanzi"><span id="chinese_${index}">${displayChinese}</span><span id="audio_wrap_${index}">${audioBtnHtml}</span></td>
+                    <td class="col-hanzi">
+                        <div id="chinese_${index}">${displayChinese}</div>
+                        <div id="audio_wrap_${index}">${audioBtnHtml}</div>
+                    </td>
                     <td class="col-type">${item.type || '-'}</td>
                     <td id="pinyin_${index}" class="col-pinyin">***</td>
                     <td id="meaning_${index}" class="col-viet">${displayMeaning}</td>
@@ -418,9 +437,6 @@
                 document.getElementById(`chinese_${index}`).innerText = item.chinese;
                 document.getElementById(`pinyin_${index}`).innerText = item.pinyin;
                 document.getElementById(`meaning_${index}`).innerText = item.meaning;
-                document.getElementById(`audio_wrap_${index}`).innerHTML = `<button class="audio-btn" onclick="speakText('${item.chinese.replace(/'/g, "\\'")}')">🔊</button>`;
-                
-                speakText(item.chinese);
             } else {
                 tr.className = 'row-wrong';
                 statusTd.innerHTML = '❌';
