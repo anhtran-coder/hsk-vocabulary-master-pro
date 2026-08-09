@@ -518,26 +518,34 @@
         let sequentialOffset = 0;
         let isAudioEnabled = true;
 
+        // Cơ chế quản lý 1 Audio toàn cục duy nhất, chống kẹt lệnh và triệt tiêu hoàn toàn nhai lại trên mobile
+        let globalAudio = new Audio();
+
         const btnAudioToggle = document.getElementById('btnAudioToggle');
         btnAudioToggle.addEventListener('click', function() {
             isAudioEnabled = !isAudioEnabled;
             if (isAudioEnabled) {
                 btnAudioToggle.innerHTML = "🔊 Âm thanh: Bật";
                 btnAudioToggle.classList.remove('muted');
+                // Kích hoạt ngầm để mở khóa audio trên iOS/Android
+                globalAudio.src = "https://translate.google.com/translate_tts?ie=UTF-8&q=hao&tl=zh-CN&client=tw-ob";
+                globalAudio.play().catch(e => {});
             } else {
                 btnAudioToggle.innerHTML = "🔇 Âm thanh: Tắt";
                 btnAudioToggle.classList.add('muted');
             }
         });
 
-        // Hàm xử lý âm thanh đã lọc sạch ký tự đặc biệt, chống lặp vòng và hỗ trợ tốc độ đọc
         function speakText(text) {
             if (!isAudioEnabled || !text) return;
             
-            // Chỉ lấy từ vựng đầu tiên (cắt bỏ dấu /, khoảng trắng thừa, dấu câu để không bị nhai lại)
+            // Xử lý cắt sạch chuỗi chỉ lấy đúng từ đơn đầu tiên chuẩn xác
             let pureText = text.split(/[/,;|\n]+/)[0].trim();
-            // Nếu có chữ Hán kèm chữ khác dạng "早饭 / 早餐", chỉ lấy phần đầu
             pureText = pureText.split(' ')[0];
+            // Lọc bỏ ký tự đặc biệt lằng nhằng nếu có
+            pureText = pureText.replace(/[…….,;:!?()]/g, '');
+
+            if (!pureText) return;
 
             const cleanText = encodeURIComponent(pureText);
             const voiceType = document.getElementById('voiceSelect').value;
@@ -550,9 +558,14 @@
                 audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${cleanText}&tl=zh-CN&client=tw-ob`;
             }
 
-            const audio = new Audio(audioUrl);
-            audio.playbackRate = parseFloat(speed);
-            audio.play().catch(e => console.log("Không thể phát âm thanh tự động:", e));
+            // Dừng hẳn luồng âm thanh cũ trước khi gán link mới để không bị chồng chéo
+            globalAudio.pause();
+            globalAudio.currentTime = 0;
+            globalAudio.src = audioUrl;
+            globalAudio.playbackRate = parseFloat(speed);
+            globalAudio.play().catch(e => {
+                console.log("Trình duyệt di động chặn tự phát âm thanh:", e);
+            });
         }
 
         function removePinyinTones(str) {
