@@ -404,8 +404,16 @@
             <div class="control-box">
                 <label class="box-label">🎙️ Giọng đọc</label>
                 <select id="voiceSelect">
-                    <option value="google">Giọng Nữ chuẩn (Google TTS)</option>
-                    <option value="baidu">Giọng Chuẩn Nam/Nữ (Baidu TTS)</option>
+                    <option value="google">Nữ chuẩn (Google)</option>
+                    <option value="baidu">Nam/Nữ (Baidu)</option>
+                </select>
+            </div>
+
+            <div class="control-box">
+                <label class="box-label">⚡ Tốc độ</label>
+                <select id="speedSelect">
+                    <option value="1">Bình thường</option>
+                    <option value="0.75">Chậm (Luyện nghe)</option>
                 </select>
             </div>
 
@@ -522,11 +530,18 @@
             }
         });
 
-        // Hàm phát âm sử dụng Audio Online trực tuyến tương thích tốt nhất trên điện thoại
+        // Hàm xử lý âm thanh đã lọc sạch ký tự đặc biệt, chống lặp vòng và hỗ trợ tốc độ đọc
         function speakText(text) {
             if (!isAudioEnabled || !text) return;
-            const cleanText = encodeURIComponent(text.split(/[/,;]+/)[0].trim());
+            
+            // Chỉ lấy từ vựng đầu tiên (cắt bỏ dấu /, khoảng trắng thừa, dấu câu để không bị nhai lại)
+            let pureText = text.split(/[/,;|\n]+/)[0].trim();
+            // Nếu có chữ Hán kèm chữ khác dạng "早饭 / 早餐", chỉ lấy phần đầu
+            pureText = pureText.split(' ')[0];
+
+            const cleanText = encodeURIComponent(pureText);
             const voiceType = document.getElementById('voiceSelect').value;
+            const speed = document.getElementById('speedSelect').value;
             
             let audioUrl = "";
             if (voiceType === 'baidu') {
@@ -536,6 +551,7 @@
             }
 
             const audio = new Audio(audioUrl);
+            audio.playbackRate = parseFloat(speed);
             audio.play().catch(e => console.log("Không thể phát âm thanh tự động:", e));
         }
 
