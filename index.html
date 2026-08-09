@@ -175,6 +175,16 @@
         .btn-retry { background: linear-gradient(135deg, #f59e0b, #d97706); box-shadow: 0 4px 15px rgba(245, 158, 11, 0.35); }
         .btn-reset { background: linear-gradient(135deg, #ef4444, #dc2626); box-shadow: 0 4px 15px rgba(239, 68, 68, 0.35); }
         
+        /* Nút bật tắt âm thanh riêng biệt */
+        .btn-audio-toggle {
+            background: linear-gradient(135deg, #0ea5e9, #0284c7);
+            box-shadow: 0 4px 15px rgba(14, 165, 233, 0.35);
+        }
+        .btn-audio-toggle.muted {
+            background: linear-gradient(135deg, #94a3b8, #64748b);
+            box-shadow: 0 4px 15px rgba(148, 163, 184, 0.35);
+        }
+
         .main-layout { display: flex; gap: 20px; align-items: flex-start; }
 
         .table-container { 
@@ -414,6 +424,7 @@
                 </div>
             </div>
 
+            <button class="btn btn-audio-toggle" id="btnAudioToggle">🔊 Âm thanh: Bật</button>
             <button class="btn btn-new" id="btnNewQuiz">⚡ Đổi đề</button>
             <button class="btn btn-retry" id="btnRetryQuiz">♻️ Làm lại</button>
             <button class="btn btn-reset" id="btnReset">🗑️ Xóa data</button>
@@ -490,17 +501,33 @@
         let secondsElapsed = 0;
         let isTimerRunning = false;
         let sequentialOffset = 0;
+        let isAudioEnabled = true; // Trạng thái bật/tắt âm thanh
 
-        // Hàm phát âm tiếng Trung sử dụng trình duyệt Web Speech API
+        // Xử lý nút Bật/Tắt âm thanh
+        const btnAudioToggle = document.getElementById('btnAudioToggle');
+        btnAudioToggle.addEventListener('click', function() {
+            isAudioEnabled = !isAudioEnabled;
+            if (isAudioEnabled) {
+                btnAudioToggle.innerHTML = "🔊 Âm thanh: Bật";
+                btnAudioToggle.classList.remove('muted');
+            } else {
+                btnAudioToggle.innerHTML = "🔇 Âm thanh: Tắt";
+                btnAudioToggle.classList.add('muted');
+                if ('speechSynthesis' in window) {
+                    window.speechSynthesis.cancel();
+                }
+            }
+        });
+
+        // Hàm phát âm tiếng Trung
         function speakText(text) {
-            if (!text || !('speechSynthesis' in window)) return;
-            window.speechSynthesis.cancel(); // Hủy âm thanh đang phát cũ để không bị chồng chéo
+            if (!isAudioEnabled || !text || !('speechSynthesis' in window)) return;
+            window.speechSynthesis.cancel(); 
             
-            // Xử lý tách chuỗi nếu có dấu gạch chéo phân cách
             const cleanText = text.split(/[/,;]+/)[0].trim();
             const utterance = new SpeechSynthesisUtterance(cleanText);
-            utterance.lang = 'zh-CN'; // Giọng chuẩn tiếng Trung
-            utterance.rate = 0.9; // Tốc độ đọc chậm vừa phải dễ nghe
+            utterance.lang = 'zh-CN'; 
+            utterance.rate = 0.9; 
             window.speechSynthesis.speak(utterance);
         }
 
@@ -838,7 +865,6 @@
                     document.getElementById(`meaning_${index}`).innerText = item.meaning;
                 }
                 
-                // Tự động phát âm khi gõ đúng
                 speakText(item.chinese);
             } else {
                 tr.className = 'row-wrong';
