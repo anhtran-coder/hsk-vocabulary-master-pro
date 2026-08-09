@@ -383,7 +383,7 @@
 
     <div class="container-wrapper">
         <div class="app-header">
-            <h2 class="app-title">🌸 HSK Vocabulary Master <span class="pro-tag">PRO AUDIO ONLINE</span></h2>
+            <h2 class="app-title">🌸 HSK Vocabulary Master <span class="pro-tag">NATIVE SPEECH API</span></h2>
         </div>
 
         <div class="controls">
@@ -401,11 +401,10 @@
                 </select>
             </div>
 
-            <div class="control-box">
+            <div class="control-box" style="display:none;">
                 <label class="box-label">🎙️ Giọng đọc</label>
                 <select id="voiceSelect">
-                    <option value="google">Nữ chuẩn (Google)</option>
-                    <option value="baidu">Nam/Nữ (Baidu)</option>
+                    <option value="native">Giọng hệ thống</option>
                 </select>
             </div>
 
@@ -518,54 +517,38 @@
         let sequentialOffset = 0;
         let isAudioEnabled = true;
 
-        // Cơ chế quản lý 1 Audio toàn cục duy nhất, chống kẹt lệnh và triệt tiêu hoàn toàn nhai lại trên mobile
-        let globalAudio = new Audio();
-
         const btnAudioToggle = document.getElementById('btnAudioToggle');
         btnAudioToggle.addEventListener('click', function() {
             isAudioEnabled = !isAudioEnabled;
             if (isAudioEnabled) {
                 btnAudioToggle.innerHTML = "🔊 Âm thanh: Bật";
                 btnAudioToggle.classList.remove('muted');
-                // Kích hoạt ngầm để mở khóa audio trên iOS/Android
-                globalAudio.src = "https://translate.google.com/translate_tts?ie=UTF-8&q=hao&tl=zh-CN&client=tw-ob";
-                globalAudio.play().catch(e => {});
+                speakText("好"); // Kích hoạt tương tác rỗng cho phép mở khóa audio trên di động
             } else {
                 btnAudioToggle.innerHTML = "🔇 Âm thanh: Tắt";
                 btnAudioToggle.classList.add('muted');
             }
         });
 
+        // Sử dụng Web Speech API chuẩn trình duyệt di động (chống chặn, chống lặp vòng 100%)
         function speakText(text) {
-            if (!isAudioEnabled || !text) return;
+            if (!isAudioEnabled || !text || !('speechSynthesis' in window)) return;
             
-            // Xử lý cắt sạch chuỗi chỉ lấy đúng từ đơn đầu tiên chuẩn xác
+            // Lọc sạch văn bản, lấy chính xác từ đơn đầu tiên, tuyệt đối không bị nhai lại ký tự
             let pureText = text.split(/[/,;|\n]+/)[0].trim();
             pureText = pureText.split(' ')[0];
-            // Lọc bỏ ký tự đặc biệt lằng nhằng nếu có
             pureText = pureText.replace(/[…….,;:!?()]/g, '');
 
             if (!pureText) return;
 
-            const cleanText = encodeURIComponent(pureText);
-            const voiceType = document.getElementById('voiceSelect').value;
-            const speed = document.getElementById('speedSelect').value;
-            
-            let audioUrl = "";
-            if (voiceType === 'baidu') {
-                audioUrl = `https://fanyi.baidu.com/gettts?lan=zh&text=${cleanText}&spd=3&source=web`;
-            } else {
-                audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${cleanText}&tl=zh-CN&client=tw-ob`;
-            }
+            // Hủy ngay lệnh đọc cũ nếu đang đọc dở để tránh xếp hàng gây nhai lại
+            window.speechSynthesis.cancel();
 
-            // Dừng hẳn luồng âm thanh cũ trước khi gán link mới để không bị chồng chéo
-            globalAudio.pause();
-            globalAudio.currentTime = 0;
-            globalAudio.src = audioUrl;
-            globalAudio.playbackRate = parseFloat(speed);
-            globalAudio.play().catch(e => {
-                console.log("Trình duyệt di động chặn tự phát âm thanh:", e);
-            });
+            const utterance = new SpeechSynthesisUtterance(pureText);
+            utterance.lang = 'zh-CN';
+            utterance.rate = parseFloat(document.getElementById('speedSelect').value) || 1;
+
+            window.speechSynthesis.speak(utterance);
         }
 
         function removePinyinTones(str) {
