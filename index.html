@@ -175,7 +175,6 @@
         .btn-retry { background: linear-gradient(135deg, #f59e0b, #d97706); box-shadow: 0 4px 15px rgba(245, 158, 11, 0.35); }
         .btn-reset { background: linear-gradient(135deg, #ef4444, #dc2626); box-shadow: 0 4px 15px rgba(239, 68, 68, 0.35); }
         
-        /* Nút bật tắt âm thanh riêng biệt */
         .btn-audio-toggle {
             background: linear-gradient(135deg, #0ea5e9, #0284c7);
             box-shadow: 0 4px 15px rgba(14, 165, 233, 0.35);
@@ -384,7 +383,7 @@
 
     <div class="container-wrapper">
         <div class="app-header">
-            <h2 class="app-title">🌸 HSK Vocabulary Master <span class="pro-tag">PRO AUDIO</span></h2>
+            <h2 class="app-title">🌸 HSK Vocabulary Master <span class="pro-tag">PRO AUDIO ONLINE</span></h2>
         </div>
 
         <div class="controls">
@@ -399,6 +398,14 @@
                     <option value="chinese_only">1. Chỉ gõ Chữ Hán (Hiện Tiếng Việt)</option>
                     <option value="pinyin_to_chinese">2. Gõ Chữ Hán HOẶC Pinyin (Hiện Tiếng Việt)</option>
                     <option value="chinese_to_meaning">3. Gõ Tiếng Việt (Hiện Chữ Hán)</option>
+                </select>
+            </div>
+
+            <div class="control-box">
+                <label class="box-label">🎙️ Giọng đọc</label>
+                <select id="voiceSelect">
+                    <option value="google">Giọng Nữ chuẩn (Google TTS)</option>
+                    <option value="baidu">Giọng Chuẩn Nam/Nữ (Baidu TTS)</option>
                 </select>
             </div>
 
@@ -501,9 +508,8 @@
         let secondsElapsed = 0;
         let isTimerRunning = false;
         let sequentialOffset = 0;
-        let isAudioEnabled = true; // Trạng thái bật/tắt âm thanh
+        let isAudioEnabled = true;
 
-        // Xử lý nút Bật/Tắt âm thanh
         const btnAudioToggle = document.getElementById('btnAudioToggle');
         btnAudioToggle.addEventListener('click', function() {
             isAudioEnabled = !isAudioEnabled;
@@ -513,22 +519,24 @@
             } else {
                 btnAudioToggle.innerHTML = "🔇 Âm thanh: Tắt";
                 btnAudioToggle.classList.add('muted');
-                if ('speechSynthesis' in window) {
-                    window.speechSynthesis.cancel();
-                }
             }
         });
 
-        // Hàm phát âm tiếng Trung
+        // Hàm phát âm sử dụng Audio Online trực tuyến tương thích tốt nhất trên điện thoại
         function speakText(text) {
-            if (!isAudioEnabled || !text || !('speechSynthesis' in window)) return;
-            window.speechSynthesis.cancel(); 
+            if (!isAudioEnabled || !text) return;
+            const cleanText = encodeURIComponent(text.split(/[/,;]+/)[0].trim());
+            const voiceType = document.getElementById('voiceSelect').value;
             
-            const cleanText = text.split(/[/,;]+/)[0].trim();
-            const utterance = new SpeechSynthesisUtterance(cleanText);
-            utterance.lang = 'zh-CN'; 
-            utterance.rate = 0.9; 
-            window.speechSynthesis.speak(utterance);
+            let audioUrl = "";
+            if (voiceType === 'baidu') {
+                audioUrl = `https://fanyi.baidu.com/gettts?lan=zh&text=${cleanText}&spd=3&source=web`;
+            } else {
+                audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${cleanText}&tl=zh-CN&client=tw-ob`;
+            }
+
+            const audio = new Audio(audioUrl);
+            audio.play().catch(e => console.log("Không thể phát âm thanh tự động:", e));
         }
 
         function removePinyinTones(str) {
