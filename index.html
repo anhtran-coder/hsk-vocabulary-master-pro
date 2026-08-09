@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>HSK Vocabulary Master - Hệ Thống Luyện Từ Vựng HSK</title>
+    <title>HSK Vocabulary Master - Debug Audio</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@500;700;900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
@@ -106,10 +106,7 @@
             border-radius: 14px;
             border: 1.5px solid #e2e8f0;
             box-shadow: 0 2px 6px rgba(0,0,0,0.02);
-            transition: all 0.2s ease;
         }
-
-        .control-box:hover { border-color: #cbd5e1; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
 
         .controls label.box-label {
             font-weight: 600;
@@ -130,14 +127,7 @@
             font-weight: 600;
             color: #0f172a;
             background: #f8fafc;
-            transition: all 0.2s;
             font-size: 13px;
-        }
-
-        .controls select:focus, .controls input:focus {
-            border-color: #6366f1;
-            background: #ffffff;
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
         }
 
         .range-container {
@@ -164,24 +154,47 @@
             gap: 8px;
             transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: 0 4px 12px rgba(0,0,0,0.12);
-            position: relative;
-            overflow: hidden;
         }
 
         .btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.18); }
 
-        .btn-excel { background: linear-gradient(135deg, #059669, #047857); box-shadow: 0 4px 15px rgba(5, 150, 105, 0.35); }
-        .btn-new { background: linear-gradient(135deg, #6366f1, #4f46e5); box-shadow: 0 4px 15px rgba(99, 102, 241, 0.35); }
-        .btn-retry { background: linear-gradient(135deg, #f59e0b, #d97706); box-shadow: 0 4px 15px rgba(245, 158, 11, 0.35); }
-        .btn-reset { background: linear-gradient(135deg, #ef4444, #dc2626); box-shadow: 0 4px 15px rgba(239, 68, 68, 0.35); }
+        .btn-excel { background: linear-gradient(135deg, #059669, #047857); }
+        .btn-new { background: linear-gradient(135deg, #6366f1, #4f46e5); }
+        .btn-retry { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .btn-reset { background: linear-gradient(135deg, #ef4444, #dc2626); }
         
         .btn-audio-toggle {
             background: linear-gradient(135deg, #0ea5e9, #0284c7);
-            box-shadow: 0 4px 15px rgba(14, 165, 233, 0.35);
         }
         .btn-audio-toggle.muted {
             background: linear-gradient(135deg, #94a3b8, #64748b);
-            box-shadow: 0 4px 15px rgba(148, 163, 184, 0.35);
+        }
+
+        /* KHUNG DEBUG LOG HIỂN THỊ TRÊN MÀN HÌNH */
+        .debug-console {
+            background: #0f172a;
+            color: #38bdf8;
+            font-family: monospace;
+            font-size: 12px;
+            padding: 10px 14px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #334155;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        .debug-console span { flex: 1; word-break: break-all; }
+        .debug-console button {
+            background: #334155;
+            color: #fff;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 11px;
         }
 
         .main-layout { display: flex; gap: 20px; align-items: flex-start; }
@@ -205,7 +218,6 @@
             font-weight: 700 !important;
             font-size: 13px !important;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
             padding: 12px 8px !important;
             border-top: 1.5px solid var(--header-border) !important;
             border-bottom: 2px solid #f472b6 !important;
@@ -217,11 +229,10 @@
         td { border-bottom: 1px solid rgba(203, 213, 225, 0.6); padding: 12px 6px; text-align: center; word-wrap: break-word; }
 
         td.col-hanzi { 
-            font-family: 'Noto Sans SC', 'Microsoft YaHei', 'PingFang SC', sans-serif;
+            font-family: 'Noto Sans SC', sans-serif;
             font-size: 24px; 
             font-weight: 700 !important;
             color: #9f1239;
-            letter-spacing: 1px;
         }
 
         .audio-btn {
@@ -237,7 +248,6 @@
             justify-content: center;
             margin-left: 6px;
             vertical-align: middle;
-            transition: all 0.2s;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         .audio-btn:hover { background: #f472b6; transform: scale(1.1); }
@@ -267,7 +277,6 @@
             outline: none;
             background: rgba(255, 255, 255, 0.95);
         }
-
         input[type="text"]:focus {
             border-color: #ec4899;
             background: #ffffff;
@@ -318,28 +327,10 @@
             padding: 10px 12px;
             font-size: 11px;
             color: #334155;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
         }
-        .contact-card .contact-title {
-            font-weight: 700;
-            color: #4338ca;
-            margin-bottom: 6px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            text-transform: uppercase;
-            font-size: 10px;
-            letter-spacing: 0.3px;
-        }
-        .contact-card .contact-item {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            margin-top: 4px;
-            word-break: break-all;
-        }
+        .contact-card .contact-title { font-weight: 700; color: #4338ca; margin-bottom: 6px; text-transform: uppercase; font-size: 10px; }
+        .contact-card .contact-item { display: flex; align-items: center; gap: 6px; margin-top: 4px; word-break: break-all; }
         .contact-card .contact-item a { color: #2563eb; text-decoration: none; font-weight: 600; }
-        .contact-card .contact-item a:hover { text-decoration: underline; }
 
         .footer-owner { text-align: center; margin-top: 14px; padding-top: 10px; border-top: 1px dashed #cbd5e1; font-size: 11px; color: #475569; font-weight: 500; }
 
@@ -352,16 +343,7 @@
             th { font-size: 11px !important; padding: 10px 2px !important; }
             td { padding: 10px 2px !important; font-size: 13px; }
             td.col-hanzi { font-size: 18px; }
-            td.col-pinyin { font-size: 12px; }
-            td.col-type { font-size: 11px; }
-            td.col-viet { font-size: 12px; }
             input[type="text"] { font-size: 13px; padding: 6px 2px; width: 95%; }
-            .col-stt { width: 8%; }
-            .col-hanzi { width: 26%; }
-            .col-type { width: 12%; }
-            .col-pinyin { width: 18%; }
-            .col-viet { width: 21%; }
-            .col-input { width: 15%; }
         }
     </style>
 </head>
@@ -369,21 +351,26 @@
 
     <script>
         const symbols = ['🌸', '🌺', '🌷', '🌻', '🍃', '❄️', '❅', '✨', '💮', '❄️'];
-        for (let i = 0; i < 40; i++) {
+        for (let i = 0; i < 30; i++) {
             const div = document.createElement('div');
             div.className = 'falling-decor';
             div.innerHTML = symbols[Math.floor(Math.random() * symbols.length)];
             div.style.left = Math.random() * 100 + 'vw';
             div.style.animationDuration = (Math.random() * 5 + 5) + 's';
             div.style.animationDelay = (Math.random() * 5) + 's';
-            div.style.fontSize = (Math.random() * 14 + 16) + 'px';
             document.body.appendChild(div);
         }
     </script>
 
     <div class="container-wrapper">
         <div class="app-header">
-            <h2 class="app-title">🌸 HSK Vocabulary Master <span class="pro-tag">NATIVE SPEECH API</span></h2>
+            <h2 class="app-title">🌸 HSK Master <span class="pro-tag">AUDIO DEBUGGER</span></h2>
+        </div>
+
+        <!-- BẢNG THEO DÕI LỖI (DEBUG CONSOLE) -->
+        <div class="debug-console">
+            <span id="logDisplay">🛠️ Trạng thái: Sẵn sàng. Hãy bấm 'Bật âm thanh' và thử bấm loa.</span>
+            <button onclick="clearLog()">Xóa Log</button>
         </div>
 
         <div class="controls">
@@ -395,16 +382,9 @@
             <div class="control-box">
                 <label class="box-label">🎯 Chế độ</label>
                 <select id="modeSelect">
-                    <option value="chinese_only">1. Chỉ gõ Chữ Hán (Hiện Tiếng Việt)</option>
-                    <option value="pinyin_to_chinese">2. Gõ Chữ Hán HOẶC Pinyin (Hiện Tiếng Việt)</option>
-                    <option value="chinese_to_meaning">3. Gõ Tiếng Việt (Hiện Chữ Hán)</option>
-                </select>
-            </div>
-
-            <div class="control-box" style="display:none;">
-                <label class="box-label">🎙️ Giọng đọc</label>
-                <select id="voiceSelect">
-                    <option value="native">Giọng hệ thống</option>
+                    <option value="chinese_only">1. Chỉ gõ Chữ Hán (Hiện TV)</option>
+                    <option value="pinyin_to_chinese">2. Gõ Hán/Pinyin (Hiện TV)</option>
+                    <option value="chinese_to_meaning">3. Gõ Tiếng Việt (Hiện Hán)</option>
                 </select>
             </div>
 
@@ -412,36 +392,33 @@
                 <label class="box-label">⚡ Tốc độ</label>
                 <select id="speedSelect">
                     <option value="1">Bình thường</option>
-                    <option value="0.75">Chậm (Luyện nghe)</option>
+                    <option value="0.75">Chậm</option>
                 </select>
             </div>
 
             <div class="control-box">
-                <label class="box-label">🔄 Trộn câu</label>
+                <label class="box-label">🔄 Trộn</label>
                 <select id="shuffleSelect">
-                    <option value="sequential">🔢 Theo thứ tự</option>
-                    <option value="random">🔀 Đảo ngẫu nhiên</option>
+                    <option value="sequential">Theo thứ tự</option>
+                    <option value="random">Đảo ngẫu nhiên</option>
                 </select>
             </div>
 
             <div class="control-box">
                 <label class="box-label">📝 Số câu</label>
-                <input type="number" id="quizSize" value="10" min="1" style="width: 48px; text-align: center;">
+                <input type="number" id="quizSize" value="10" min="1" style="width: 45px; text-align: center;">
             </div>
 
-            <div class="control-box">
-                <label class="box-label">📊 Khoảng</label>
-                <div class="range-container">
-                    <input type="number" id="rangeFrom" placeholder="Từ" min="1" value="1">
-                    <span>đến</span>
-                    <input type="number" id="rangeTo" placeholder="Đến" min="1" value="100">
-                </div>
+            <div class="range-container">
+                <input type="number" id="rangeFrom" value="1">
+                <span>đến</span>
+                <input type="number" id="rangeTo" value="100">
             </div>
 
             <button class="btn btn-audio-toggle" id="btnAudioToggle">🔊 Âm thanh: Bật</button>
             <button class="btn btn-new" id="btnNewQuiz">⚡ Đổi đề</button>
             <button class="btn btn-retry" id="btnRetryQuiz">♻️ Làm lại</button>
-            <button class="btn btn-reset" id="btnReset">🗑️ Xóa data</button>
+            <button class="btn btn-reset" id="btnReset">🗑️ Xóa</button>
             <span id="loadingStatus" style="font-size: 13px; font-weight: 600; color: var(--success); margin-left: auto;"></span>
         </div>
 
@@ -465,57 +442,58 @@
 
             <div class="stats-dashboard">
                 <div class="timer-box">
-                    <div class="timer-label">⏱ Thời gian làm bài</div>
+                    <div class="timer-label">⏱ Thời gian</div>
                     <div class="timer-value" id="timerDisplay">00:00</div>
                 </div>
 
-                <h3>📊 Tiến độ bài tập</h3>
+                <h3>📊 Tiến độ</h3>
                 <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressBar"></div></div>
                 <div class="stats-grid">
-                    <div class="stat-card"><div class="label">Tổng số câu</div><div class="value" id="statTotal">0</div></div>
-                    <div class="stat-card"><div class="label">Đã hoàn thành</div><div class="value" id="statDone">0</div></div>
-                    <div class="stat-card" style="border-color: #a7f3d0; background: rgba(240, 253, 244, 0.9);"><div class="label" style="color: #065f46;">Số câu Đúng</div><div class="value" style="color: var(--success);" id="statCorrect">0</div></div>
-                    <div class="stat-card" style="border-color: #fecaca; background: rgba(254, 242, 242, 0.9);"><div class="label" style="color: #991b1b;">Số câu Sai</div><div class="value" style="color: var(--danger);" id="statWrong">0</div></div>
+                    <div class="stat-card"><div class="label">Tổng câu</div><div class="value" id="statTotal">0</div></div>
+                    <div class="stat-card"><div class="label">Hoàn thành</div><div class="value" id="statDone">0</div></div>
+                    <div class="stat-card" style="border-color: #a7f3d0; background: rgba(240, 253, 244, 0.9);"><div class="label" style="color: #065f46;">Đúng</div><div class="value" style="color: var(--success);" id="statCorrect">0</div></div>
+                    <div class="stat-card" style="border-color: #fecaca; background: rgba(254, 242, 242, 0.9);"><div class="label" style="color: #991b1b;">Sai</div><div class="value" style="color: var(--danger);" id="statWrong">0</div></div>
                 </div>
                 <div class="rate-card">
-                    <div style="font-size: 11px; color: #be185d; font-weight: 700;">TỶ LỆ CHÍNH XÁC</div>
+                    <div style="font-size: 11px; color: #be185d; font-weight: 700;">TỶ LỆ ĐÚNG</div>
                     <div style="font-size: 22px; font-weight: 700; color: #db2777; margin-top: 2px;" id="statRate">0.0%</div>
                 </div>
 
                 <div class="contact-card">
-                    <div class="contact-title">💬 Trung tâm Hỗ trợ & Góp ý</div>
-                    <div class="contact-item">
-                        <span>✉️</span>
-                        <span>Email: <a href="mailto:tuan91.at@gmail.com">tuan91.at@gmail.com</a></span>
-                    </div>
-                    <div class="contact-item">
-                        <span>📞</span>
-                        <span>Hotline: <a href="tel:0917241091">0917 241 091</a></span>
-                    </div>
+                    <div class="contact-title">💬 Hỗ trợ kỹ thuật</div>
+                    <div class="contact-item"><span>✉️</span><a href="mailto:tuan91.at@gmail.com">tuan91.at@gmail.com</a></div>
+                    <div class="contact-item"><span>📞</span><a href="tel:0917241091">0917 241 091</a></div>
                 </div>
-
-                <div class="footer-owner">Bản quyền thuộc sở hữu:<br><b>TRẦN ANH TUẤN - C7 CB K139-140</b></div>
+                <div class="footer-owner">TRẦN ANH TUẤN - C7 CB</div>
             </div>
         </div>
     </div>
 
     <script>
         const SECRET_KEY = "CAMTU2019S2THANHAN2025";
-
         const EMBEDDED_VOCAB_DATA = [
-            {"chinese": "早饭 / 早餐", "type": "Danh từ", "pinyin": "zǎofàn / zǎocān", "meaning": "Bữa sáng, điểm tâm"},
-            {"chinese": "午饭 / 晚餐", "type": "Danh từ", "pinyin": "wǔfàn / wǔcān", "meaning": "Bữa trưa"},
-            {"chinese": "因为……所以……", "type": "Liên từ", "pinyin": "yīnwèi……suǒyǐ……", "meaning": "Vì…… nên……"},
+            {"chinese": "早饭", "type": "Danh từ", "pinyin": "zǎofàn", "meaning": "Bữa sáng"},
+            {"chinese": "午饭", "type": "Danh từ", "pinyin": "wǔfàn", "meaning": "Bữa trưa"},
             {"chinese": "姐姐", "type": "Danh từ", "pinyin": "jiějie", "meaning": "Chị gái"}
         ];
 
         let fullVocabData = [];
         let currentQuizData = [];
-        let timerInterval = null;
-        let secondsElapsed = 0;
-        let isTimerRunning = false;
-        let sequentialOffset = 0;
-        let isAudioEnabled = true;
+        let timerInterval = null, secondsElapsed = 0, isTimerRunning = false, sequentialOffset = 0, isAudioEnabled = true;
+
+        // Hàm ghi nhận log lên màn hình để dễ dò lỗi
+        function logDebug(message) {
+            const logEl = document.getElementById('logDisplay');
+            if (logEl) {
+                const timeStr = new Date().toLocaleTimeString();
+                logEl.innerText = `[${timeStr}] ${message}`;
+            }
+            console.log(message);
+        }
+
+        function clearLog() {
+            document.getElementById('logDisplay').innerText = "🛠️ Đã xóa log.";
+        }
 
         const btnAudioToggle = document.getElementById('btnAudioToggle');
         btnAudioToggle.addEventListener('click', function() {
@@ -523,41 +501,60 @@
             if (isAudioEnabled) {
                 btnAudioToggle.innerHTML = "🔊 Âm thanh: Bật";
                 btnAudioToggle.classList.remove('muted');
-                speakText("好"); // Kích hoạt tương tác rỗng cho phép mở khóa audio trên di động
+                logDebug("Đã bật âm thanh, kích hoạt test.");
+                speakText("好"); 
             } else {
                 btnAudioToggle.innerHTML = "🔇 Âm thanh: Tắt";
                 btnAudioToggle.classList.add('muted');
+                logDebug("Đã tắt âm thanh.");
             }
         });
 
-        // Sử dụng Web Speech API chuẩn trình duyệt di động (chống chặn, chống lặp vòng 100%)
+        // Hàm đọc âm thanh có cơ chế giám sát lỗi trả về màn hình
         function speakText(text) {
-            if (!isAudioEnabled || !text || !('speechSynthesis' in window)) return;
-            
-            // Lọc sạch văn bản, lấy chính xác từ đơn đầu tiên, tuyệt đối không bị nhai lại ký tự
+            if (!isAudioEnabled) {
+                logDebug("Bỏ qua đọc vì âm thanh đang tắt.");
+                return;
+            }
+            if (!('speechSynthesis' in window)) {
+                logDebug("❌ LỖI: Trình duyệt này KHÔNG hỗ trợ SpeechSynthesis!");
+                alert("Trình duyệt của bạn không hỗ trợ Web Speech API.");
+                return;
+            }
+
             let pureText = text.split(/[/,;|\n]+/)[0].trim();
-            pureText = pureText.split(' ')[0];
-            pureText = pureText.replace(/[…….,;:!?()]/g, '');
+            pureText = pureText.split(' ')[0].replace(/لل*[…….,;:!?()]/g, '');
 
             if (!pureText) return;
 
-            // Hủy ngay lệnh đọc cũ nếu đang đọc dở để tránh xếp hàng gây nhai lại
-            window.speechSynthesis.cancel();
+            logDebug(`Đang yêu cầu đọc từ: "${pureText}"`);
 
-            const utterance = new SpeechSynthesisUtterance(pureText);
-            utterance.lang = 'zh-CN';
-            utterance.rate = parseFloat(document.getElementById('speedSelect').value) || 1;
+            try {
+                window.speechSynthesis.cancel();
 
-            window.speechSynthesis.speak(utterance);
+                setTimeout(() => {
+                    const utterance = new SpeechSynthesisUtterance(pureText);
+                    utterance.lang = 'zh-CN';
+                    utterance.rate = parseFloat(document.getElementById('speedSelect').value) || 1;
+
+                    utterance.onstart = () => {
+                        logDebug(`✅ Thành công: Đang phát âm "${pureText}"`);
+                    };
+
+                    utterance.onerror = (e) => {
+                        logDebug(`❌ LỖI TTS: ${e.error || 'Không xác định'}`);
+                    };
+
+                    window.speechSynthesis.speak(utterance);
+                }, 80);
+            } catch (err) {
+                logDebug(`❌ LỖI EXCEPTION: ${err.message}`);
+            }
         }
 
         function removePinyinTones(str) {
             if (!str) return '';
-            return str.normalize('NFD')
-                      .replace(/[\u0300-\u036f]/g, '')
-                      .replace(/ü/g, 'v')
-                      .replace(/Ü/g, 'v')
-                      .toLowerCase();
+            return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/ü/g, 'v').toLowerCase();
         }
 
         function cleanString(str) {
@@ -567,23 +564,12 @@
 
         function splitVariants(str) {
             if (!str) return [];
-            return str.split(/[/,;|\n]+/)
-                      .map(s => cleanString(s))
-                      .filter(s => s.length > 0);
+            return str.split(/[/,;|\n]+/).map(s => cleanString(s)).filter(s => s.length > 0);
         }
 
         window.onload = function() {
             const savedData = localStorage.getItem('hsk_vocab_data');
-            if (savedData) {
-                try { 
-                    fullVocabData = JSON.parse(savedData);
-                    if(!fullVocabData || fullVocabData.length === 0 || !fullVocabData[0].chinese) {
-                        fullVocabData = [...EMBEDDED_VOCAB_DATA];
-                    }
-                } catch(e) { fullVocabData = [...EMBEDDED_VOCAB_DATA]; }
-            } else {
-                fullVocabData = [...EMBEDDED_VOCAB_DATA];
-            }
+            fullVocabData = savedData ? JSON.parse(savedData) : [...EMBEDDED_VOCAB_DATA];
             document.getElementById('rangeTo').value = fullVocabData.length;
             
             document.getElementById('btnNewQuiz').addEventListener('click', startNewQuiz);
@@ -591,14 +577,13 @@
             document.getElementById('btnReset').addEventListener('click', resetAllData);
 
             startNewQuiz();
+            logDebug("Hệ thống khởi động thành công.");
         };
 
         function resetTimer() {
             clearInterval(timerInterval);
-            timerInterval = null;
-            secondsElapsed = 0;
-            isTimerRunning = false;
-            updateTimerDisplay();
+            timerInterval = null; secondsElapsed = 0; isTimerRunning = false;
+            document.getElementById('timerDisplay').innerText = "00:00";
         }
 
         function checkAndStartTimer() {
@@ -606,183 +591,100 @@
                 isTimerRunning = true;
                 timerInterval = setInterval(() => {
                     secondsElapsed++;
-                    updateTimerDisplay();
+                    const mins = Math.floor(secondsElapsed / 60).toString().padStart(2, '0');
+                    const secs = (secondsElapsed % 60).toString().padStart(2, '0');
+                    document.getElementById('timerDisplay').innerText = `${mins}:${secs}`;
                 }, 1000);
             }
-        }
-
-        function stopTimer() {
-            clearInterval(timerInterval);
-            isTimerRunning = false;
-        }
-
-        function updateTimerDisplay() {
-            const mins = Math.floor(secondsElapsed / 60).toString().padStart(2, '0');
-            const secs = (secondsElapsed % 60).toString().padStart(2, '0');
-            document.getElementById('timerDisplay').innerText = `${mins}:${secs}`;
         }
 
         document.getElementById('excelFile').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (!file) return;
-
-            const statusText = document.getElementById('loadingStatus');
-            if (statusText) { statusText.innerText = "⏳ Đang kiểm tra mã khóa..."; statusText.style.color = "var(--primary)"; }
-
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
                     const data = new Uint8Array(e.target.result);
                     const workbook = XLSX.read(data, { type: 'array' });
                     const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-
                     const cellZ1 = worksheet['Z1'] ? worksheet['Z1'].v.toString().trim() : '';
                     const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: "" });
 
-                    if (!rows || rows.length < 2) {
-                        alert("File Excel không có dữ liệu!");
-                        return;
-                    }
-
-                    let hasValidKey = false;
-                    if (cellZ1 === SECRET_KEY) {
-                        hasValidKey = true;
-                    } else if (rows[0]) {
+                    let hasValidKey = (cellZ1 === SECRET_KEY);
+                    if (!hasValidKey && rows[0]) {
                         for (let col = 0; col < rows[0].length; col++) {
-                            if (rows[0][col] && rows[0][col].toString().trim() === SECRET_KEY) {
-                                hasValidKey = true;
-                                break;
-                            }
+                            if (rows[0][col] && rows[0][col].toString().trim() === SECRET_KEY) { hasValidKey = true; break; }
                         }
                     }
 
                     if (!hasValidKey) {
-                        alert("❌ TRUY CẬP BỊ TỪ CHỐI!\n\nFile Excel này KHÔNG HỢP LỆ hoặc mã khóa ở ô Z1 không đúng.");
+                        alert("❌ Mã khóa ô Z1 không hợp lệ!");
                         document.getElementById('excelFile').value = '';
-                        if (statusText) statusText.innerText = "";
                         return;
                     }
 
                     let headerRowIndex = 0;
                     for (let i = 0; i < Math.min(rows.length, 5); i++) {
-                        const rowStr = rows[i].join(" ").toUpperCase();
-                        if (rowStr.includes("CHENESE") || rowStr.includes("CHINESE") || rowStr.includes("PINYIN") || rowStr.includes("MEANING")) {
-                            headerRowIndex = i;
-                            break;
+                        if (rows[i].join(" ").toUpperCase().includes("CHINESE") || rows[i].join(" ").toUpperCase().includes("HÁN")) {
+                            headerRowIndex = i; break;
                         }
                     }
 
                     const headers = rows[headerRowIndex].map(h => h.toString().trim().toUpperCase());
-                    let colChinese = -1, colType = -1, colPinyin = -1, colMeaning = -1;
-
-                    headers.forEach((h, idx) => {
-                        if (h.includes('INPUT')) return;
-                        if ((h.includes('CHENESE') || h.includes('CHINESE') || h.includes('HÁN')) && colChinese === -1) colChinese = idx;
-                        else if (h.includes('TYPE') || h.includes('LOẠI TỪ')) colType = idx;
-                        else if (h.includes('PINYIN') || h.includes('PHIÊN ÂM')) colPinyin = idx;
-                        else if (h.includes('MEANING') || h.includes('TIẾNG VIỆT') || h.includes('NGHĨA')) colMeaning = idx;
-                    });
-
-                    if (colChinese === -1) colChinese = 1;
-                    if (colType === -1) colType = 2;
-                    if (colPinyin === -1) colPinyin = 3;
-                    if (colMeaning === -1) colMeaning = 4;
+                    let colC = headers.findIndex(h => h.includes('CHINESE') || h.includes('HÁN'));
+                    let colT = headers.findIndex(h => h.includes('TYPE') || h.includes('LOẠI'));
+                    let colP = headers.findIndex(h => h.includes('PINYIN'));
+                    let colM = headers.findIndex(h => h.includes('MEANING') || h.includes('NGHĨA') || h.includes('VIỆT'));
 
                     const parsedData = [];
                     for (let i = headerRowIndex + 1; i < rows.length; i++) {
                         const row = rows[i];
                         if (!row || row.length === 0) continue;
-
-                        const chinese = row[colChinese] ? row[colChinese].toString().trim() : '';
-                        const type    = row[colType]    ? row[colType].toString().trim() : '';
-                        const pinyin  = row[colPinyin]  ? row[colPinyin].toString().trim() : '';
-                        const meaning = row[colMeaning] ? row[colMeaning].toString().trim() : '';
-
-                        if (chinese || meaning) {
-                            parsedData.push({ chinese, type, pinyin, meaning });
-                        }
-                    }
-
-                    if (parsedData.length === 0) {
-                        alert("Không tìm thấy dữ liệu từ vựng hợp lệ!");
-                        return;
+                        const chinese = row[colC !== -1 ? colC : 1] ? row[colC !== -1 ? colC : 1].toString().trim() : '';
+                        const type = row[colT !== -1 ? colT : 2] ? row[colT !== -1 ? colT : 2].toString().trim() : '';
+                        const pinyin = row[colP !== -1 ? colP : 3] ? row[colP !== -1 ? colP : 3].toString().trim() : '';
+                        const meaning = row[colM !== -1 ? colM : 4] ? row[colM !== -1 ? colM : 4].toString().trim() : '';
+                        if (chinese || meaning) parsedData.push({ chinese, type, pinyin, meaning });
                     }
 
                     fullVocabData = parsedData;
                     localStorage.setItem('hsk_vocab_data', JSON.stringify(fullVocabData));
-                    
-                    if (statusText) { 
-                        statusText.innerText = `✅ Đã nạp thành công ${fullVocabData.length} từ!`; 
-                        statusText.style.color = "var(--success)"; 
-                    }
-                    
+                    document.getElementById('loadingStatus').innerText = `✅ Nạp ${fullVocabData.length} từ!`;
                     document.getElementById('rangeFrom').value = 1;
                     document.getElementById('rangeTo').value = fullVocabData.length;
                     sequentialOffset = 0;
-                    
                     startNewQuiz();
-                } catch (err) { alert("Lỗi khi đọc file Excel: " + err.message); }
+                    logDebug(`Đã nạp file Excel thành công (${fullVocabData.length} từ).`);
+                } catch (err) { alert("Lỗi đọc file: " + err.message); }
             };
             reader.readAsArrayBuffer(file);
         });
 
         function startNewQuiz() {
             if (!fullVocabData || fullVocabData.length === 0) fullVocabData = [...EMBEDDED_VOCAB_DATA];
-            
             let fromIdx = parseInt(document.getElementById('rangeFrom').value) || 1;
             let toIdx = parseInt(document.getElementById('rangeTo').value) || fullVocabData.length;
             const size = parseInt(document.getElementById('quizSize').value) || 10;
             const shuffleMode = document.getElementById('shuffleSelect').value;
 
-            if (fromIdx < 1) fromIdx = 1;
-            if (toIdx > fullVocabData.length) toIdx = fullVocabData.length;
-            if (fromIdx > toIdx) { let temp = fromIdx; fromIdx = toIdx; toIdx = temp; }
-
-            document.getElementById('rangeFrom').value = fromIdx;
-            document.getElementById('rangeTo').value = toIdx;
-
-            const slicedData = fullVocabData.slice(fromIdx - 1, toIdx);
-
-            if (slicedData.length === 0) {
-                alert("Khoảng câu chọn không hợp lệ!");
-                return;
-            }
-
-            let processedData = [];
+            const sliced = fullVocabData.slice(fromIdx - 1, toIdx);
             if (shuffleMode === 'random') {
-                const shuffled = [...slicedData].sort(() => 0.5 - Math.random());
-                processedData = shuffled.slice(0, Math.min(size, slicedData.length));
+                currentQuizData = [...sliced].sort(() => 0.5 - Math.random()).slice(0, size);
             } else {
-                if (sequentialOffset >= slicedData.length) sequentialOffset = 0;
-                processedData = slicedData.slice(sequentialOffset, sequentialOffset + size);
+                if (sequentialOffset >= sliced.length) sequentialOffset = 0;
+                currentQuizData = sliced.slice(sequentialOffset, sequentialOffset + size);
                 sequentialOffset += size;
             }
-
-            currentQuizData = processedData;
-            resetTimer(); 
+            resetTimer();
             renderTable();
         }
 
-        document.getElementById('shuffleSelect').addEventListener('change', function() { sequentialOffset = 0; });
-        document.getElementById('modeSelect').addEventListener('change', function() { renderTable(); });
-
-        function retryCurrentQuiz() { 
-            if (currentQuizData.length > 0) {
-                resetTimer();
-                renderTable();
-            } 
-        }
-
+        function retryCurrentQuiz() { if (currentQuizData.length > 0) { resetTimer(); renderTable(); } }
         function resetAllData() {
-            if (confirm("Bạn có chắc chắn muốn xóa dữ liệu đã lưu?")) {
-                localStorage.removeItem('hsk_vocab_data');
-                fullVocabData = [...EMBEDDED_VOCAB_DATA];
-                document.getElementById('loadingStatus').innerText = "";
-                document.getElementById('rangeFrom').value = 1;
-                document.getElementById('rangeTo').value = fullVocabData.length;
-                sequentialOffset = 0;
-                startNewQuiz();
-            }
+            localStorage.removeItem('hsk_vocab_data');
+            fullVocabData = [...EMBEDDED_VOCAB_DATA];
+            startNewQuiz();
+            logDebug("Đã khôi phục dữ liệu gốc.");
         }
 
         function renderTable() {
@@ -793,35 +695,17 @@
             currentQuizData.forEach((item, index) => {
                 const tr = document.createElement('tr');
                 tr.id = `row_${index}`;
-                
-                let displayChinese = '***';
-                let displayPinyin  = '***';
-                let displayMeaning = '***';
-                let audioBtnHtml = '';
-
-                if (mode === 'chinese_to_meaning') {
-                    displayChinese = item.chinese || '---';
-                    audioBtnHtml = `<button class="audio-btn" onclick="speakText('${item.chinese.replace(/'/g, "\\'")}')" title="Nghe phát âm">🔊</button>`;
-                } else {
-                    displayMeaning = item.meaning || '---';
-                }
+                let displayChinese = (mode === 'chinese_to_meaning') ? item.chinese : '***';
+                let displayMeaning = (mode === 'chinese_to_meaning') ? '***' : item.meaning;
+                let audioBtnHtml = (mode === 'chinese_to_meaning') ? `<button class="audio-btn" onclick="speakText('${item.chinese.replace(/'/g, "\\'")}')">🔊</button>` : '';
 
                 tr.innerHTML = `
                     <td class="col-stt">${index + 1}</td>
-                    <td class="col-hanzi">
-                        <span id="chinese_${index}">${displayChinese}</span>
-                        <span id="audio_wrap_${index}">${audioBtnHtml}</span>
-                    </td>
+                    <td class="col-hanzi"><span id="chinese_${index}">${displayChinese}</span><span id="audio_wrap_${index}">${audioBtnHtml}</span></td>
                     <td class="col-type">${item.type || '-'}</td>
-                    <td id="pinyin_${index}" class="col-pinyin">${displayPinyin}</td>
+                    <td id="pinyin_${index}" class="col-pinyin">***</td>
                     <td id="meaning_${index}" class="col-viet">${displayMeaning}</td>
-                    <td class="col-input">
-                        <input type="text" id="input_${index}" 
-                               enterkeyhint="next" 
-                               oninput="checkAndStartTimer()"
-                               onblur="checkAnswer(${index})"
-                               onkeydown="handleKeyDown(event, ${index})">
-                    </td>
+                    <td class="col-input"><input type="text" id="input_${index}" oninput="checkAndStartTimer()" onblur="checkAnswer(${index})" onkeydown="handleKeyDown(event, ${index})"></td>
                     <td id="status_${index}" class="col-status">-</td>
                 `;
                 tbody.appendChild(tr);
@@ -833,13 +717,9 @@
             checkAndStartTimer();
             if (event.key === 'Enter' || event.keyCode === 13) {
                 event.preventDefault();
-                checkAnswer(index); 
-                
-                const nextInput = document.getElementById(`input_${index + 1}`);
-                if (nextInput) {
-                    nextInput.focus();
-                    nextInput.select();
-                }
+                checkAnswer(index);
+                const next = document.getElementById(`input_${index + 1}`);
+                if (next) { next.focus(); next.select(); }
             }
         }
 
@@ -851,81 +731,50 @@
             const mode = document.getElementById('modeSelect').value;
             const tr = document.getElementById(`row_${index}`);
             const statusTd = document.getElementById(`status_${index}`);
-            
-            let isCorrect = false;
             const cleanedInput = cleanString(inputVal);
 
+            let isCorrect = false;
             if (mode === 'chinese_to_meaning') {
-                const meaningVariants = splitVariants(item.meaning);
-                isCorrect = meaningVariants.some(v => cleanedInput === v || cleanedInput.includes(v));
+                isCorrect = splitVariants(item.meaning).some(v => cleanedInput === v || cleanedInput.includes(v));
             } else if (mode === 'pinyin_to_chinese') {
-                const chineseVariants = splitVariants(item.chinese);
-                const pinyinVariants = splitVariants(item.pinyin);
-                const rawPinyinVariants = pinyinVariants.map(p => removePinyinTones(p));
-                const cleanInputNoTone = removePinyinTones(cleanedInput);
-
-                isCorrect = chineseVariants.includes(cleanedInput) || 
-                            pinyinVariants.includes(cleanedInput) || 
-                            rawPinyinVariants.includes(cleanInputNoTone);
+                isCorrect = splitVariants(item.chinese).includes(cleanedInput) || 
+                            splitVariants(item.pinyin).includes(cleanedInput) || 
+                            splitVariants(item.pinyin).map(p => removePinyinTones(p)).includes(removePinyinTones(cleanedInput));
             } else {
-                const chineseVariants = splitVariants(item.chinese);
-                isCorrect = chineseVariants.includes(cleanedInput);
+                isCorrect = splitVariants(item.chinese).includes(cleanedInput);
             }
 
             if (isCorrect) {
                 tr.className = 'row-correct';
                 statusTd.innerHTML = '✅';
-                statusTd.style.color = 'var(--success)';
-                
-                if (mode !== 'chinese_to_meaning') {
-                    document.getElementById(`chinese_${index}`).innerText = item.chinese;
-                    document.getElementById(`pinyin_${index}`).innerText = item.pinyin;
-                    document.getElementById(`audio_wrap_${index}`).innerHTML = `<button class="audio-btn" onclick="speakText('${item.chinese.replace(/'/g, "\\'")}')" title="Nghe phát âm">🔊</button>`;
-                } else {
-                    document.getElementById(`meaning_${index}`).innerText = item.meaning;
-                }
+                document.getElementById(`chinese_${index}`).innerText = item.chinese;
+                document.getElementById(`pinyin_${index}`).innerText = item.pinyin;
+                document.getElementById(`meaning_${index}`).innerText = item.meaning;
+                document.getElementById(`audio_wrap_${index}`).innerHTML = `<button class="audio-btn" onclick="speakText('${item.chinese.replace(/'/g, "\\'")}')">🔊</button>`;
                 
                 speakText(item.chinese);
             } else {
                 tr.className = 'row-wrong';
                 statusTd.innerHTML = '❌';
-                statusTd.style.color = 'var(--danger)';
             }
-
             updateStats();
         }
 
         function updateStats() {
             const total = currentQuizData.length;
-            let done = 0;
-            let correct = 0;
-            let wrong = 0;
-
+            let done = 0, correct = 0, wrong = 0;
             currentQuizData.forEach((_, index) => {
                 const tr = document.getElementById(`row_${index}`);
-                if (tr.classList.contains('row-correct')) {
-                    done++;
-                    correct++;
-                } else if (tr.classList.contains('row-wrong')) {
-                    done++;
-                    wrong++;
-                }
+                if (tr.classList.contains('row-correct')) { done++; correct++; }
+                else if (tr.classList.contains('row-wrong')) { done++; wrong++; }
             });
-
             document.getElementById('statTotal').innerText = total;
             document.getElementById('statDone').innerText = done;
             document.getElementById('statCorrect').innerText = correct;
             document.getElementById('statWrong').innerText = wrong;
-
-            const rate = done > 0 ? ((correct / done) * 100).toFixed(1) : '0.0';
-            document.getElementById('statRate').innerText = `${rate}%`;
-
-            const percent = total > 0 ? (done / total) * 100 : 0;
-            document.getElementById('progressBar').style.width = `${percent}%`;
-
-            if (done === total && total > 0) {
-                stopTimer();
-            }
+            document.getElementById('statRate').innerText = (done > 0 ? ((correct / done) * 100).toFixed(1) : '0.0') + '%';
+            document.getElementById('progressBar').style.width = (total > 0 ? (done / total) * 100 : 0) + '%';
+            if (done === total && total > 0) clearInterval(timerInterval);
         }
     </script>
 </body>
