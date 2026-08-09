@@ -134,12 +134,6 @@
             font-size: 13px;
         }
 
-        .controls select:focus, .controls input:focus {
-            border-color: #6366f1;
-            background: #ffffff;
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
-        }
-
         .range-container {
             display: inline-flex;
             align-items: center;
@@ -267,12 +261,6 @@
             outline: none;
             background: rgba(255, 255, 255, 0.95);
         }
-
-        input[type="text"]:focus {
-            border-color: #ec4899;
-            background: #ffffff;
-            box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.25);
-        }
         
         tr.row-correct td { background-color: var(--success-light) !important; color: #064e3b; }
         tr.row-wrong td { background-color: var(--danger-light) !important; color: #7f1d1d; }
@@ -339,7 +327,6 @@
             word-break: break-all;
         }
         .contact-card .contact-item a { color: #2563eb; text-decoration: none; font-weight: 600; }
-        .contact-card .contact-item a:hover { text-decoration: underline; }
 
         .footer-owner { text-align: center; margin-top: 14px; padding-top: 10px; border-top: 1px dashed #cbd5e1; font-size: 11px; color: #475569; font-weight: 500; }
 
@@ -383,7 +370,7 @@
 
     <div class="container-wrapper">
         <div class="app-header">
-            <h2 class="app-title">🌸 HSK Vocabulary Master <span class="pro-tag">PRO AUDIO ONLINE</span></h2>
+            <h2 class="app-title">🌸 HSK Vocabulary Master <span class="pro-tag">NATIVE AUDIO API</span></h2>
         </div>
 
         <div class="controls">
@@ -398,14 +385,6 @@
                     <option value="chinese_only">1. Chỉ gõ Chữ Hán (Hiện Tiếng Việt)</option>
                     <option value="pinyin_to_chinese">2. Gõ Chữ Hán HOẶC Pinyin (Hiện Tiếng Việt)</option>
                     <option value="chinese_to_meaning">3. Gõ Tiếng Việt (Hiện Chữ Hán)</option>
-                </select>
-            </div>
-
-            <div class="control-box">
-                <label class="box-label">🎙️ Giọng đọc</label>
-                <select id="voiceSelect">
-                    <option value="google">Nữ chuẩn (Google)</option>
-                    <option value="baidu">Nam/Nữ (Baidu)</option>
                 </select>
             </div>
 
@@ -518,23 +497,8 @@
         let sequentialOffset = 0;
         let isAudioEnabled = true;
 
-        // Cơ chế quản lý Audio toàn cục và mở khóa tự động trên điện thoại (iOS/Android)
-        let globalAudio = new Audio();
-        let isAudioUnlocked = false;
-
-        function unlockMobileAudio() {
-            if (isAudioUnlocked) return;
-            globalAudio.src = "https://translate.google.com/translate_tts?ie=UTF-8&q=hao&tl=zh-CN&client=tw-ob";
-            globalAudio.play().then(() => {
-                globalAudio.pause();
-                isAudioUnlocked = true;
-            }).catch(e => {
-                console.log("Chờ tương tác chạm màn hình để mở khóa audio");
-            });
-        }
-
-        document.addEventListener('touchstart', unlockMobileAudio, { once: true });
-        document.addEventListener('click', unlockMobileAudio, { once: true });
+        // Sử dụng Web Speech API của trình duyệt (Hoạt động tốt 100% trên Điện thoại và Máy tính)
+        const synth = window.speechSynthesis;
 
         const btnAudioToggle = document.getElementById('btnAudioToggle');
         btnAudioToggle.addEventListener('click', function() {
@@ -542,15 +506,15 @@
             if (isAudioEnabled) {
                 btnAudioToggle.innerHTML = "🔊 Âm thanh: Bật";
                 btnAudioToggle.classList.remove('muted');
-                unlockMobileAudio();
             } else {
                 btnAudioToggle.innerHTML = "🔇 Âm thanh: Tắt";
                 btnAudioToggle.classList.add('muted');
+                if (synth) synth.cancel();
             }
         });
 
         function speakText(text) {
-            if (!isAudioEnabled || !text) return;
+            if (!isAudioEnabled || !text || !synth) return;
             
             let pureText = text.split(/[/,;|\n]+/)[0].trim();
             pureText = pureText.split(' ')[0];
@@ -558,24 +522,14 @@
 
             if (!pureText) return;
 
-            const cleanText = encodeURIComponent(pureText);
-            const voiceType = document.getElementById('voiceSelect').value;
-            const speed = document.getElementById('speedSelect').value;
-            
-            let audioUrl = "";
-            if (voiceType === 'baidu') {
-                audioUrl = `https://fanyi.baidu.com/gettts?lan=zh&text=${cleanText}&spd=3&source=web`;
-            } else {
-                audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${cleanText}&tl=zh-CN&client=tw-ob`;
-            }
+            // Hủy các lệnh đọc trước đó để đọc từ mới ngay lập tức
+            synth.cancel();
 
-            globalAudio.pause();
-            globalAudio.currentTime = 0;
-            globalAudio.src = audioUrl;
-            globalAudio.playbackRate = parseFloat(speed);
-            globalAudio.play().catch(e => {
-                console.log("Trình duyệt di động chặn phát tự động:", e);
-            });
+            const utterThis = new SpeechSynthesisUtterance(pureText);
+            utterThis.lang = 'zh-CN'; // Đặt ngôn ngữ tiếng Trung
+            utterThis.rate = parseFloat(document.getElementById('speedSelect').value);
+            
+            synth.speak(utterThis);
         }
 
         function removePinyinTones(str) {
