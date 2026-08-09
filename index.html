@@ -209,11 +209,29 @@
 
         td.col-hanzi { 
             font-family: 'Noto Sans SC', 'Microsoft YaHei', 'PingFang SC', sans-serif;
-            font-size: 26px; 
+            font-size: 24px; 
             font-weight: 700 !important;
             color: #9f1239;
             letter-spacing: 1px;
         }
+
+        .audio-btn {
+            background: #fbcfe8;
+            border: none;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            cursor: pointer;
+            font-size: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 6px;
+            vertical-align: middle;
+            transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .audio-btn:hover { background: #f472b6; transform: scale(1.1); }
 
         td.col-pinyin { color: #475569; font-style: italic; font-size: 14px; font-weight: 600; }
         td.col-stt { color: #475569; font-weight: 600; }
@@ -222,10 +240,10 @@
         td.col-status { font-weight: 700; }
 
         .col-stt { width: 6%; }
-        .col-hanzi { width: 20%; }
+        .col-hanzi { width: 22%; }
         .col-type { width: 12%; }
         .col-pinyin { width: 16%; }
-        .col-viet { width: 21%; }
+        .col-viet { width: 19%; }
         .col-input { width: 17%; }
         .col-status { width: 8%; }
 
@@ -324,16 +342,16 @@
             .col-status { display: none !important; }
             th { font-size: 11px !important; padding: 10px 2px !important; }
             td { padding: 10px 2px !important; font-size: 13px; }
-            td.col-hanzi { font-size: 20px; }
+            td.col-hanzi { font-size: 18px; }
             td.col-pinyin { font-size: 12px; }
             td.col-type { font-size: 11px; }
             td.col-viet { font-size: 12px; }
             input[type="text"] { font-size: 13px; padding: 6px 2px; width: 95%; }
             .col-stt { width: 8%; }
-            .col-hanzi { width: 25%; }
+            .col-hanzi { width: 26%; }
             .col-type { width: 12%; }
             .col-pinyin { width: 18%; }
-            .col-viet { width: 22%; }
+            .col-viet { width: 21%; }
             .col-input { width: 15%; }
         }
     </style>
@@ -356,7 +374,7 @@
 
     <div class="container-wrapper">
         <div class="app-header">
-            <h2 class="app-title">🌸 HSK Vocabulary Master <span class="pro-tag">PRO</span></h2>
+            <h2 class="app-title">🌸 HSK Vocabulary Master <span class="pro-tag">PRO AUDIO</span></h2>
         </div>
 
         <div class="controls">
@@ -473,6 +491,19 @@
         let isTimerRunning = false;
         let sequentialOffset = 0;
 
+        // Hàm phát âm tiếng Trung sử dụng trình duyệt Web Speech API
+        function speakText(text) {
+            if (!text || !('speechSynthesis' in window)) return;
+            window.speechSynthesis.cancel(); // Hủy âm thanh đang phát cũ để không bị chồng chéo
+            
+            // Xử lý tách chuỗi nếu có dấu gạch chéo phân cách
+            const cleanText = text.split(/[/,;]+/)[0].trim();
+            const utterance = new SpeechSynthesisUtterance(cleanText);
+            utterance.lang = 'zh-CN'; // Giọng chuẩn tiếng Trung
+            utterance.rate = 0.9; // Tốc độ đọc chậm vừa phải dễ nghe
+            window.speechSynthesis.speak(utterance);
+        }
+
         function removePinyinTones(str) {
             if (!str) return '';
             return str.normalize('NFD')
@@ -559,7 +590,6 @@
                     const worksheet = workbook.Sheets[workbook.SheetNames[0]];
 
                     const cellZ1 = worksheet['Z1'] ? worksheet['Z1'].v.toString().trim() : '';
-
                     const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: "" });
 
                     if (!rows || rows.length < 2) {
@@ -720,16 +750,21 @@
                 let displayChinese = '***';
                 let displayPinyin  = '***';
                 let displayMeaning = '***';
+                let audioBtnHtml = '';
 
                 if (mode === 'chinese_to_meaning') {
                     displayChinese = item.chinese || '---';
+                    audioBtnHtml = `<button class="audio-btn" onclick="speakText('${item.chinese.replace(/'/g, "\\'")}')" title="Nghe phát âm">🔊</button>`;
                 } else {
                     displayMeaning = item.meaning || '---';
                 }
 
                 tr.innerHTML = `
                     <td class="col-stt">${index + 1}</td>
-                    <td id="chinese_${index}" class="col-hanzi">${displayChinese}</td>
+                    <td class="col-hanzi">
+                        <span id="chinese_${index}">${displayChinese}</span>
+                        <span id="audio_wrap_${index}">${audioBtnHtml}</span>
+                    </td>
                     <td class="col-type">${item.type || '-'}</td>
                     <td id="pinyin_${index}" class="col-pinyin">${displayPinyin}</td>
                     <td id="meaning_${index}" class="col-viet">${displayMeaning}</td>
@@ -798,9 +833,13 @@
                 if (mode !== 'chinese_to_meaning') {
                     document.getElementById(`chinese_${index}`).innerText = item.chinese;
                     document.getElementById(`pinyin_${index}`).innerText = item.pinyin;
+                    document.getElementById(`audio_wrap_${index}`).innerHTML = `<button class="audio-btn" onclick="speakText('${item.chinese.replace(/'/g, "\\'")}')" title="Nghe phát âm">🔊</button>`;
                 } else {
                     document.getElementById(`meaning_${index}`).innerText = item.meaning;
                 }
+                
+                // Tự động phát âm khi gõ đúng
+                speakText(item.chinese);
             } else {
                 tr.className = 'row-wrong';
                 statusTd.innerHTML = '❌';
