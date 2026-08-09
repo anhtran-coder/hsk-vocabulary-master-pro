@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>HSK Vocabulary Master - Click Audio</title>
+    <title>HSK Vocabulary Master - Safe Link Mode</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@500;700;900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
@@ -19,7 +19,6 @@
             --header-bg-start: rgba(238, 242, 255, 0.95);
             --header-bg-end: rgba(224, 231, 255, 0.95);
             --header-text: #3730a3;
-            --header-border: #c7d2fe;
         }
 
         body { 
@@ -62,22 +61,17 @@
         td { border-bottom: 1px solid rgba(203, 213, 225, 0.6); padding: 12px 6px; text-align: center; word-wrap: break-word; }
         td.col-hanzi { font-family: 'Noto Sans SC', sans-serif; font-size: 22px; font-weight: 700 !important; color: #9f1239; }
 
-        .audio-btn { 
+        .audio-link { 
+            display: inline-block;
             background: linear-gradient(135deg, #ec4899, #db2777); 
             color: white; 
-            border: none; 
-            border-radius: 10px; 
-            padding: 6px 12px; 
-            cursor: pointer; 
-            font-size: 12px; 
+            text-decoration: none;
+            border-radius: 8px; 
+            padding: 4px 10px; 
+            font-size: 11px; 
             font-weight: 600;
-            display: inline-flex; 
-            align-items: center; 
-            gap: 4px;
-            margin-top: 6px;
-            box-shadow: 0 2px 5px rgba(236, 72, 153, 0.3);
+            margin-top: 4px;
         }
-        .audio-btn:active { transform: scale(0.95); }
 
         td.col-pinyin { color: #475569; font-style: italic; font-size: 14px; font-weight: 600; }
         td.col-stt { color: #475569; font-weight: 600; }
@@ -128,7 +122,7 @@
 
     <div class="container-wrapper">
         <div class="app-header">
-            <h2 class="app-title">🌸 HSK Master <span class="pro-tag">CLICK AUDIO ENGINE</span></h2>
+            <h2 class="app-title">🌸 HSK Master <span class="pro-tag">SAFE LINK MODE</span></h2>
         </div>
 
         <div class="controls">
@@ -223,19 +217,6 @@
         let fullVocabData = [];
         let currentQuizData = [];
         let timerInterval = null, secondsElapsed = 0, isTimerRunning = false, sequentialOffset = 0;
-
-        // HÀM PHÁT ÂM THANH TRỰC TIẾP KHI CÓ THAO TÁC CHẠM CHUẨN XÁC
-        function speakText(text) {
-            let pureText = text.split(/[/,;|\n]+/)[0].trim();
-            pureText = pureText.split(' ')[0].replace(/[…….,;:!?()]/g, '');
-            if (!pureText) return;
-
-            const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(pureText)}&tl=zh-CN&client=tw-ob`;
-            const audio = new Audio(audioUrl);
-            audio.play().catch(error => {
-                console.log("Phát âm thanh thất bại: ", error);
-            });
-        }
 
         function removePinyinTones(str) {
             if (!str) return '';
@@ -380,14 +361,14 @@
                 let displayChinese = (mode === 'chinese_to_meaning') ? item.chinese : '***';
                 let displayMeaning = (mode === 'chinese_to_meaning') ? '***' : item.meaning;
                 
-                // Luôn hiển thị nút bấm Nghe rõ ràng để người dùng tự click phá bỏ chặn của điện thoại
-                let audioBtnHtml = `<button class="audio-btn" onclick="speakText('${item.chinese.replace(/'/g, "\\'")}')">🔊 Nghe</button>`;
+                let cleanWord = item.chinese.split(/[/,;|\n]+/)[0].trim();
+                let audioLinkHtml = `<a class="audio-link" href="https://translate.google.com/?sl=zh-CN&tl=vi&text=${encodeURIComponent(cleanWord)}&op=translate" target="_blank">🔊 Nghe (Google)</a>`;
 
                 tr.innerHTML = `
                     <td class="col-stt">${index + 1}</td>
                     <td class="col-hanzi">
                         <div id="chinese_${index}">${displayChinese}</div>
-                        <div id="audio_wrap_${index}">${audioBtnHtml}</div>
+                        <div id="audio_wrap_${index}">${audioLinkHtml}</div>
                     </td>
                     <td class="col-type">${item.type || '-'}</td>
                     <td id="pinyin_${index}" class="col-pinyin">***</td>
