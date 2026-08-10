@@ -29,7 +29,6 @@
             overflow-x: hidden;
         }
 
-        /* Đưa hoa rơi chìm sâu phía sau nội dung và giảm độ chói */
         .falling-decor {
             position: fixed;
             top: -10vh;
@@ -486,21 +485,19 @@
         let isTimerRunning = false;
         let sequentialOffset = 0;
         let isAudioEnabled = true;
-        let isMobileAudioUnlocked = false; // Biến kiểm tra mở khóa âm thanh trên điện thoại
+        let isMobileAudioUnlocked = false;
 
         let globalAudio = new Audio();
 
-        // Kỹ thuật mở khóa âm thanh cho trình duyệt di động (Safari/Chrome Mobile)
+        // Mở khóa âm thanh trên các trình duyệt di động (Safari/Chrome Mobile)
         function unlockMobileAudio() {
             if (isMobileAudioUnlocked) return;
             globalAudio.src = "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=";
             globalAudio.play().then(() => {
                 isMobileAudioUnlocked = true;
-                console.log("Audio unlocked for mobile.");
             }).catch(e => {});
         }
 
-        // Lắng nghe thao tác chạm đầu tiên trên màn hình điện thoại để kích hoạt audio
         ['touchstart', 'click'].forEach(evt => {
             document.addEventListener(evt, unlockMobileAudio, { once: true });
         });
@@ -518,10 +515,15 @@
             }
         });
 
-        function speakText(text) {
-            if (!isAudioEnabled || !text) return;
+        // Hàm xử lý âm thanh thông minh: Hỗ trợ tìm chữ Hán tương ứng để đọc chuẩn trên di động
+        function speakText(targetText, chineseFallback = '') {
+            if (!isAudioEnabled) return;
             
-            let pureText = text.split(/[/,;|\n]+/)[0].trim();
+            // Ưu tiên sử dụng chữ Hán (nếu truyền vào) vì API đọc chuẩn tiếng Trung không nhận chuỗi Pinyin dạng Latinh
+            let textToRead = chineseFallback ? chineseFallback : targetText;
+            if (!textToRead) return;
+
+            let pureText = textToRead.split(/[/,;|\n]+/)[0].trim();
             pureText = pureText.split(' ')[0];
             pureText = pureText.replace(/[…….,;:!?()]/g, '');
 
@@ -795,9 +797,11 @@
                 let displayMeaning = '***';
                 let audioBtnHtml = '';
 
+                const escapedChinese = item.chinese ? item.chinese.replace(/'/g, "\\'") : '';
+
                 if (mode === 'chinese_to_meaning') {
                     displayChinese = item.chinese || '---';
-                    audioBtnHtml = `<button class="audio-btn" onclick="speakText('${item.chinese.replace(/'/g, "\\'")}')" title="Nghe phát âm">🔊 Nghe</button>`;
+                    audioBtnHtml = `<button class="audio-btn" onclick="speakText('${escapedChinese}', '${escapedChinese}')" title="Nghe phát âm">🔊 Nghe</button>`;
                 } else {
                     displayMeaning = item.meaning || '---';
                 }
@@ -868,6 +872,8 @@
                 isCorrect = chineseVariants.includes(cleanedInput);
             }
 
+            const escapedChinese = item.chinese ? item.chinese.replace(/'/g, "\\'") : '';
+
             if (isCorrect) {
                 tr.className = 'row-correct';
                 statusTd.innerHTML = '✅';
@@ -876,12 +882,12 @@
                 if (mode !== 'chinese_to_meaning') {
                     document.getElementById(`chinese_${index}`).innerText = item.chinese;
                     document.getElementById(`pinyin_${index}`).innerText = item.pinyin;
-                    document.getElementById(`audio_wrap_${index}`).innerHTML = `<button class="audio-btn" onclick="speakText('${item.chinese.replace(/'/g, "\\'")}')" title="Nghe phát âm">🔊 Nghe</button>`;
+                    document.getElementById(`audio_wrap_${index}`).innerHTML = `<button class="audio-btn" onclick="speakText('${escapedChinese}', '${escapedChinese}')" title="Nghe phát âm">🔊 Nghe</button>`;
                 } else {
                     document.getElementById(`meaning_${index}`).innerText = item.meaning;
                 }
                 
-                speakText(item.chinese);
+                speakText(item.chinese, item.chinese);
             } else {
                 tr.className = 'row-wrong';
                 statusTd.innerHTML = '❌';
@@ -892,7 +898,7 @@
                 } else {
                     document.getElementById(`chinese_${index}`).innerText = item.chinese;
                     document.getElementById(`pinyin_${index}`).innerText = item.pinyin;
-                    document.getElementById(`audio_wrap_${index}`).innerHTML = `<button class="audio-btn" onclick="speakText('${item.chinese.replace(/'/g, "\\'")}')" title="Nghe phát âm">🔊 Nghe</button>`;
+                    document.getElementById(`audio_wrap_${index}`).innerHTML = `<button class="audio-btn" onclick="speakText('${escapedChinese}', '${escapedChinese}')" title="Nghe phát âm">🔊 Nghe</button>`;
                 }
             }
 
