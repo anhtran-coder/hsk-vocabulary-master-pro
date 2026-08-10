@@ -351,7 +351,7 @@
 
     <div class="container-wrapper">
         <div class="app-header">
-            <h2 class="app-title">🌸 HSK Vocabulary Master <span class="pro-tag">PRO MOBILE AUDIO</span></h2>
+            <h2 class="app-title">🌸 HSK Vocabulary Master <span class="pro-tag">PRO CLOUD AUDIO</span></h2>
         </div>
 
         <div class="controls">
@@ -366,22 +366,6 @@
                     <option value="chinese_only">1. Chỉ gõ Chữ Hán (Hiện Tiếng Việt)</option>
                     <option value="pinyin_to_chinese">2. Gõ Chữ Hán HOẶC Pinyin (Hiện Tiếng Việt)</option>
                     <option value="chinese_to_meaning">3. Gõ Tiếng Việt (Hiện Chữ Hán)</option>
-                </select>
-            </div>
-
-            <!-- Thêm ô chọn giọng đọc hệ thống thiết bị -->
-            <div class="control-box">
-                <label class="box-label">🗣️ Giọng đọc</label>
-                <select id="voiceSelect">
-                    <option value="">Đang tải giọng...</option>
-                </select>
-            </div>
-
-            <div class="control-box">
-                <label class="box-label">⚡ Tốc độ</label>
-                <select id="speedSelect">
-                    <option value="1">Bình thường</option>
-                    <option value="0.75">Chậm (Luyện nghe)</option>
                 </select>
             </div>
 
@@ -485,37 +469,6 @@
         let isTimerRunning = false;
         let sequentialOffset = 0;
         let isAudioEnabled = true;
-        let voices = [];
-
-        // Nạp danh sách giọng đọc từ thiết bị
-        function loadVoices() {
-            if (!('speechSynthesis' in window)) return;
-            voices = window.speechSynthesis.getVoices();
-            const voiceSelect = document.getElementById('voiceSelect');
-            if (!voiceSelect) return;
-            
-            voiceSelect.innerHTML = '';
-            const chineseVoices = voices.filter(v => v.lang.includes('zh') || v.lang.includes('CN') || v.lang.includes('TW'));
-            const targetVoices = chineseVoices.length > 0 ? chineseVoices : voices;
-            
-            targetVoices.forEach((voice, index) => {
-                const option = document.createElement('option');
-                option.value = index;
-                option.textContent = `${voice.name} (${voice.lang})`;
-                voiceSelect.appendChild(option);
-            });
-
-            if (voiceSelect.options.length === 0) {
-                const option = document.createElement('option');
-                option.textContent = "Mặc định hệ thống";
-                voiceSelect.appendChild(option);
-            }
-        }
-
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.onvoiceschanged = loadVoices;
-            setTimeout(loadVoices, 300);
-        }
 
         const btnAudioToggle = document.getElementById('btnAudioToggle');
         btnAudioToggle.addEventListener('click', function() {
@@ -530,10 +483,9 @@
             }
         });
 
-        // Hàm phát âm thanh tích hợp giọng chọn tùy chỉnh
+        // Hàm phát âm thanh qua luồng Google Text-to-Speech (Chạy chuẩn 100% trên mọi loại điện thoại)
         function speakText(text) {
             if (!isAudioEnabled || !text) return;
-            if (!('speechSynthesis' in window)) return;
 
             let pureText = text.split(/[/,;|\n]+/)[0].trim();
             pureText = pureText.split(' ')[0];
@@ -541,22 +493,11 @@
 
             if (!pureText) return;
 
-            window.speechSynthesis.cancel(); // Dừng câu trước nếu đang đọc dở
-
-            const utterance = new SpeechSynthesisUtterance(pureText);
-            
-            const voiceSelect = document.getElementById('voiceSelect');
-            if (voiceSelect) {
-                const selectedIdx = voiceSelect.value;
-                if (selectedIdx !== "" && voices[selectedIdx]) {
-                    utterance.voice = voices[selectedIdx];
-                }
-            }
-            utterance.lang = 'zh-CN';
-            const speed = document.getElementById('speedSelect').value;
-            utterance.rate = parseFloat(speed);
-
-            window.speechSynthesis.speak(utterance);
+            const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(pureText)}&tl=zh-CN&client=tw-ob`;
+            const audio = new Audio(audioUrl);
+            audio.play().catch(e => {
+                console.log("Không phát được âm thanh tự động:", e);
+            });
         }
 
         function removePinyinTones(str) {
