@@ -29,14 +29,14 @@
             overflow-x: hidden;
         }
 
-        /* Đưa hoa rơi chìm sâu phía sau nội dung và giảm độ chói/lóa */
+        /* Đưa hoa rơi chìm sâu phía sau nội dung và giảm độ chói */
         .falling-decor {
             position: fixed;
             top: -10vh;
             user-select: none;
             pointer-events: none;
-            z-index: 1; /* Nằm dưới mọi thành phần nội dung */
-            opacity: 0.35; /* Làm mờ đi để không lóa chữ */
+            z-index: 1;
+            opacity: 0.35;
             animation: fall linear infinite;
         }
 
@@ -45,12 +45,11 @@
             100% { transform: translateY(110vh) rotate(360deg); }
         }
 
-        /* Mở rộng tối đa chiều rộng trên máy tính để không bị bé */
         .container-wrapper {
             max-width: 1650px;
             margin: 0 auto;
             position: relative;
-            z-index: 2; /* Đảm bảo nội dung luôn nổi lên trên hiệu ứng */
+            z-index: 2;
         }
 
         .app-header {
@@ -222,16 +221,17 @@
         .row-wrong { background-color: rgba(254, 226, 226, 0.6) !important; }
 
         .audio-btn {
-            background: none;
-            border: none;
+            background: #fdf2f8;
+            border: 1px solid #f472b6;
             cursor: pointer;
             font-size: 16px;
-            padding: 2px 6px;
-            border-radius: 4px;
+            padding: 4px 8px;
+            border-radius: 6px;
             transition: background 0.2s;
             vertical-align: middle;
+            color: #be185d;
         }
-        .audio-btn:hover { background: rgba(236, 72, 153, 0.1); }
+        .audio-btn:active { background: #fbcfe8; }
 
         .stats-dashboard {
             width: 360px;
@@ -486,8 +486,24 @@
         let isTimerRunning = false;
         let sequentialOffset = 0;
         let isAudioEnabled = true;
+        let isMobileAudioUnlocked = false; // Biến kiểm tra mở khóa âm thanh trên điện thoại
 
         let globalAudio = new Audio();
+
+        // Kỹ thuật mở khóa âm thanh cho trình duyệt di động (Safari/Chrome Mobile)
+        function unlockMobileAudio() {
+            if (isMobileAudioUnlocked) return;
+            globalAudio.src = "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=";
+            globalAudio.play().then(() => {
+                isMobileAudioUnlocked = true;
+                console.log("Audio unlocked for mobile.");
+            }).catch(e => {});
+        }
+
+        // Lắng nghe thao tác chạm đầu tiên trên màn hình điện thoại để kích hoạt audio
+        ['touchstart', 'click'].forEach(evt => {
+            document.addEventListener(evt, unlockMobileAudio, { once: true });
+        });
 
         const btnAudioToggle = document.getElementById('btnAudioToggle');
         btnAudioToggle.addEventListener('click', function() {
@@ -495,8 +511,7 @@
             if (isAudioEnabled) {
                 btnAudioToggle.innerHTML = "🔊 Âm thanh: Bật";
                 btnAudioToggle.classList.remove('muted');
-                globalAudio.src = "https://translate.google.com/translate_tts?ie=UTF-8&q=hao&tl=zh-CN&client=tw-ob";
-                globalAudio.play().catch(e => {});
+                speakText("好");
             } else {
                 btnAudioToggle.innerHTML = "🔇 Âm thanh: Tắt";
                 btnAudioToggle.classList.add('muted');
@@ -528,7 +543,7 @@
             globalAudio.src = audioUrl;
             globalAudio.playbackRate = parseFloat(speed);
             globalAudio.play().catch(e => {
-                console.log("Trình duyệt di động chặn tự phát âm thanh:", e);
+                console.log("Lỗi phát âm thanh trên thiết bị:", e);
             });
         }
 
@@ -782,7 +797,7 @@
 
                 if (mode === 'chinese_to_meaning') {
                     displayChinese = item.chinese || '---';
-                    audioBtnHtml = `<button class="audio-btn" onclick="speakText('${item.chinese.replace(/'/g, "\\'")}')" title="Nghe phát âm">🔊</button>`;
+                    audioBtnHtml = `<button class="audio-btn" onclick="speakText('${item.chinese.replace(/'/g, "\\'")}')" title="Nghe phát âm">🔊 Nghe</button>`;
                 } else {
                     displayMeaning = item.meaning || '---';
                 }
@@ -861,7 +876,7 @@
                 if (mode !== 'chinese_to_meaning') {
                     document.getElementById(`chinese_${index}`).innerText = item.chinese;
                     document.getElementById(`pinyin_${index}`).innerText = item.pinyin;
-                    document.getElementById(`audio_wrap_${index}`).innerHTML = `<button class="audio-btn" onclick="speakText('${item.chinese.replace(/'/g, "\\'")}')" title="Nghe phát âm">🔊</button>`;
+                    document.getElementById(`audio_wrap_${index}`).innerHTML = `<button class="audio-btn" onclick="speakText('${item.chinese.replace(/'/g, "\\'")}')" title="Nghe phát âm">🔊 Nghe</button>`;
                 } else {
                     document.getElementById(`meaning_${index}`).innerText = item.meaning;
                 }
@@ -877,7 +892,7 @@
                 } else {
                     document.getElementById(`chinese_${index}`).innerText = item.chinese;
                     document.getElementById(`pinyin_${index}`).innerText = item.pinyin;
-                    document.getElementById(`audio_wrap_${index}`).innerHTML = `<button class="audio-btn" onclick="speakText('${item.chinese.replace(/'/g, "\\'")}')" title="Nghe phát âm">🔊</button>`;
+                    document.getElementById(`audio_wrap_${index}`).innerHTML = `<button class="audio-btn" onclick="speakText('${item.chinese.replace(/'/g, "\\'")}')" title="Nghe phát âm">🔊 Nghe</button>`;
                 }
             }
 
