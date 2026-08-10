@@ -11,7 +11,7 @@
             --primary: #ec4899;
             --primary-hover: #db2777;
             --bg-gradient: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%);
-            --card-bg: rgba(255, 255, 255, 0.95);
+            --card-bg: rgba(255, 255, 255, 0.96);
             --text-main: #334155;
             --border-color: #f3e8ff;
             --success: #10b981;
@@ -23,38 +23,43 @@
             background: var(--bg-gradient);
             color: var(--text-main);
             margin: 0;
-            padding: 15px;
+            padding: 20px;
             min-height: 100vh;
             box-sizing: border-box;
             overflow-x: hidden;
         }
 
+        /* Đưa hoa rơi chìm sâu phía sau nội dung và giảm độ chói/lóa */
         .falling-decor {
             position: fixed;
             top: -10vh;
             user-select: none;
             pointer-events: none;
-            z-index: 9999;
+            z-index: 1; /* Nằm dưới mọi thành phần nội dung */
+            opacity: 0.35; /* Làm mờ đi để không lóa chữ */
             animation: fall linear infinite;
         }
 
         @keyframes fall {
-            0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(110vh) rotate(360deg); opacity: 0.2; }
+            0% { transform: translateY(-10vh) rotate(0deg); }
+            100% { transform: translateY(110vh) rotate(360deg); }
         }
 
+        /* Mở rộng tối đa chiều rộng trên máy tính để không bị bé */
         .container-wrapper {
-            max-width: 1350px;
+            max-width: 1650px;
             margin: 0 auto;
+            position: relative;
+            z-index: 2; /* Đảm bảo nội dung luôn nổi lên trên hiệu ứng */
         }
 
         .app-header {
             text-align: center;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
 
         .app-title {
-            font-size: 24px;
+            font-size: 28px;
             color: #be185d;
             margin: 0;
             font-weight: 800;
@@ -64,8 +69,8 @@
         .pro-tag {
             background: linear-gradient(135deg, #ec4899, #8b5cf6);
             color: white;
-            font-size: 11px;
-            padding: 3px 8px;
+            font-size: 12px;
+            padding: 4px 10px;
             border-radius: 12px;
             vertical-align: middle;
             margin-left: 8px;
@@ -74,34 +79,34 @@
 
         .controls {
             background: var(--card-bg);
-            padding: 12px 15px;
+            padding: 16px 20px;
             border-radius: 16px;
             box-shadow: 0 10px 25px -5px rgba(236, 72, 153, 0.1);
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 14px;
             align-items: center;
-            margin-bottom: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.8);
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.9);
         }
 
         .control-box {
             display: flex;
             flex-direction: column;
-            gap: 3px;
+            gap: 4px;
         }
 
         .box-label {
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 700;
             color: #db2777;
         }
 
         select, input[type="number"] {
-            padding: 6px 10px;
+            padding: 8px 12px;
             border: 1px solid #f472b6;
             border-radius: 8px;
-            font-size: 13px;
+            font-size: 14px;
             background: #fff;
             color: var(--text-main);
             outline: none;
@@ -114,16 +119,16 @@
         }
 
         .btn {
-            padding: 7px 14px;
+            padding: 9px 16px;
             border: none;
             border-radius: 8px;
-            font-size: 13px;
+            font-size: 14px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
             display: inline-flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
         }
 
         .btn-excel { background: #10b981; color: white; }
@@ -144,27 +149,27 @@
         .range-container {
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
         }
         .range-container input {
-            width: 50px;
+            width: 55px;
             text-align: center;
         }
 
         .main-layout {
             display: flex;
-            gap: 15px;
+            gap: 20px;
         }
 
         .table-container {
             flex: 1;
             background: var(--card-bg);
             border-radius: 16px;
-            padding: 12px;
+            padding: 16px;
             box-shadow: 0 10px 25px -5px rgba(236, 72, 153, 0.1);
             overflow-y: auto;
-            max-height: 72vh;
-            border: 1px solid rgba(255, 255, 255, 0.8);
+            max-height: 75vh;
+            border: 1px solid rgba(255, 255, 255, 0.9);
         }
 
         table {
@@ -175,8 +180,8 @@
         th {
             background: #fdf2f8;
             color: #be185d;
-            padding: 10px 8px;
-            font-size: 13px;
+            padding: 12px 10px;
+            font-size: 14px;
             font-weight: 700;
             text-align: left;
             position: sticky;
@@ -186,25 +191,25 @@
         }
 
         td {
-            padding: 8px;
+            padding: 10px;
             border-bottom: 1px solid var(--border-color);
-            font-size: 14px;
+            font-size: 15px;
         }
 
         .col-stt { width: 5%; text-align: center; }
-        .col-hanzi { width: 22%; font-weight: 600; font-size: 16px; color: #9d174d; }
-        .col-type { width: 12%; color: #64748b; font-size: 12px; }
-        .col-pinyin { width: 22%; color: #475569; }
-        .col-viet { width: 22%; font-weight: 500; }
+        .col-hanzi { width: 22%; font-weight: 600; font-size: 18px; color: #9d174d; }
+        .col-type { width: 12%; color: #64748b; font-size: 13px; }
+        .col-pinyin { width: 22%; color: #475569; font-size: 15px; }
+        .col-viet { width: 22%; font-weight: 500; font-size: 15px; }
         .col-input { width: 12%; }
-        .col-status { width: 5%; text-align: center; font-size: 16px; }
+        .col-status { width: 5%; text-align: center; font-size: 18px; }
 
         input[type="text"] {
-            width: 90%;
-            padding: 6px 8px;
+            width: 92%;
+            padding: 8px 10px;
             border: 1px solid #cbd5e1;
             border-radius: 6px;
-            font-size: 14px;
+            font-size: 15px;
             outline: none;
             transition: all 0.2s;
         }
@@ -220,8 +225,8 @@
             background: none;
             border: none;
             cursor: pointer;
-            font-size: 15px;
-            padding: 2px 5px;
+            font-size: 16px;
+            padding: 2px 6px;
             border-radius: 4px;
             transition: background 0.2s;
             vertical-align: middle;
@@ -229,32 +234,32 @@
         .audio-btn:hover { background: rgba(236, 72, 153, 0.1); }
 
         .stats-dashboard {
-            width: 320px;
+            width: 360px;
             background: var(--card-bg);
             border-radius: 16px;
-            padding: 15px;
+            padding: 20px;
             box-shadow: 0 10px 25px -5px rgba(236, 72, 153, 0.1);
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.8);
+            gap: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.9);
             height: fit-content;
         }
 
         .timer-box {
             background: linear-gradient(135deg, #f472b6, #db2777);
             color: white;
-            padding: 10px;
+            padding: 12px;
             border-radius: 12px;
             text-align: center;
         }
-        .timer-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-        .timer-value { font-size: 22px; font-weight: 800; margin-top: 2px; font-family: monospace; }
+        .timer-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        .timer-value { font-size: 24px; font-weight: 800; margin-top: 2px; font-family: monospace; }
 
         .progress-bar-bg {
             background: #f1f5f9;
-            height: 10px;
-            border-radius: 5px;
+            height: 12px;
+            border-radius: 6px;
             overflow: hidden;
         }
         .progress-bar-fill {
@@ -267,22 +272,22 @@
         .stats-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 8px;
+            gap: 10px;
         }
         .stat-card {
             background: #f8fafc;
             border: 1px solid #e2e8f0;
-            padding: 8px;
+            padding: 10px;
             border-radius: 10px;
             text-align: center;
         }
-        .stat-card .label { font-size: 11px; color: #64748b; font-weight: 600; }
-        .stat-card .value { font-size: 16px; font-weight: 700; color: #334155; margin-top: 2px; }
+        .stat-card .label { font-size: 12px; color: #64748b; font-weight: 600; }
+        .stat-card .value { font-size: 18px; font-weight: 700; color: #334155; margin-top: 2px; }
 
         .rate-card {
             background: linear-gradient(135deg, #fdf2f8, #fbcfe8);
             border: 1px solid #f472b6;
-            padding: 10px;
+            padding: 12px;
             border-radius: 12px;
             text-align: center;
         }
@@ -290,21 +295,21 @@
         .contact-card {
             background: #fdf4ff;
             border: 1px solid #f0abfc;
-            padding: 10px;
+            padding: 12px;
             border-radius: 12px;
-            font-size: 12px;
+            font-size: 13px;
         }
-        .contact-title { font-weight: 700; color: #a21caf; margin-bottom: 5px; }
-        .contact-item { display: flex; align-items: center; gap: 6px; margin-bottom: 3px; }
+        .contact-title { font-weight: 700; color: #a21caf; margin-bottom: 6px; }
+        .contact-item { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
         .contact-item a { color: #86198f; text-decoration: none; font-weight: 600; }
         .contact-item a:hover { text-decoration: underline; }
 
         .footer-owner {
             text-align: center;
-            font-size: 11px;
+            font-size: 12px;
             color: #64748b;
             border-top: 1px dashed #cbd5e1;
-            padding-top: 8px;
+            padding-top: 10px;
         }
 
         @media (max-width: 768px) {
@@ -391,7 +396,7 @@
 
             <div class="control-box">
                 <label class="box-label">📝 Số câu</label>
-                <input type="number" id="quizSize" value="10" min="1" style="width: 48px; text-align: center;">
+                <input type="number" id="quizSize" value="10" min="1" style="width: 55px; text-align: center;">
             </div>
 
             <div class="control-box">
@@ -867,7 +872,6 @@
                 statusTd.innerHTML = '❌';
                 statusTd.style.color = 'var(--danger)';
 
-                // Tự động hiển thị đáp án đúng lên màn hình để học lại ngay lập tức khi gõ sai
                 if (mode === 'chinese_to_meaning') {
                     document.getElementById(`meaning_${index}`).innerHTML = `<span style="color: var(--danger); text-decoration: line-through;">${inputVal}</span><br><strong style="color: var(--success);">${item.meaning}</strong>`;
                 } else {
