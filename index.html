@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HSK Vocabulary Master PRO AUDIO ONLINE</title>
+    <title>HSK Vocabulary Master PRO MOBILE</title>
     <!-- Thư viện SheetJS để đọc file Excel -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
@@ -351,7 +351,7 @@
 
     <div class="container-wrapper">
         <div class="app-header">
-            <h2 class="app-title">🌸 HSK Vocabulary Master <span class="pro-tag">PRO AUDIO ONLINE</span></h2>
+            <h2 class="app-title">🌸 HSK Vocabulary Master <span class="pro-tag">PRO MOBILE AUDIO</span></h2>
         </div>
 
         <div class="controls">
@@ -366,14 +366,6 @@
                     <option value="chinese_only">1. Chỉ gõ Chữ Hán (Hiện Tiếng Việt)</option>
                     <option value="pinyin_to_chinese">2. Gõ Chữ Hán HOẶC Pinyin (Hiện Tiếng Việt)</option>
                     <option value="chinese_to_meaning">3. Gõ Tiếng Việt (Hiện Chữ Hán)</option>
-                </select>
-            </div>
-
-            <div class="control-box">
-                <label class="box-label">🎙️ Giọng đọc</label>
-                <select id="voiceSelect">
-                    <option value="google">Nữ chuẩn (Google)</option>
-                    <option value="baidu">Nam/Nữ (Baidu)</option>
                 </select>
             </div>
 
@@ -485,22 +477,6 @@
         let isTimerRunning = false;
         let sequentialOffset = 0;
         let isAudioEnabled = true;
-        let isMobileAudioUnlocked = false;
-
-        let globalAudio = new Audio();
-
-        // Mở khóa âm thanh trên các trình duyệt di động (Safari/Chrome Mobile)
-        function unlockMobileAudio() {
-            if (isMobileAudioUnlocked) return;
-            globalAudio.src = "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=";
-            globalAudio.play().then(() => {
-                isMobileAudioUnlocked = true;
-            }).catch(e => {});
-        }
-
-        ['touchstart', 'click'].forEach(evt => {
-            document.addEventListener(evt, unlockMobileAudio, { once: true });
-        });
 
         const btnAudioToggle = document.getElementById('btnAudioToggle');
         btnAudioToggle.addEventListener('click', function() {
@@ -515,38 +491,25 @@
             }
         });
 
-        // Hàm xử lý âm thanh thông minh: Hỗ trợ tìm chữ Hán tương ứng để đọc chuẩn trên di động
-        function speakText(targetText, chineseFallback = '') {
-            if (!isAudioEnabled) return;
-            
-            // Ưu tiên sử dụng chữ Hán (nếu truyền vào) vì API đọc chuẩn tiếng Trung không nhận chuỗi Pinyin dạng Latinh
-            let textToRead = chineseFallback ? chineseFallback : targetText;
-            if (!textToRead) return;
+        // Sử dụng SpeechSynthesis (trình đọc tích hợp sẵn của điện thoại/trình duyệt)
+        function speakText(text) {
+            if (!isAudioEnabled || !text) return;
+            if (!('speechSynthesis' in window)) return;
 
-            let pureText = textToRead.split(/[/,;|\n]+/)[0].trim();
+            let pureText = text.split(/[/,;|\n]+/)[0].trim();
             pureText = pureText.split(' ')[0];
             pureText = pureText.replace(/[…….,;:!?()]/g, '');
 
             if (!pureText) return;
 
-            const cleanText = encodeURIComponent(pureText);
-            const voiceType = document.getElementById('voiceSelect').value;
-            const speed = document.getElementById('speedSelect').value;
-            
-            let audioUrl = "";
-            if (voiceType === 'baidu') {
-                audioUrl = `https://fanyi.baidu.com/gettts?lan=zh&text=${cleanText}&spd=3&source=web`;
-            } else {
-                audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${cleanText}&tl=zh-CN&client=tw-ob`;
-            }
+            window.speechSynthesis.cancel(); // Dừng câu trước nếu đang đọc dở
 
-            globalAudio.pause();
-            globalAudio.currentTime = 0;
-            globalAudio.src = audioUrl;
-            globalAudio.playbackRate = parseFloat(speed);
-            globalAudio.play().catch(e => {
-                console.log("Lỗi phát âm thanh trên thiết bị:", e);
-            });
+            const utterance = new SpeechSynthesisUtterance(pureText);
+            utterance.lang = 'zh-CN'; // Ép giọng đọc chuẩn tiếng Trung
+            const speed = document.getElementById('speedSelect').value;
+            utterance.rate = parseFloat(speed);
+
+            window.speechSynthesis.speak(utterance);
         }
 
         function removePinyinTones(str) {
@@ -801,7 +764,7 @@
 
                 if (mode === 'chinese_to_meaning') {
                     displayChinese = item.chinese || '---';
-                    audioBtnHtml = `<button class="audio-btn" onclick="speakText('${escapedChinese}', '${escapedChinese}')" title="Nghe phát âm">🔊 Nghe</button>`;
+                    audioBtnHtml = `<button class="audio-btn" onclick="speakText('${escapedChinese}')" title="Nghe phát âm">🔊 Nghe</button>`;
                 } else {
                     displayMeaning = item.meaning || '---';
                 }
@@ -882,12 +845,12 @@
                 if (mode !== 'chinese_to_meaning') {
                     document.getElementById(`chinese_${index}`).innerText = item.chinese;
                     document.getElementById(`pinyin_${index}`).innerText = item.pinyin;
-                    document.getElementById(`audio_wrap_${index}`).innerHTML = `<button class="audio-btn" onclick="speakText('${escapedChinese}', '${escapedChinese}')" title="Nghe phát âm">🔊 Nghe</button>`;
+                    document.getElementById(`audio_wrap_${index}`).innerHTML = `<button class="audio-btn" onclick="speakText('${escapedChinese}')" title="Nghe phát âm">🔊 Nghe</button>`;
                 } else {
                     document.getElementById(`meaning_${index}`).innerText = item.meaning;
                 }
                 
-                speakText(item.chinese, item.chinese);
+                speakText(item.chinese);
             } else {
                 tr.className = 'row-wrong';
                 statusTd.innerHTML = '❌';
@@ -898,7 +861,7 @@
                 } else {
                     document.getElementById(`chinese_${index}`).innerText = item.chinese;
                     document.getElementById(`pinyin_${index}`).innerText = item.pinyin;
-                    document.getElementById(`audio_wrap_${index}`).innerHTML = `<button class="audio-btn" onclick="speakText('${escapedChinese}', '${escapedChinese}')" title="Nghe phát âm">🔊 Nghe</button>`;
+                    document.getElementById(`audio_wrap_${index}`).innerHTML = `<button class="audio-btn" onclick="speakText('${escapedChinese}')" title="Nghe phát âm">🔊 Nghe</button>`;
                 }
             }
 
