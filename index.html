@@ -300,6 +300,7 @@
 <body>
 
     <script>
+        // Hiệu ứng hoa rơi nhẹ nhàng
         const symbols = ['🌸', '🌺', '🌷', '🌻', '🍃', '❄️', '❅', '✨', '💮', '❄️'];
         for (let i = 0; i < 40; i++) {
             const div = document.createElement('div');
@@ -329,7 +330,7 @@
                 <select id="modeSelect">
                     <option value="chinese_only">1. Chỉ gõ Chữ Hán (Hiện Tiếng Việt)</option>
                     <option value="pinyin_to_chinese">2. Gõ Chữ Hán HOẶC Pinyin (Hiện Tiếng Việt)</option>
-                    <option value="chinese_to_meaning">3. Gõ Tiếng Việt (Hiện Chữ Hán)</option>
+                    <option value="chinese_to_meaning" selected>3. Gõ Tiếng Việt (Hiện Chữ Hán)</option>
                 </select>
             </div>
 
@@ -436,11 +437,13 @@
         const SECRET_KEY = "CAMTU2019S2THANHAN2025";
 
         const EMBEDDED_VOCAB_DATA = [
-            {"chinese": "早饭 / 早餐", "type": "Danh từ", "pinyin": "zǎofàn / zǎocān", "meaning": "Bữa sáng, điểm tâm"},
-            {"chinese": "午饭 / 晚餐", "type": "Danh từ", "pinyin": "wǔfàn / wǔcān", "meaning": "Bữa trưa"},
-            {"chinese": "因为……所以……", "type": "Liên từ", "pinyin": "yīnwèi……suǒyǐ……", "meaning": "Vì…… nên……"},
-            {"chinese": "咱们", "type": "Đại từ", "pinyin": "zánmen", "meaning": "Chúng ta (bao gồm cả người nghe)"},
-            {"chinese": "姐姐", "type": "Danh từ", "pinyin": "jiějie", "meaning": "Chị gái"}
+            {"chinese": "学校", "type": "Danh từ", "pinyin": "xuéxiào", "meaning": "trường học"},
+            {"chinese": "医院", "type": "Danh từ", "pinyin": "yīyuàn", "meaning": "bệnh viện"},
+            {"chinese": "机场", "type": "Danh từ", "pinyin": "jīchǎng", "meaning": "sân bay"},
+            {"chinese": "车站", "type": "Danh từ", "pinyin": "chēzhàn", "meaning": "bến xe"},
+            {"chinese": "火车站", "type": "Danh từ", "pinyin": "huǒchē zhàn", "meaning": "ga tàu hỏa / ga tàu hoả"},
+            {"chinese": "公共汽车站", "type": "Danh từ", "pinyin": "gōnggòng qìchēzhàn", "meaning": "trạm xe buýt / trạm xe bốt"},
+            {"chinese": "外语中心", "type": "Danh từ", "pinyin": "wàiyǔ zhōngxīn", "meaning": "trung tâm ngoại ngữ"}
         ];
 
         let fullVocabData = [];
@@ -492,7 +495,7 @@
             globalAudio.src = audioUrl;
             globalAudio.playbackRate = parseFloat(speed);
             globalAudio.play().catch(e => {
-                console.log("Trình duyệt di động chặn tự phát âm thanh:", e);
+                console.log("Trình duyệt chặn phát âm thanh:", e);
             });
         }
 
@@ -505,15 +508,38 @@
                       .toLowerCase();
         }
 
+        // HÀM CHUẨN HÓA TIẾNG VIỆT CHUYÊN SÂU (XỬ LÝ DẤU KIỂU CŨ & KIỂU MỚI)
+        function normalizeVietnamese(str) {
+            if (!str) return '';
+            let s = str.normalize('NFC').toLowerCase();
+            
+            s = s.replace(/hoả/g, 'hỏa')
+                 .replace(/hoà/g, 'hòa')
+                 .replace(/hoán/g, 'hoán')
+                 .replace(/hoá/g, 'hóa')
+                 .replace(/hoạ/g, 'họa')
+                 .replace(/thuỷ/g, 'thủy')
+                 .replace(/thuý/g, 'thúy')
+                 .replace(/thuỳ/g, 'thùy')
+                 .replace(/quỷ/g, 'quỷ')
+                 .replace(/quả/g, 'quả')
+                 .replace(/quá/g, 'quá')
+                 .replace(/quà/g, 'quà')
+                 .replace(/quạ/g, 'quạ');
+                 
+            return s;
+        }
+
         function cleanString(str) {
             if (!str) return '';
-            return str
+            let cleaned = str
                 .toLowerCase()
                 .replace(/\([^)]*\)/g, '')
                 .replace(/\[[^\]]*\]/g, '')
                 .replace(/\{[^}]*\}/g, '')
                 .trim()
                 .replace(/\s+/g, ' ');
+            return normalizeVietnamese(cleaned);
         }
 
         function splitVariants(str) {
@@ -838,7 +864,7 @@
                 statusTd.style.color = 'var(--success)';
                 
                 if (mode === 'chinese_to_meaning') {
-                    // CẬP NHẬT: Hiện đồng thời cả Pinyin và Tiếng Việt đầy đủ khi trả lời đúng
+                    // Hiện đồng thời Pinyin + Tiếng Việt khi ĐÚNG
                     document.getElementById(`pinyin_${index}`).innerText = item.pinyin;
                     document.getElementById(`meaning_${index}`).innerText = item.meaning;
                 } else {
@@ -854,7 +880,7 @@
                 statusTd.style.color = 'var(--danger)';
 
                 if (mode === 'chinese_to_meaning') {
-                    // CẬP NHẬT: Hiện đồng thời cả Pinyin và Tiếng Việt khi trả lời sai
+                    // Hiện đồng thời Pinyin + Đáp án Tiếng Việt đúng khi SAI
                     document.getElementById(`pinyin_${index}`).innerText = item.pinyin;
                     document.getElementById(`meaning_${index}`).innerHTML = `<span style="color: var(--danger); text-decoration: line-through;">${inputVal}</span><br><strong style="color: var(--success);">${item.meaning}</strong>`;
                 } else {
