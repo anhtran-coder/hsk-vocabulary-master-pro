@@ -2,8 +2,8 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HSK Vocabulary Master PRO AUDIO ONLINE</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Thư viện SheetJS để đọc file Excel -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
@@ -17,7 +17,6 @@
             --success: #10b981;
             --danger: #ef4444;
         }
-
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: var(--bg-gradient);
@@ -28,36 +27,29 @@
             box-sizing: border-box;
             overflow-x: hidden;
         }
-
-        /* Đưa hoa rơi chìm sâu phía sau nội dung và giảm độ chói/lóa */
         .falling-decor {
             position: fixed;
             top: -10vh;
             user-select: none;
             pointer-events: none;
-            z-index: 1; /* Nằm dưới mọi thành phần nội dung */
-            opacity: 0.35; /* Làm mờ đi để không lóa chữ */
+            z-index: 1;
+            opacity: 0.35;
             animation: fall linear infinite;
         }
-
         @keyframes fall {
             0% { transform: translateY(-10vh) rotate(0deg); }
             100% { transform: translateY(110vh) rotate(360deg); }
         }
-
-        /* Mở rộng tối đa chiều rộng trên máy tính để không bị bé */
         .container-wrapper {
             max-width: 1650px;
             margin: 0 auto;
             position: relative;
-            z-index: 2; /* Đảm bảo nội dung luôn nổi lên trên hiệu ứng */
+            z-index: 2;
         }
-
         .app-header {
             text-align: center;
             margin-bottom: 20px;
         }
-
         .app-title {
             font-size: 28px;
             color: #be185d;
@@ -65,7 +57,6 @@
             font-weight: 800;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
         }
-
         .pro-tag {
             background: linear-gradient(135deg, #ec4899, #8b5cf6);
             color: white;
@@ -76,7 +67,6 @@
             margin-left: 8px;
             font-weight: 600;
         }
-
         .controls {
             background: var(--card-bg);
             padding: 16px 20px;
@@ -89,19 +79,16 @@
             margin-bottom: 20px;
             border: 1px solid rgba(255, 255, 255, 0.9);
         }
-
         .control-box {
             display: flex;
             flex-direction: column;
             gap: 4px;
         }
-
         .box-label {
             font-size: 12px;
             font-weight: 700;
             color: #db2777;
         }
-
         select, input[type="number"] {
             padding: 8px 12px;
             border: 1px solid #f472b6;
@@ -112,12 +99,10 @@
             outline: none;
             transition: all 0.2s;
         }
-
         select:focus, input:focus {
             border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.15);
         }
-
         .btn {
             padding: 9px 16px;
             border: none;
@@ -130,22 +115,16 @@
             align-items: center;
             gap: 6px;
         }
-
         .btn-excel { background: #10b981; color: white; }
         .btn-excel:hover { background: #059669; }
-        
         .btn-new { background: #ec4899; color: white; }
         .btn-new:hover { background: #db2777; }
-
         .btn-retry { background: #f59e0b; color: white; }
         .btn-retry:hover { background: #d97706; }
-
         .btn-reset { background: #64748b; color: white; }
         .btn-reset:hover { background: #475569; }
-
         .btn-audio-toggle { background: #8b5cf6; color: white; }
         .btn-audio-toggle.muted { background: #94a3b8; }
-
         .range-container {
             display: flex;
             align-items: center;
@@ -155,12 +134,10 @@
             width: 55px;
             text-align: center;
         }
-
         .main-layout {
             display: flex;
             gap: 20px;
         }
-
         .table-container {
             flex: 1;
             background: var(--card-bg);
@@ -171,12 +148,10 @@
             max-height: 75vh;
             border: 1px solid rgba(255, 255, 255, 0.9);
         }
-
         table {
             width: 100%;
             border-collapse: collapse;
         }
-
         th {
             background: #fdf2f8;
             color: #be185d;
@@ -189,13 +164,11 @@
             z-index: 10;
             border-bottom: 2px solid #f472b6;
         }
-
         td {
             padding: 10px;
             border-bottom: 1px solid var(--border-color);
             font-size: 15px;
         }
-
         .col-stt { width: 5%; text-align: center; }
         .col-hanzi { width: 22%; font-weight: 600; font-size: 18px; color: #9d174d; }
         .col-type { width: 12%; color: #64748b; font-size: 13px; }
@@ -203,13 +176,13 @@
         .col-viet { width: 22%; font-weight: 500; font-size: 15px; }
         .col-input { width: 12%; }
         .col-status { width: 5%; text-align: center; font-size: 18px; }
-
         input[type="text"] {
             width: 92%;
             padding: 8px 10px;
             border: 1px solid #cbd5e1;
             border-radius: 6px;
             font-size: 15px;
+            text-align: center;
             outline: none;
             transition: all 0.2s;
         }
@@ -217,10 +190,8 @@
             border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.15);
         }
-
         .row-correct { background-color: rgba(209, 250, 229, 0.6) !important; }
         .row-wrong { background-color: rgba(254, 226, 226, 0.6) !important; }
-
         .audio-btn {
             background: none;
             border: none;
@@ -232,7 +203,6 @@
             vertical-align: middle;
         }
         .audio-btn:hover { background: rgba(236, 72, 153, 0.1); }
-
         .stats-dashboard {
             width: 360px;
             background: var(--card-bg);
@@ -245,7 +215,6 @@
             border: 1px solid rgba(255, 255, 255, 0.9);
             height: fit-content;
         }
-
         .timer-box {
             background: linear-gradient(135deg, #f472b6, #db2777);
             color: white;
@@ -255,7 +224,6 @@
         }
         .timer-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
         .timer-value { font-size: 24px; font-weight: 800; margin-top: 2px; font-family: monospace; }
-
         .progress-bar-bg {
             background: #f1f5f9;
             height: 12px;
@@ -268,7 +236,6 @@
             width: 0%;
             transition: width 0.3s ease;
         }
-
         .stats-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -283,7 +250,6 @@
         }
         .stat-card .label { font-size: 12px; color: #64748b; font-weight: 600; }
         .stat-card .value { font-size: 18px; font-weight: 700; color: #334155; margin-top: 2px; }
-
         .rate-card {
             background: linear-gradient(135deg, #fdf2f8, #fbcfe8);
             border: 1px solid #f472b6;
@@ -291,7 +257,6 @@
             border-radius: 12px;
             text-align: center;
         }
-
         .contact-card {
             background: #fdf4ff;
             border: 1px solid #f0abfc;
@@ -303,7 +268,6 @@
         .contact-item { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
         .contact-item a { color: #86198f; text-decoration: none; font-weight: 600; }
         .contact-item a:hover { text-decoration: underline; }
-
         .footer-owner {
             text-align: center;
             font-size: 12px;
@@ -311,7 +275,6 @@
             border-top: 1px dashed #cbd5e1;
             padding-top: 10px;
         }
-
         @media (max-width: 768px) {
             body { padding: 8px; }
             .main-layout { flex-direction: column; }
@@ -476,6 +439,7 @@
             {"chinese": "早饭 / 早餐", "type": "Danh từ", "pinyin": "zǎofàn / zǎocān", "meaning": "Bữa sáng, điểm tâm"},
             {"chinese": "午饭 / 晚餐", "type": "Danh từ", "pinyin": "wǔfàn / wǔcān", "meaning": "Bữa trưa"},
             {"chinese": "因为……所以……", "type": "Liên từ", "pinyin": "yīnwèi……suǒyǐ……", "meaning": "Vì…… nên……"},
+            {"chinese": "咱们", "type": "Đại từ", "pinyin": "zánmen", "meaning": "Chúng ta (bao gồm cả người nghe)"},
             {"chinese": "姐姐", "type": "Danh từ", "pinyin": "jiějie", "meaning": "Chị gái"}
         ];
 
@@ -541,9 +505,16 @@
                       .toLowerCase();
         }
 
+        // Đã cập nhật: Loại bỏ phần chú thích nằm trong các dấu ngoặc (), [], {}
         function cleanString(str) {
             if (!str) return '';
-            return str.toLowerCase().trim().replace(/\s+/g, ' ');
+            return str
+                .toLowerCase()
+                .replace(/\([^)]*\)/g, '')
+                .replace(/\[[^\]]*\]/g, '')
+                .replace(/\{[^}]*\}/g, '')
+                .trim()
+                .replace(/\s+/g, ' ');
         }
 
         function splitVariants(str) {
@@ -799,6 +770,7 @@
                     <td class="col-input">
                         <input type="text" id="input_${index}" 
                                enterkeyhint="next" 
+                               autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"
                                oninput="checkAndStartTimer()"
                                onblur="checkAnswer(${index})"
                                onkeydown="handleKeyDown(event, ${index})">
@@ -825,16 +797,24 @@
         }
 
         function checkAnswer(index) {
-            const inputVal = document.getElementById(`input_${index}`).value;
-            if (!inputVal) return;
+            const inputElem = document.getElementById(`input_${index}`);
+            if (!inputElem) return;
 
-            const item = currentQuizData[index];
-            const mode = document.getElementById('modeSelect').value;
+            const inputVal = inputElem.value;
             const tr = document.getElementById(`row_${index}`);
             const statusTd = document.getElementById(`status_${index}`);
-            
-            let isCorrect = false;
+            const item = currentQuizData[index];
+            const mode = document.getElementById('modeSelect').value;
+
+            if (!inputVal.trim()) {
+                tr.className = "";
+                statusTd.innerText = "-";
+                statusTd.style.color = "inherit";
+                return;
+            }
+
             const cleanedInput = cleanString(inputVal);
+            let isCorrect = false;
 
             if (mode === 'chinese_to_meaning') {
                 const meaningVariants = splitVariants(item.meaning);
@@ -892,10 +872,10 @@
 
             currentQuizData.forEach((_, index) => {
                 const tr = document.getElementById(`row_${index}`);
-                if (tr.classList.contains('row-correct')) {
+                if (tr && tr.classList.contains('row-correct')) {
                     done++;
                     correct++;
-                } else if (tr.classList.contains('row-wrong')) {
+                } else if (tr && tr.classList.contains('row-wrong')) {
                     done++;
                     wrong++;
                 }
