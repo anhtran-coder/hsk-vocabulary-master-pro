@@ -505,7 +505,6 @@
                       .toLowerCase();
         }
 
-        // Đã cập nhật: Loại bỏ phần chú thích nằm trong các dấu ngoặc (), [], {}
         function cleanString(str) {
             if (!str) return '';
             return str
@@ -838,12 +837,14 @@
                 statusTd.innerHTML = '✅';
                 statusTd.style.color = 'var(--success)';
                 
-                if (mode !== 'chinese_to_meaning') {
+                if (mode === 'chinese_to_meaning') {
+                    // CẬP NHẬT: Hiện đồng thời cả Pinyin và Tiếng Việt đầy đủ khi trả lời đúng
+                    document.getElementById(`pinyin_${index}`).innerText = item.pinyin;
+                    document.getElementById(`meaning_${index}`).innerText = item.meaning;
+                } else {
                     document.getElementById(`chinese_${index}`).innerText = item.chinese;
                     document.getElementById(`pinyin_${index}`).innerText = item.pinyin;
                     document.getElementById(`audio_wrap_${index}`).innerHTML = `<button class="audio-btn" onclick="speakText('${item.chinese.replace(/'/g, "\\'")}')" title="Nghe phát âm">🔊</button>`;
-                } else {
-                    document.getElementById(`meaning_${index}`).innerText = item.meaning;
                 }
                 
                 speakText(item.chinese);
@@ -853,6 +854,8 @@
                 statusTd.style.color = 'var(--danger)';
 
                 if (mode === 'chinese_to_meaning') {
+                    // CẬP NHẬT: Hiện đồng thời cả Pinyin và Tiếng Việt khi trả lời sai
+                    document.getElementById(`pinyin_${index}`).innerText = item.pinyin;
                     document.getElementById(`meaning_${index}`).innerHTML = `<span style="color: var(--danger); text-decoration: line-through;">${inputVal}</span><br><strong style="color: var(--success);">${item.meaning}</strong>`;
                 } else {
                     document.getElementById(`chinese_${index}`).innerText = item.chinese;
