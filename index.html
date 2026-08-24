@@ -441,8 +441,8 @@
             {"chinese": "医院", "type": "Danh từ", "pinyin": "yīyuàn", "meaning": "bệnh viện"},
             {"chinese": "机场", "type": "Danh từ", "pinyin": "jīchǎng", "meaning": "sân bay"},
             {"chinese": "车站", "type": "Danh từ", "pinyin": "chēzhàn", "meaning": "bến xe"},
-            {"chinese": "火车站", "type": "Danh từ", "pinyin": "huǒchē zhàn", "meaning": "ga tàu hỏa (ga tàu hoả)"},
-            {"chinese": "公共汽车站", "type": "Danh từ", "pinyin": "gōnggòng qìchēzhàn", "meaning": "trạm xe buýt (trạm xe bốt)"},
+            {"chinese": "火车站", "type": "Danh từ", "pinyin": "huǒchē zhàn", "meaning": "ga tàu hỏa / ga tàu hoả"},
+            {"chinese": "公共汽车站", "type": "Danh từ", "pinyin": "gōnggòng qìchēzhàn", "meaning": "trạm xe buýt / trạm xe bốt"},
             {"chinese": "外语中心", "type": "Danh từ", "pinyin": "wàiyǔ zhōngxīn", "meaning": "trung tâm ngoại ngữ"}
         ];
 
@@ -508,7 +508,7 @@
                       .toLowerCase();
         }
 
-        // HÀM CHUẨN HÓA TIẾNG VIỆT
+        // HÀM CHUẨN HÓA TIẾNG VIỆT CHUYÊN SÂU (XỬ LÝ DẤU KIỂU CŨ & KIỂU MỚI)
         function normalizeVietnamese(str) {
             if (!str) return '';
             let s = str.normalize('NFC').toLowerCase();
@@ -530,14 +530,13 @@
             return s;
         }
 
-        // LỌC BỎ NGOẶC ĐƠN VÀ DẤU NGOẶC VUÔNG/NHỌN
         function cleanString(str) {
             if (!str) return '';
             let cleaned = str
                 .toLowerCase()
-                .replace(/\([^)]*\)/g, '')   // Lọc sạch ngoặc đơn (...)
-                .replace(/\[[^\]]*\]/g, '') // Lọc sạch ngoặc vuông [...]
-                .replace(/\{[^}]*\}/g, '')  // Lọc sạch ngoặc nhọn {...}
+                .replace(/\([^)]*\)/g, '')
+                .replace(/\[[^\]]*\]/g, '')
+                .replace(/\{[^}]*\}/g, '')
                 .trim()
                 .replace(/\s+/g, ' ');
             return normalizeVietnamese(cleaned);
@@ -775,78 +774,120 @@
                 let displayChinese = '***';
                 let displayPinyin  = '***';
                 let displayMeaning = '***';
-                
-                if (mode === 'chinese_only' || mode === 'pinyin_to_chinese') {
-                    displayMeaning = item.meaning;
-                } else if (mode === 'chinese_to_meaning') {
-                    displayChinese = item.chinese;
-                }
+                let audioBtnHtml = '';
 
-                const audioBtnHtml = `<button class="audio-btn" onclick="speakText('${item.chinese.replace(/'/g, "\\'")}')">🔊</button>`;
+                if (mode === 'chinese_to_meaning') {
+                    displayChinese = item.chinese || '---';
+                    audioBtnHtml = `<button class="audio-btn" onclick="speakText('${item.chinese.replace(/'/g, "\\'")}')" title="Nghe phát âm">🔊</button>`;
+                } else {
+                    displayMeaning = item.meaning || '---';
+                }
 
                 tr.innerHTML = `
                     <td class="col-stt">${index + 1}</td>
-                    <td class="col-hanzi">${displayChinese} ${displayChinese !== '***' ? audioBtnHtml : ''}</td>
-                    <td class="col-type">${item.type || ''}</td>
-                    <td class="col-pinyin">${displayPinyin}</td>
-                    <td class="col-viet">${displayMeaning}</td>
-                    <td class="col-input"><input type="text" id="input_${index}" autocomplete="off" oninput="checkAnswer(${index})"></td>
-                    <td class="col-status" id="status_${index}">-</td>
+                    <td class="col-hanzi">
+                        <span id="chinese_${index}">${displayChinese}</span>
+                        <span id="audio_wrap_${index}">${audioBtnHtml}</span>
+                    </td>
+                    <td class="col-type">${item.type || '-'}</td>
+                    <td id="pinyin_${index}" class="col-pinyin">${displayPinyin}</td>
+                    <td id="meaning_${index}" class="col-viet">${displayMeaning}</td>
+                    <td class="col-input">
+                        <input type="text" id="input_${index}" 
+                               enterkeyhint="next" 
+                               autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"
+                               oninput="checkAndStartTimer()"
+                               onblur="checkAnswer(${index})"
+                               onkeydown="handleKeyDown(event, ${index})">
+                    </td>
+                    <td id="status_${index}" class="col-status">-</td>
                 `;
                 tbody.appendChild(tr);
             });
-
             updateStats();
         }
 
-        function checkAnswer(index) {
+        function handleKeyDown(event, index) {
             checkAndStartTimer();
-            const mode = document.getElementById('modeSelect').value;
-            const inputVal = document.getElementById(`input_${index}`).value.trim();
-            const item = currentQuizData[index];
+            if (event.key === 'Enter' || event.keyCode === 13) {
+                event.preventDefault();
+                checkAnswer(index); 
+                
+                const nextInput = document.getElementById(`input_${index + 1}`);
+                if (nextInput) {
+                    nextInput.focus();
+                    nextInput.select();
+                }
+            }
+        }
+
+        function checkAnswer(index) {
+            const inputElem = document.getElementById(`input_${index}`);
+            if (!inputElem) return;
+
+            const inputVal = inputElem.value;
             const tr = document.getElementById(`row_${index}`);
             const statusTd = document.getElementById(`status_${index}`);
+            const item = currentQuizData[index];
+            const mode = document.getElementById('modeSelect').value;
 
-            if (!inputVal) {
-                tr.className = '';
-                statusTd.innerText = '-';
-                
-                if (mode === 'chinese_only' || mode === 'pinyin_to_chinese') {
-                    tr.children[1].innerHTML = `***`;
-                    tr.children[3].innerText = `***`;
-                } else {
-                    tr.children[4].innerText = `***`;
-                }
-                updateStats();
+            if (!inputVal.trim()) {
+                tr.className = "";
+                statusTd.innerText = "-";
+                statusTd.style.color = "inherit";
                 return;
             }
 
+            const cleanedInput = cleanString(inputVal);
             let isCorrect = false;
 
-            if (mode === 'chinese_only') {
-                isCorrect = (inputVal === item.chinese);
+            if (mode === 'chinese_to_meaning') {
+                const meaningVariants = splitVariants(item.meaning);
+                isCorrect = meaningVariants.some(v => cleanedInput === v || cleanedInput.includes(v));
             } else if (mode === 'pinyin_to_chinese') {
-                const cleanInput = removePinyinTones(inputVal);
-                const cleanTargetPinyin = removePinyinTones(item.pinyin);
-                isCorrect = (inputVal === item.chinese) || (cleanInput === cleanTargetPinyin);
-            } else if (mode === 'chinese_to_meaning') {
-                const cleanInput = cleanString(inputVal);
-                const validVariants = splitVariants(item.meaning);
-                isCorrect = validVariants.includes(cleanInput);
+                const chineseVariants = splitVariants(item.chinese);
+                const pinyinVariants = splitVariants(item.pinyin);
+                const rawPinyinVariants = pinyinVariants.map(p => removePinyinTones(p));
+                const cleanInputNoTone = removePinyinTones(cleanedInput);
+
+                isCorrect = chineseVariants.includes(cleanedInput) || 
+                            pinyinVariants.includes(cleanedInput) || 
+                            rawPinyinVariants.includes(cleanInputNoTone);
+            } else {
+                const chineseVariants = splitVariants(item.chinese);
+                isCorrect = chineseVariants.includes(cleanedInput);
             }
 
             if (isCorrect) {
                 tr.className = 'row-correct';
-                statusTd.innerText = '✔️';
+                statusTd.innerHTML = '✅';
+                statusTd.style.color = 'var(--success)';
                 
-                tr.children[1].innerHTML = `${item.chinese} <button class="audio-btn" onclick="speakText('${item.chinese.replace(/'/g, "\\'")}')">🔊</button>`;
-                tr.children[3].innerText = item.pinyin;
-                tr.children[4].innerText = item.meaning;
-
+                if (mode === 'chinese_to_meaning') {
+                    // Hiện đồng thời Pinyin + Tiếng Việt khi ĐÚNG
+                    document.getElementById(`pinyin_${index}`).innerText = item.pinyin;
+                    document.getElementById(`meaning_${index}`).innerText = item.meaning;
+                } else {
+                    document.getElementById(`chinese_${index}`).innerText = item.chinese;
+                    document.getElementById(`pinyin_${index}`).innerText = item.pinyin;
+                    document.getElementById(`audio_wrap_${index}`).innerHTML = `<button class="audio-btn" onclick="speakText('${item.chinese.replace(/'/g, "\\'")}')" title="Nghe phát âm">🔊</button>`;
+                }
+                
                 speakText(item.chinese);
             } else {
                 tr.className = 'row-wrong';
-                statusTd.innerText = '❌';
+                statusTd.innerHTML = '❌';
+                statusTd.style.color = 'var(--danger)';
+
+                if (mode === 'chinese_to_meaning') {
+                    // Hiện đồng thời Pinyin + Đáp án Tiếng Việt đúng khi SAI
+                    document.getElementById(`pinyin_${index}`).innerText = item.pinyin;
+                    document.getElementById(`meaning_${index}`).innerHTML = `<span style="color: var(--danger); text-decoration: line-through;">${inputVal}</span><br><strong style="color: var(--success);">${item.meaning}</strong>`;
+                } else {
+                    document.getElementById(`chinese_${index}`).innerText = item.chinese;
+                    document.getElementById(`pinyin_${index}`).innerText = item.pinyin;
+                    document.getElementById(`audio_wrap_${index}`).innerHTML = `<button class="audio-btn" onclick="speakText('${item.chinese.replace(/'/g, "\\'")}')" title="Nghe phát âm">🔊</button>`;
+                }
             }
 
             updateStats();
@@ -859,11 +900,11 @@
             let wrong = 0;
 
             currentQuizData.forEach((_, index) => {
-                const status = document.getElementById(`status_${index}`).innerText;
-                if (status === '✔️') {
+                const tr = document.getElementById(`row_${index}`);
+                if (tr && tr.classList.contains('row-correct')) {
                     done++;
                     correct++;
-                } else if (status === '❌') {
+                } else if (tr && tr.classList.contains('row-wrong')) {
                     done++;
                     wrong++;
                 }
@@ -874,11 +915,11 @@
             document.getElementById('statCorrect').innerText = correct;
             document.getElementById('statWrong').innerText = wrong;
 
-            const rate = done > 0 ? ((correct / total) * 100).toFixed(1) : '0.0';
+            const rate = done > 0 ? ((correct / done) * 100).toFixed(1) : '0.0';
             document.getElementById('statRate').innerText = `${rate}%`;
 
-            const progress = total > 0 ? (done / total) * 100 : 0;
-            document.getElementById('progressBar').style.width = `${progress}%`;
+            const percent = total > 0 ? (done / total) * 100 : 0;
+            document.getElementById('progressBar').style.width = `${percent}%`;
 
             if (done === total && total > 0) {
                 stopTimer();
