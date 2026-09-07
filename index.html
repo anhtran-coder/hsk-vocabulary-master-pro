@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <!-- Chặn tự động phóng to khi bấm ô nhập trên điện thoại (maximum-scale=1.0, user-scalable=no) -->
+    <!-- Chặn tự động phóng to khi bấm ô nhập trên điện thoại -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>HSK Vocabulary Master</title>
     <!-- Thư viện SheetJS để đọc file Excel -->
@@ -14,9 +14,11 @@
             --bg-body: #fdf2f8;
             --card-bg: #ffffff;
             --border-color: #fbcfe8;
-            --text-color: #334155;
-            --success: #10b981;
-            --danger: #ef4444;
+            --text-color: #1e293b;
+            --success-bg: #d1fae5;    /* Màu xanh đậm nét */
+            --success-border: #34d399;
+            --danger-bg: #ffe4e6;     /* Màu đỏ đậm nét */
+            --danger-border: #f87171;
             --btn-green: #10b981;
             --btn-orange: #f59e0b;
             --btn-gray: #6b7280;
@@ -33,12 +35,13 @@
         body {
             background-color: var(--bg-body);
             color: var(--text-color);
-            padding: 20px 30px;
+            padding: 24px 35px;
             overflow-x: hidden;
             position: relative;
+            font-size: 15px; /* Phông nền tổng thể trên máy tính */
         }
 
-        /* ----- HIỆU ỨNG HOA ĐÀO RƠI ẨN PHÍA SAU (z-index: 0) ----- */
+        /* ----- HIỆU ỨNG HOA ĐÀO RƠI GẤP 10 LẦN (ẨN SAU Z-INDEX: 0) ----- */
         #snowflakeContainer {
             position: fixed;
             top: 0;
@@ -52,18 +55,17 @@
 
         .snowflake {
             position: absolute;
-            top: -20px;
+            top: -30px;
             color: #f472b6;
-            font-size: 1.1em;
             font-family: Arial, sans-serif;
-            text-shadow: 0 0 5px rgba(255,182,193,0.3);
+            text-shadow: 0 0 6px rgba(244, 114, 182, 0.4);
             user-select: none;
-            opacity: 0.4;
+            opacity: 0.6;
             animation-name: snowflakes-fall, snowflakes-shake;
-            animation-duration: 10s, 3s;
             animation-timing-function: linear, ease-in-out;
             animation-iteration-count: infinite, infinite;
             animation-play-state: running, running;
+            will-change: transform, top; /* Tối ưu hiệu năng rendering cho 220 hoa */
         }
 
         @keyframes snowflakes-fall {
@@ -72,40 +74,41 @@
         }
 
         @keyframes snowflakes-shake {
-            0%, 100% { transform: translateX(0); }
-            50% { transform: translateX(50px); }
+            0%, 100% { transform: translateX(0) rotate(0deg); }
+            50% { transform: translateX(50px) rotate(180deg); }
         }
 
-        /* CONTAINER DÀN RỘNG CÂN ĐỐI TRÊN MÁY TÍNH */
+        /* CONTAINER DÀN RỘNG CÂN ĐỐI VÀ TĂNG TỈ LỆ TRÊN MÁY TÍNH */
         .container {
-            max-width: 1600px;
-            width: 96%;
+            max-width: 1680px;
+            width: 98%;
             margin: 0 auto;
             position: relative;
             z-index: 1;
         }
 
-        /* HEADER TITLE */
+        /* HEADER TITLE TO HƠN */
         .header-title-box {
             text-align: center;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 10px;
         }
 
         .header-title-box h1 {
             color: #be185d;
-            font-size: 26px;
+            font-size: 30px;
             font-weight: 800;
+            letter-spacing: 0.5px;
         }
 
         .header-title-box .badge {
             background: #a855f7;
             color: white;
-            font-size: 11px;
-            padding: 3px 9px;
+            font-size: 12px;
+            padding: 4px 10px;
             border-radius: 12px;
             font-weight: 700;
             text-transform: uppercase;
@@ -114,37 +117,37 @@
         /* CONTROLS PANEL */
         .controls-wrapper {
             background: var(--card-bg);
-            padding: 16px 24px;
-            border-radius: 14px;
-            box-shadow: 0 4px 15px rgba(236, 72, 153, 0.08);
+            padding: 20px 28px;
+            border-radius: 16px;
+            box-shadow: 0 5px 20px rgba(236, 72, 153, 0.1);
             border: 1px solid var(--border-color);
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
 
         .controls-row-top {
             display: flex;
             flex-wrap: wrap;
-            gap: 16px;
+            gap: 18px;
             align-items: center;
-            margin-bottom: 14px;
+            margin-bottom: 16px;
         }
 
         .controls-row-bottom {
             display: flex;
             flex-wrap: wrap;
-            gap: 12px;
+            gap: 14px;
             align-items: center;
         }
 
         .control-box {
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 5px;
         }
 
         .box-label {
-            font-size: 11px;
-            font-weight: 600;
+            font-size: 12px;
+            font-weight: 700;
             color: #854d0e;
             display: flex;
             align-items: center;
@@ -152,32 +155,34 @@
         }
 
         select, input[type="number"], input[type="file"] {
-            padding: 6px 10px;
-            border: 1px solid #f472b6;
-            border-radius: 6px;
-            font-size: 13px;
+            padding: 8px 12px;
+            border: 1.5px solid #f472b6;
+            border-radius: 8px;
+            font-size: 14px;
             outline: none;
             background-color: #fff;
             color: #334155;
+            font-weight: 500;
         }
 
         select:focus, input:focus {
             border-color: #db2777;
-            box-shadow: 0 0 0 2px rgba(219, 39, 119, 0.1);
+            box-shadow: 0 0 0 3px rgba(219, 39, 119, 0.15);
         }
 
         .file-upload-btn {
             background-color: #10b981;
             color: white;
-            padding: 8px 14px;
-            border-radius: 6px;
+            padding: 9px 16px;
+            border-radius: 8px;
             cursor: pointer;
-            font-weight: 600;
-            font-size: 13px;
+            font-weight: 700;
+            font-size: 14px;
             display: inline-flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
             border: none;
+            box-shadow: 0 2px 6px rgba(16, 185, 129, 0.2);
         }
 
         .file-upload-btn:hover { background-color: #059669; }
@@ -185,28 +190,29 @@
         .range-container {
             display: flex;
             align-items: center;
-            gap: 5px;
-            font-size: 12px;
+            gap: 6px;
+            font-size: 13px;
         }
 
         .range-container input {
-            width: 55px;
+            width: 65px;
             text-align: center;
         }
 
         /* BUTTONS */
         .btn {
-            padding: 7px 14px;
+            padding: 9px 16px;
             border: none;
-            border-radius: 6px;
-            font-weight: 600;
-            font-size: 12px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 13px;
             cursor: pointer;
             transition: all 0.2s;
             display: inline-flex;
             align-items: center;
-            gap: 4px;
+            gap: 6px;
             color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
 
         .btn-pink { background-color: #ec4899; }
@@ -225,21 +231,23 @@
             background: none;
             border: none;
             cursor: pointer;
-            font-size: 14px;
-            margin-left: 6px;
+            font-size: 16px;
+            margin-left: 8px;
+            transition: transform 0.1s;
         }
+        .audio-btn:hover { transform: scale(1.2); }
 
         /* LAYOUT TRÊN MÁY TÍNH */
         .main-layout {
             display: grid;
-            grid-template-columns: 1fr 340px;
-            gap: 22px;
+            grid-template-columns: 1fr 360px;
+            gap: 25px;
         }
 
         .table-container {
             background: var(--card-bg);
-            border-radius: 14px;
-            box-shadow: 0 4px 15px rgba(236, 72, 153, 0.08);
+            border-radius: 16px;
+            box-shadow: 0 5px 20px rgba(236, 72, 153, 0.08);
             border: 1px solid var(--border-color);
             overflow-x: auto;
         }
@@ -248,74 +256,93 @@
             width: 100%;
             border-collapse: collapse;
             text-align: left;
-            font-size: 14px;
+            font-size: 15px;
         }
 
         th {
             background-color: #fff1f2;
-            padding: 12px 14px;
-            font-weight: 700;
+            padding: 14px 16px;
+            font-weight: 800;
             color: #9f1239;
             border-bottom: 2px solid var(--border-color);
+            font-size: 15px;
         }
 
         td {
-            padding: 10px 14px;
+            padding: 12px 16px;
             border-bottom: 1px solid #fecdd3;
             vertical-align: middle;
+            transition: background-color 0.2s ease;
         }
 
-        .col-stt { width: 50px; text-align: center; color: #888; }
-        .col-hanzi { width: 140px; font-size: 18px; font-weight: 600; }
-        .col-type { width: 130px; color: #64748b; font-size: 13px; }
-        .col-pinyin { width: 130px; color: #0284c7; }
-        .col-viet { min-width: 180px; color: #334155; }
-        .col-input { width: 200px; }
-        .col-status { width: 70px; text-align: center; font-weight: bold; }
+        .col-stt { width: 55px; text-align: center; color: #64748b; font-weight: 600; }
+        .col-hanzi { width: 160px; font-size: 20px; font-weight: 700; }
+        .col-type { width: 140px; color: #475569; font-size: 14px; font-weight: 500; }
+        .col-pinyin { width: 150px; color: #0284c7; font-weight: 600; font-size: 15px; }
+        .col-viet { min-width: 200px; color: #1e293b; font-weight: 500; }
+        .col-input { width: 220px; }
+        .col-status { width: 80px; text-align: center; font-weight: 800; font-size: 18px; }
 
         .col-input input {
             width: 100%;
-            padding: 7px 12px;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
+            padding: 9px 14px;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 8px;
             outline: none;
-            font-size: 14px;
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.2s;
         }
 
-        .row-correct { background-color: #f0fdf4; }
-        .row-wrong { background-color: #fff1f2; }
+        /* KHU VỰC HIỂN THỊ MÀU ĐÚNG / SAI RÕ RÀNG */
+        .row-correct { 
+            background-color: var(--success-bg) !important; 
+            border-left: 4px solid var(--success-border);
+        }
+        .row-correct td {
+            color: #064e3b;
+            font-weight: 600;
+        }
+        
+        .row-wrong { 
+            background-color: var(--danger-bg) !important; 
+            border-left: 4px solid var(--danger-border);
+        }
+        .row-wrong td {
+            color: #881337;
+        }
 
         /* DASHBOARD TRÊN MÁY TÍNH */
         .stats-dashboard {
             background: var(--card-bg);
-            padding: 20px;
-            border-radius: 14px;
-            box-shadow: 0 4px 15px rgba(236, 72, 153, 0.08);
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 5px 20px rgba(236, 72, 153, 0.08);
             border: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 18px;
             height: fit-content;
         }
 
         .timer-box {
             background: #ec4899;
             color: white;
-            padding: 12px;
-            border-radius: 10px;
+            padding: 14px;
+            border-radius: 12px;
             text-align: center;
-            box-shadow: 0 2px 8px rgba(236, 72, 153, 0.3);
+            box-shadow: 0 3px 10px rgba(236, 72, 153, 0.35);
         }
 
-        .timer-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
-        .timer-value { font-size: 28px; font-weight: 800; margin-top: 2px; }
+        .timer-label { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; }
+        .timer-value { font-size: 32px; font-weight: 900; margin-top: 2px; }
 
-        .dash-heading { font-size: 15px; font-weight: 700; color: #881337; }
+        .dash-heading { font-size: 16px; font-weight: 800; color: #881337; }
 
         .progress-bar-bg {
-            height: 8px;
+            height: 10px;
             background: #f1f5f9;
-            border-radius: 4px;
+            border-radius: 5px;
             overflow: hidden;
         }
 
@@ -329,55 +356,56 @@
         .stats-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
+            gap: 12px;
         }
 
         .stat-card {
             background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            padding: 10px;
-            border-radius: 8px;
-            text-align: center;
-        }
-
-        .stat-card .label { font-size: 11px; color: #64748b; font-weight: 600; }
-        .stat-card .value { font-size: 18px; font-weight: 700; margin-top: 2px; color: #1e293b; }
-
-        .rate-card {
-            background: #fdf2f8;
-            border: 1px solid #fbcfe8;
+            border: 1.5px solid #e2e8f0;
             padding: 12px;
             border-radius: 10px;
             text-align: center;
         }
 
-        .contact-card {
-            background: #fafafa;
-            border: 1px dashed #cbd5e1;
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
+        .stat-card .label { font-size: 12px; color: #64748b; font-weight: 700; }
+        .stat-card .value { font-size: 20px; font-weight: 800; margin-top: 2px; color: #0f172a; }
+
+        .rate-card {
+            background: #fdf2f8;
+            border: 1.5px solid #fbcfe8;
+            padding: 14px;
+            border-radius: 12px;
+            text-align: center;
         }
 
-        .contact-title { font-weight: 700; color: #334155; }
-        .contact-item a { color: #ec4899; text-decoration: none; font-weight: 600; }
+        .contact-card {
+            background: #fafafa;
+            border: 1.5px dashed #cbd5e1;
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 13px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .contact-title { font-weight: 800; color: #334155; }
+        .contact-item a { color: #ec4899; text-decoration: none; font-weight: 700; }
 
         .footer-owner {
-            font-size: 11px;
+            font-size: 12px;
             color: #94a3b8;
             text-align: center;
-            line-height: 1.4;
+            line-height: 1.5;
         }
 
         /* -------------------------------------------------------------------- */
-        /* CHỈ CHỈNH SỬA RIÊNG MÀN HÌNH ĐIỆN THOẠI (CHỐNG ZOOM VÀ XỘC XỆCH) */
+        /* GIỮ NGUYÊN TỈ LỆ TRÊN MÀN HÌNH ĐIỆN THOẠI */
         /* -------------------------------------------------------------------- */
         @media (max-width: 768px) {
             body {
                 padding: 8px 4px;
+                font-size: 14px;
             }
 
             .container {
@@ -395,6 +423,7 @@
 
             .controls-wrapper {
                 padding: 10px;
+                border-radius: 12px;
             }
 
             .table-container {
@@ -410,8 +439,10 @@
                 padding: 6px 3px;
             }
 
+            th { font-size: 12px; }
+
             .col-status {
-                display: none; /* Ẩn cột TT tiết kiệm không gian */
+                display: none;
             }
 
             .col-stt { width: 22px; font-size: 11px; }
@@ -421,7 +452,6 @@
             .col-viet { min-width: 80px; font-size: 12px; }
             .col-input { min-width: 80px; }
 
-            /* QUAN TRỌNG: font-size 16px giúp chống trình duyệt tự động ZOOM/PHÓNG TO khi click */
             .col-input input, 
             select, 
             input[type="number"] {
@@ -433,7 +463,7 @@
 </head>
 <body>
 
-    <!-- Container chứa hiệu ứng hoa đào rơi (Nằm ở background - z-index: 0) -->
+    <!-- Container chứa hiệu ứng hoa đào rơi (z-index: 0) -->
     <div id="snowflakeContainer"></div>
 
     <div class="container">
@@ -488,7 +518,7 @@
 
                 <div class="control-box">
                     <label class="box-label">📝 Số câu</label>
-                    <input type="number" id="quizSize" value="10" min="1" style="width: 45px; text-align: center;">
+                    <input type="number" id="quizSize" value="10" min="1" style="width: 50px; text-align: center;">
                 </div>
 
                 <div class="control-box">
@@ -507,7 +537,7 @@
                 <button class="btn btn-pink" id="btnNewQuiz">⚡ Đổi đề</button>
                 <button class="btn btn-amber" id="btnRetryQuiz">♻️ Làm lại</button>
                 <button class="btn btn-slate" id="btnReset">🗑️ Xóa data</button>
-                <span id="loadingStatus" style="font-size: 11px; font-weight: 600; color: #10b981; margin-left: auto;"></span>
+                <span id="loadingStatus" style="font-size: 13px; font-weight: 700; color: #10b981; margin-left: auto;"></span>
             </div>
         </div>
 
@@ -544,13 +574,13 @@
                 <div class="stats-grid">
                     <div class="stat-card"><div class="label">Tổng câu</div><div class="value" id="statTotal">0</div></div>
                     <div class="stat-card"><div class="label">Đã làm</div><div class="value" id="statDone">0</div></div>
-                    <div class="stat-card" style="background: #f0fdf4; border-color: #bbf7d0;"><div class="label" style="color: #166534;">Số câu Đúng</div><div class="value" style="color: #15803d;" id="statCorrect">0</div></div>
-                    <div class="stat-card" style="background: #fff1f2; border-color: #fecdd3;"><div class="label" style="color: #9f1239;">Số câu Sai</div><div class="value" style="color: #e11d48;" id="statWrong">0</div></div>
+                    <div class="stat-card" style="background: #d1fae5; border-color: #34d399;"><div class="label" style="color: #065f46;">Số câu Đúng</div><div class="value" style="color: #047857;" id="statCorrect">0</div></div>
+                    <div class="stat-card" style="background: #ffe4e6; border-color: #f87171;"><div class="label" style="color: #9f1239;">Số câu Sai</div><div class="value" style="color: #be123c;" id="statWrong">0</div></div>
                 </div>
 
                 <div class="rate-card">
-                    <div style="font-size: 10px; color: #be185d; font-weight: 700;">TỶ LỆ CHÍNH XÁC</div>
-                    <div style="font-size: 20px; font-weight: 800; color: #db2777; margin-top: 2px;" id="statRate">0.0%</div>
+                    <div style="font-size: 11px; color: #be185d; font-weight: 800;">TỶ LỆ CHÍNH XÁC</div>
+                    <div style="font-size: 22px; font-weight: 900; color: #db2777; margin-top: 2px;" id="statRate">0.0%</div>
                 </div>
 
                 <div class="contact-card">
@@ -572,31 +602,34 @@
 
     <!-- JavaScript Execution -->
     <script>
-        // --- HIỆU ỨNG HOA ĐÀO RƠI ẨN BÊN DƯỚI ---
+        // --- TĂNG GẤP 10 LẦN SỐ LƯỢNG HOA ĐÀO RƠI (220 CÁNH HOA) ---
         function createSnowflakes() {
             const container = document.getElementById('snowflakeContainer');
-            const icons = ['🌸', '❄', '🌸', '❆'];
-            const count = 12;
+            const icons = ['🌸', '❄', '🌸', '❆', '🌺', '🌸'];
+            const count = 220; // Đã tăng gấp 10 lần (từ 22 lên 220)
             
+            const fragment = document.createDocumentFragment();
+
             for (let i = 0; i < count; i++) {
                 const flake = document.createElement('div');
                 flake.className = 'snowflake';
                 flake.innerText = icons[Math.floor(Math.random() * icons.length)];
                 
                 const leftPos = Math.random() * 100;
-                const duration = 7 + Math.random() * 8;
-                const delay = Math.random() * 5;
-                const size = 0.6 + Math.random() * 0.7;
-                const opacity = 0.2 + Math.random() * 0.3;
+                const duration = 5 + Math.random() * 9;
+                const delay = Math.random() * 10;
+                const size = 0.5 + Math.random() * 0.9;
+                const opacity = 0.2 + Math.random() * 0.55;
                 
                 flake.style.left = `${leftPos}%`;
-                flake.style.animationDuration = `${duration}s, 3s`;
+                flake.style.animationDuration = `${duration}s, 3.5s`;
                 flake.style.animationDelay = `${delay}s, ${delay}s`;
                 flake.style.fontSize = `${size}em`;
                 flake.style.opacity = opacity;
                 
-                container.appendChild(flake);
+                fragment.appendChild(flake);
             }
+            container.appendChild(fragment);
         }
         createSnowflakes();
 
@@ -1002,7 +1035,6 @@
             if (isCorrect) {
                 tr.className = 'row-correct';
                 statusTd.innerHTML = '✅';
-                statusTd.style.color = 'var(--success)';
                 
                 document.getElementById(`chinese_${index}`).innerText = item.chinese;
                 document.getElementById(`pinyin_${index}`).innerText = item.pinyin;
@@ -1012,7 +1044,6 @@
             } else {
                 tr.className = 'row-wrong';
                 statusTd.innerHTML = '❌';
-                statusTd.style.color = 'var(--danger)';
 
                 document.getElementById(`chinese_${index}`).innerText = item.chinese;
                 document.getElementById(`pinyin_${index}`).innerText = item.pinyin;
