@@ -3,44 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ Thống Ôn Tập Từ Vựng HSK</title>
+    <title>HSK Vocabulary Master</title>
     <!-- Thư viện SheetJS để đọc file Excel -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <style>
         :root {
-            --primary: #2563eb;
-            --primary-hover: #1d4ed8;
-            --bg-body: #f8fafc;
+            --primary-pink: #ec4899;
+            --primary-pink-hover: #db2777;
+            --bg-body: #fdf2f8;
             --card-bg: #ffffff;
-            --border-color: #e2e8f0;
-            --text-color: #1e293b;
+            --border-color: #fbcfe8;
+            --text-color: #334155;
             --success: #10b981;
             --danger: #ef4444;
+            --btn-green: #10b981;
+            --btn-orange: #f59e0b;
+            --btn-gray: #6b7280;
+            --btn-purple: #8b5cf6;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
 
         body {
             background-color: var(--bg-body);
             color: var(--text-color);
-            padding: 15px;
+            padding: 20px;
             overflow-x: hidden;
             position: relative;
         }
 
-        /* ----- HIỆU ỨNG HOA TUYẾT RƠI ----- */
+        /* ----- HIỆU ỨNG HOA TUYẾT / HOA ĐÀO RƠI ----- */
         .snowflake {
             position: fixed;
             top: -10px;
-            color: #93c5fd;
+            color: #f472b6;
             font-size: 1em;
             font-family: Arial, sans-serif;
-            text-shadow: 0 0 5px #0000001a;
+            text-shadow: 0 0 5px rgba(255,182,193,0.5);
             user-select: none;
             z-index: 9999;
             pointer-events: none;
@@ -58,28 +62,65 @@
 
         @keyframes snowflakes-shake {
             0%, 100% { transform: translateX(0); }
-            50% { transform: translateX(80px); }
+            50% { transform: translateX(60px); }
         }
-        /* ---------------------------------- */
 
         .container {
-            max-width: 1200px;
+            max-width: 1250px;
             margin: 0 auto;
             position: relative;
             z-index: 1;
         }
 
-        /* Controls Area */
+        /* HEADER TITLE */
+        .header-title-box {
+            text-align: center;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .header-title-box h1 {
+            color: #be185d;
+            font-size: 24px;
+            font-weight: 800;
+        }
+
+        .header-title-box .badge {
+            background: #a855f7;
+            color: white;
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        /* CONTROLS PANEL */
         .controls-wrapper {
             background: var(--card-bg);
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            padding: 16px 20px;
+            border-radius: 14px;
+            box-shadow: 0 4px 15px rgba(236, 72, 153, 0.08);
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+
+        .controls-row-top {
             display: flex;
             flex-wrap: wrap;
             gap: 12px;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 12px;
+        }
+
+        .controls-row-bottom {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
         }
 
         .control-box {
@@ -89,85 +130,109 @@
         }
 
         .box-label {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 600;
-            color: #64748b;
+            color: #854d0e;
+            display: flex;
+            align-items: center;
+            gap: 3px;
         }
 
         select, input[type="number"], input[type="file"] {
-            padding: 7px 10px;
-            border: 1px solid var(--border-color);
+            padding: 6px 10px;
+            border: 1px solid #f472b6;
             border-radius: 6px;
-            font-size: 14px;
+            font-size: 13px;
             outline: none;
+            background-color: #fff;
+            color: #334155;
         }
 
         select:focus, input:focus {
-            border-color: var(--primary);
+            border-color: #db2777;
+            box-shadow: 0 0 0 2px rgba(219, 39, 119, 0.1);
         }
+
+        .file-upload-btn {
+            background-color: #10b981;
+            color: white;
+            padding: 8px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            border: none;
+        }
+
+        .file-upload-btn:hover { background-color: #059669; }
 
         .range-container {
             display: flex;
             align-items: center;
-            gap: 6px;
-            font-size: 13px;
+            gap: 5px;
+            font-size: 12px;
         }
 
         .range-container input {
-            width: 60px;
+            width: 55px;
             text-align: center;
         }
 
-        /* Buttons */
+        /* BUTTONS */
         .btn {
-            padding: 8px 14px;
+            padding: 7px 14px;
             border: none;
             border-radius: 6px;
             font-weight: 600;
-            font-size: 13px;
+            font-size: 12px;
             cursor: pointer;
             transition: all 0.2s;
             display: inline-flex;
             align-items: center;
             gap: 4px;
+            color: white;
         }
 
-        .btn-new { background-color: var(--primary); color: white; }
-        .btn-new:hover { background-color: var(--primary-hover); }
+        .btn-pink { background-color: #ec4899; }
+        .btn-pink:hover { background-color: #db2777; }
 
-        .btn-retry { background-color: #f59e0b; color: white; }
-        .btn-retry:hover { background-color: #d97706; }
+        .btn-amber { background-color: #f59e0b; }
+        .btn-amber:hover { background-color: #d97706; }
 
-        .btn-reset { background-color: #ef4444; color: white; }
-        .btn-reset:hover { background-color: #dc2626; }
+        .btn-slate { background-color: #64748b; }
+        .btn-slate:hover { background-color: #475569; }
 
-        .btn-audio-toggle { background-color: #10b981; color: white; }
-        .btn-audio-toggle.muted { background-color: #6b7280; }
+        .btn-purple { background-color: #8b5cf6; }
+        .btn-purple.muted { background-color: #9ca3af; }
 
         .audio-btn {
             background: none;
             border: none;
             cursor: pointer;
-            font-size: 15px;
+            font-size: 14px;
             margin-left: 4px;
         }
 
-        /* Layout */
+        /* LAYOUT */
         .main-layout {
             display: grid;
-            grid-template-columns: 1fr 300px;
+            grid-template-columns: 1fr 320px;
             gap: 20px;
         }
 
-        @media (max-width: 900px) {
+        @media (max-width: 950px) {
             .main-layout { grid-template-columns: 1fr; }
         }
 
-        /* Table */
+        /* TABLE */
         .table-container {
             background: var(--card-bg);
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border-radius: 14px;
+            box-shadow: 0 4px 15px rgba(236, 72, 153, 0.08);
+            border: 1px solid var(--border-color);
             overflow-x: auto;
         }
 
@@ -175,74 +240,85 @@
             width: 100%;
             border-collapse: collapse;
             text-align: left;
-            font-size: 14px;
+            font-size: 13px;
         }
 
         th {
-            background-color: #f1f5f9;
+            background-color: #fff1f2;
             padding: 12px 10px;
-            font-weight: 600;
-            color: #475569;
+            font-weight: 700;
+            color: #9f1239;
             border-bottom: 2px solid var(--border-color);
         }
 
         td {
             padding: 10px;
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 1px solid #fecdd3;
             vertical-align: middle;
         }
 
-        .col-stt { width: 50px; text-align: center; }
-        .col-hanzi { width: 120px; font-size: 18px; }
-        .col-type { width: 90px; color: #64748b; }
-        .col-pinyin { width: 120px; color: #0284c7; }
-        .col-viet { min-width: 150px; }
-        .col-input { width: 180px; }
-        .col-status { width: 70px; text-align: center; font-weight: bold; }
+        .col-stt { width: 45px; text-align: center; color: #888; }
+        .col-hanzi { width: 130px; font-size: 17px; font-weight: 600; }
+        .col-type { width: 110px; color: #64748b; font-size: 12px; }
+        .col-pinyin { width: 110px; color: #0284c7; }
+        .col-viet { min-width: 160px; color: #334155; }
+        .col-input { width: 170px; }
+        .col-status { width: 65px; text-align: center; font-weight: bold; }
 
-        .quiz-input, td.col-input input {
+        .col-input input {
             width: 100%;
             padding: 6px 10px;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
             outline: none;
         }
 
         .row-correct { background-color: #f0fdf4; }
-        .row-wrong { background-color: #fef2f2; }
+        .row-wrong { background-color: #fff1f2; }
 
-        /* Dashboard */
+        /* DASHBOARD */
         .stats-dashboard {
             background: var(--card-bg);
             padding: 18px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border-radius: 14px;
+            box-shadow: 0 4px 15px rgba(236, 72, 153, 0.08);
+            border: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
             gap: 15px;
         }
 
         .timer-box {
-            background: #eff6ff;
-            border: 1px solid #bfdbfe;
-            padding: 12px;
-            border-radius: 8px;
+            background: #ec4899;
+            color: white;
+            padding: 10px;
+            border-radius: 10px;
             text-align: center;
+            box-shadow: 0 2px 8px rgba(236, 72, 153, 0.3);
         }
 
-        .timer-label { font-size: 12px; color: #1e40af; font-weight: 600; }
-        .timer-value { font-size: 26px; font-weight: 700; color: #1d4ed8; }
+        .timer-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        .timer-value { font-size: 26px; font-weight: 800; margin-top: 2px; }
+
+        .dash-heading {
+            font-size: 15px;
+            font-weight: 700;
+            color: #881337;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
 
         .progress-bar-bg {
-            height: 10px;
-            background: #e2e8f0;
-            border-radius: 5px;
+            height: 8px;
+            background: #f1f5f9;
+            border-radius: 4px;
             overflow: hidden;
         }
 
         .progress-bar-fill {
             height: 100%;
-            background: var(--primary);
+            background: #10b981;
             width: 0%;
             transition: width 0.3s;
         }
@@ -255,26 +331,26 @@
 
         .stat-card {
             background: #f8fafc;
-            border: 1px solid var(--border-color);
+            border: 1px solid #e2e8f0;
             padding: 10px;
-            border-radius: 6px;
+            border-radius: 8px;
             text-align: center;
         }
 
         .stat-card .label { font-size: 11px; color: #64748b; font-weight: 600; }
-        .stat-card .value { font-size: 18px; font-weight: 700; margin-top: 2px; }
+        .stat-card .value { font-size: 18px; font-weight: 700; margin-top: 2px; color: #1e293b; }
 
         .rate-card {
             background: #fdf2f8;
             border: 1px solid #fbcfe8;
             padding: 12px;
-            border-radius: 8px;
+            border-radius: 10px;
             text-align: center;
         }
 
         .contact-card {
-            background: #f8fafc;
-            border: 1px dashed var(--border-color);
+            background: #fafafa;
+            border: 1px dashed #cbd5e1;
             padding: 12px;
             border-radius: 8px;
             font-size: 12px;
@@ -284,7 +360,7 @@
         }
 
         .contact-title { font-weight: 700; color: #334155; }
-        .contact-item a { color: var(--primary); text-decoration: none; }
+        .contact-item a { color: #ec4899; text-decoration: none; font-weight: 600; }
 
         .footer-owner {
             font-size: 11px;
@@ -296,56 +372,82 @@
 </head>
 <body>
 
-    <!-- Container chứa hiệu ứng tuyết rơi -->
+    <!-- Container chứa hiệu ứng hoa tuyết/đào rơi -->
     <div id="snowflakeContainer"></div>
 
     <div class="container">
-        <!-- Control Header Bar -->
+        <!-- Header Title -->
+        <div class="header-title-box">
+            <span>🌸</span>
+            <h1>HSK Vocabulary Master</h1>
+            <span class="badge">PRO AUDIO ONLINE</span>
+        </div>
+
+        <!-- Controls Wrapper Bar -->
         <div class="controls-wrapper">
-            <div class="control-box">
-                <label class="box-label">📁 File Excel</label>
-                <input type="file" id="excelFile" accept=".xlsx, .xls">
-            </div>
+            <div class="controls-row-top">
+                <label class="file-upload-btn">
+                    📊 Chọn Excel
+                    <input type="file" id="excelFile" accept=".xlsx, .xls" style="display: none;">
+                </label>
 
-            <div class="control-box">
-                <label class="box-label">🎯 Chế độ luyện</label>
-                <select id="modeSelect">
-                    <option value="chinese_to_meaning">Hán ➔ Tiếng Việt</option>
-                    <option value="pinyin_to_chinese">Dịch sang Chữ Hán</option>
-                    <option value="chinese_only">Kiểm tra Chữ Hán</option>
-                </select>
-            </div>
-
-            <div class="control-box">
-                <label class="box-label">🔄 Trộn câu</label>
-                <select id="shuffleSelect">
-                    <option value="sequential">🔢 Theo thứ tự</option>
-                    <option value="random">🔀 Đảo ngẫu nhiên</option>
-                </select>
-            </div>
-
-            <div class="control-box">
-                <label class="box-label">📝 Số câu</label>
-                <input type="number" id="quizSize" value="10" min="1" style="width: 55px; text-align: center;">
-            </div>
-
-            <div class="control-box">
-                <label class="box-label">📊 Khoảng</label>
-                <div class="range-container">
-                    <input type="number" id="rangeFrom" placeholder="Từ" min="1" value="1">
-                    <span>đến</span>
-                    <input type="number" id="rangeTo" placeholder="Đến" min="1" value="100">
+                <div class="control-box">
+                    <label class="box-label">🎯 Chế độ</label>
+                    <select id="modeSelect">
+                        <option value="chinese_to_meaning">1. Chỉ gõ Chữ Hán (Hiện Tiếng Việt)</option>
+                        <option value="pinyin_to_chinese">2. Dịch sang Chữ Hán</option>
+                        <option value="chinese_only">3. Kiểm tra Chữ Hán</option>
+                    </select>
                 </div>
+
+                <div class="control-box">
+                    <label class="box-label">🗣️ Giọng đọc</label>
+                    <select id="voiceSelect">
+                        <option value="baidu">Nam/Nữ (Baidu)</option>
+                        <option value="google">Chuẩn (Google)</option>
+                    </select>
+                </div>
+
+                <div class="control-box">
+                    <label class="box-label">⚡ Tốc độ</label>
+                    <select id="speedSelect">
+                        <option value="1">Bình thường</option>
+                        <option value="0.8">Chậm</option>
+                        <option value="1.2">Nhanh</option>
+                    </select>
+                </div>
+
+                <div class="control-box">
+                    <label class="box-label">🔄 Trộn câu</label>
+                    <select id="shuffleSelect">
+                        <option value="sequential">🔢 Theo thứ tự</option>
+                        <option value="random">🔀 Đảo ngẫu nhiên</option>
+                    </select>
+                </div>
+
+                <div class="control-box">
+                    <label class="box-label">📝 Số câu</label>
+                    <input type="number" id="quizSize" value="10" min="1" style="width: 50px; text-align: center;">
+                </div>
+
+                <div class="control-box">
+                    <label class="box-label">📊 Khoảng</label>
+                    <div class="range-container">
+                        <input type="number" id="rangeFrom" value="1" min="1">
+                        <span>đến</span>
+                        <input type="number" id="rangeTo" value="62" min="1">
+                    </div>
+                </div>
+
+                <button class="btn btn-purple" id="btnAudioToggle" style="margin-left: auto;">🔊 Âm thanh: Bật</button>
             </div>
 
-            <input type="hidden" id="voiceSelect" value="google">
-            <input type="hidden" id="speedSelect" value="1">
-
-            <button class="btn btn-audio-toggle" id="btnAudioToggle">🔊 Âm thanh: Bật</button>
-            <button class="btn btn-new" id="btnNewQuiz">⚡ Đổi đề</button>
-            <button class="btn btn-retry" id="btnRetryQuiz">♻️ Làm lại</button>
-            <button class="btn btn-reset" id="btnReset">🗑️ Xóa data</button>
-            <span id="loadingStatus" style="font-size: 13px; font-weight: 600; color: var(--success); margin-left: auto;"></span>
+            <div class="controls-row-bottom">
+                <button class="btn btn-pink" id="btnNewQuiz">⚡ Đổi đề</button>
+                <button class="btn btn-amber" id="btnRetryQuiz">♻️ Làm lại</button>
+                <button class="btn btn-slate" id="btnReset">🗑️ Xóa data</button>
+                <span id="loadingStatus" style="font-size: 12px; font-weight: 600; color: #10b981; margin-left: auto;"></span>
+            </div>
         </div>
 
         <!-- Main Layout -->
@@ -371,58 +473,60 @@
             <!-- Dashboard Panel -->
             <div class="stats-dashboard">
                 <div class="timer-box">
-                    <div class="timer-label">⏱ Thời gian làm bài</div>
+                    <div class="timer-label">⏱ THỜI GIAN LÀM BÀI</div>
                     <div class="timer-value" id="timerDisplay">00:00</div>
                 </div>
 
-                <h3>📊 Tiến độ bài tập</h3>
+                <div class="dash-heading">📊 Tiến độ bài tập</div>
                 <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressBar"></div></div>
+
                 <div class="stats-grid">
                     <div class="stat-card"><div class="label">Tổng số câu</div><div class="value" id="statTotal">0</div></div>
                     <div class="stat-card"><div class="label">Đã hoàn thành</div><div class="value" id="statDone">0</div></div>
-                    <div class="stat-card" style="border-color: #a7f3d0; background: rgba(240, 253, 244, 0.9);"><div class="label" style="color: #065f46;">Số câu Đúng</div><div class="value" style="color: var(--success);" id="statCorrect">0</div></div>
-                    <div class="stat-card" style="border-color: #fecaca; background: rgba(254, 242, 242, 0.9);"><div class="label" style="color: #991b1b;">Số câu Sai</div><div class="value" style="color: var(--danger);" id="statWrong">0</div></div>
+                    <div class="stat-card" style="background: #f0fdf4; border-color: #bbf7d0;"><div class="label" style="color: #166534;">Số câu Đúng</div><div class="value" style="color: #15803d;" id="statCorrect">0</div></div>
+                    <div class="stat-card" style="background: #fff1f2; border-color: #fecdd3;"><div class="label" style="color: #9f1239;">Số câu Sai</div><div class="value" style="color: #e11d48;" id="statWrong">0</div></div>
                 </div>
+
                 <div class="rate-card">
                     <div style="font-size: 11px; color: #be185d; font-weight: 700;">TỶ LỆ CHÍNH XÁC</div>
-                    <div style="font-size: 22px; font-weight: 700; color: #db2777; margin-top: 2px;" id="statRate">0.0%</div>
+                    <div style="font-size: 22px; font-weight: 800; color: #db2777; margin-top: 2px;" id="statRate">0.0%</div>
                 </div>
 
                 <div class="contact-card">
                     <div class="contact-title">💬 Trung tâm Hỗ trợ & Góp ý</div>
                     <div class="contact-item">
-                        <span>✉️</span>
-                        <span>Email: <a href="mailto:tuan91.at@gmail.com">tuan91.at@gmail.com</a></span>
+                        <span>✉️ Email: <a href="mailto:tuan91.at@gmail.com">tuan91.at@gmail.com</a></span>
                     </div>
                     <div class="contact-item">
-                        <span>📞</span>
-                        <span>Hotline: <a href="tel:0917241091">0917 241 091</a></span>
+                        <span>📞 Hotline: 0917 241 091</span>
                     </div>
                 </div>
 
-                <div class="footer-owner">Bản quyền thuộc sở hữu:<br><b>TRẦN ANH TUẤN - C7 CB K139-140</b></div>
+                <div class="footer-owner">
+                    Bản quyền thuộc sở hữu:<br><b>TRẦN ANH TUẤN - C7 CB K139-140</b>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- JavaScript Execution -->
     <script>
-        // --- SCRIPT TẠO TUYẾT RƠI TỰ ĐỘNG ---
+        // --- HIỆU ỨNG HOA TUYẾT / ĐÀO RƠI ---
         function createSnowflakes() {
             const container = document.getElementById('snowflakeContainer');
-            const icons = ['❄', '❅', '❆', '✻', '❇'];
-            const count = 20; // Số lượng hoa tuyết rơi cùng lúc
+            const icons = ['🌸', '❄', '❅', '🌸', '❆'];
+            const count = 18;
             
             for (let i = 0; i < count; i++) {
                 const flake = document.createElement('div');
                 flake.className = 'snowflake';
                 flake.innerText = icons[Math.floor(Math.random() * icons.length)];
                 
-                const leftPos = Math.random() * 100; // vị trí theo chiều ngang (%)
-                const duration = 5 + Math.random() * 10; // thời gian rơi (5s - 15s)
-                const delay = Math.random() * 5; // độ trễ xuất hiện
-                const size = 0.8 + Math.random() * 1.2; // kích thước
-                const opacity = 0.3 + Math.random() * 0.6; // độ mờ
+                const leftPos = Math.random() * 100;
+                const duration = 6 + Math.random() * 8;
+                const delay = Math.random() * 5;
+                const size = 0.7 + Math.random() * 0.9;
+                const opacity = 0.4 + Math.random() * 0.5;
                 
                 flake.style.left = `${leftPos}%`;
                 flake.style.animationDuration = `${duration}s, 3s`;
@@ -434,18 +538,20 @@
             }
         }
         createSnowflakes();
-        // ------------------------------------
 
         const SECRET_KEY = "CAMTU2019S2THANHAN2025";
 
         const EMBEDDED_VOCAB_DATA = [
-            {"chinese": "学校", "type": "Danh từ", "pinyin": "xuéxiào", "meaning": "trường học"},
-            {"chinese": "医院", "type": "Danh từ", "pinyin": "yīyuàn", "meaning": "bệnh viện"},
-            {"chinese": "机场", "type": "Danh từ", "pinyin": "jīchǎng", "meaning": "sân bay"},
-            {"chinese": "车站", "type": "Danh từ", "pinyin": "chēzhàn", "meaning": "bến xe"},
-            {"chinese": "火车站", "type": "Danh từ", "pinyin": "huǒchē zhàn", "meaning": "ga tàu hỏa / ga tàu hoả"},
-            {"chinese": "公共汽车站", "type": "Danh từ", "pinyin": "gōnggòng qìchēzhàn", "meaning": "trạm xe buýt / trạm xe bốt"},
-            {"chinese": "外语中心", "type": "Danh từ", "pinyin": "wàiyǔ zhōngxīn", "meaning": "trung tâm ngoại ngữ"}
+            {"chinese": "年", "type": "Danh từ", "pinyin": "nián", "meaning": "Năm"},
+            {"chinese": "今年", "type": "Danh từ chỉ thời gian", "pinyin": "jīnnián", "meaning": "Năm nay"},
+            {"chinese": "明年", "type": "Danh từ chỉ thời gian", "pinyin": "míngnián", "meaning": "Năm sau, sang năm"},
+            {"chinese": "后年", "type": "Danh từ chỉ thời gian", "pinyin": "hòunián", "meaning": "Năm sau nữa"},
+            {"chinese": "去年", "type": "Danh từ chỉ thời gian", "pinyin": "qùnián", "meaning": "Năm ngoái"},
+            {"chinese": "毕业", "type": "Động từ (ly hợp)", "pinyin": "bìyè", "meaning": "Tốt nghiệp"},
+            {"chinese": "多", "type": "Phó từ / Tính từ", "pinyin": "duō", "meaning": "Nhiều, hơn (dùng trong câu hỏi mức độ)"},
+            {"chinese": "多大", "type": "Cụm từ hỏi", "pinyin": "duōdà", "meaning": "Bao nhiêu tuổi"},
+            {"chinese": "岁", "type": "Lượng từ", "pinyin": "suì", "meaning": "Tuổi"},
+            {"chinese": "属", "type": "Động từ", "pinyin": "shǔ", "meaning": "Cầm cầm tinh (con giáp), thuộc về"}
         ];
 
         let fullVocabData = [];
@@ -464,8 +570,7 @@
             if (isAudioEnabled) {
                 btnAudioToggle.innerHTML = "🔊 Âm thanh: Bật";
                 btnAudioToggle.classList.remove('muted');
-                globalAudio.src = "https://translate.google.com/translate_tts?ie=UTF-8&q=hao&tl=zh-CN&client=tw-ob";
-                globalAudio.play().catch(e => {});
+                speakText("好");
             } else {
                 btnAudioToggle.innerHTML = "🔇 Âm thanh: Tắt";
                 btnAudioToggle.classList.add('muted');
@@ -482,11 +587,8 @@
             if (!pureText) return;
 
             const cleanText = encodeURIComponent(pureText);
-            const voiceSelect = document.getElementById('voiceSelect');
-            const speedSelect = document.getElementById('speedSelect');
-
-            const voiceType = voiceSelect ? voiceSelect.value : 'google';
-            const speed = speedSelect ? speedSelect.value : '1';
+            const voiceType = document.getElementById('voiceSelect').value;
+            const speed = document.getElementById('speedSelect').value;
             
             let audioUrl = "";
             if (voiceType === 'baidu') {
@@ -500,7 +602,7 @@
             globalAudio.src = audioUrl;
             globalAudio.playbackRate = parseFloat(speed);
             globalAudio.play().catch(e => {
-                console.log("Trình duyệt chặn phát âm thanh:", e);
+                console.log("Audio block error:", e);
             });
         }
 
@@ -516,33 +618,17 @@
         function normalizeVietnamese(str) {
             if (!str) return '';
             let s = str.normalize('NFC').toLowerCase();
-            
-            s = s.replace(/hoả/g, 'hỏa')
-                 .replace(/hoà/g, 'hòa')
-                 .replace(/hoán/g, 'hoán')
-                 .replace(/hoá/g, 'hóa')
-                 .replace(/hoạ/g, 'họa')
-                 .replace(/thuỷ/g, 'thủy')
-                 .replace(/thuý/g, 'thúy')
-                 .replace(/thuỳ/g, 'thùy')
-                 .replace(/quỷ/g, 'quỷ')
-                 .replace(/quả/g, 'quả')
-                 .replace(/quá/g, 'quá')
-                 .replace(/quà/g, 'quà')
-                 .replace(/quạ/g, 'quạ');
-                 
+            s = s.replace(/hoả/g, 'hỏa').replace(/hoà/g, 'hòa').replace(/hoá/g, 'hóa')
+                 .replace(/thuỷ/g, 'thủy').replace(/thuý/g, 'thúy');
             return s;
         }
 
         function cleanString(str) {
             if (!str) return '';
-            let cleaned = str
-                .toLowerCase()
-                .replace(/\([^)]*\)/g, '')
-                .replace(/\[[^\]]*\]/g, '')
-                .replace(/\{[^}]*\}/g, '')
-                .trim()
-                .replace(/\s+/g, ' ');
+            let cleaned = str.toLowerCase()
+                             .replace(/\([^)]*\)/g, '')
+                             .replace(/\[[^\]]*\]/g, '')
+                             .trim().replace(/\s+/g, ' ');
             return normalizeVietnamese(cleaned);
         }
 
@@ -608,7 +694,7 @@
             if (!file) return;
 
             const statusText = document.getElementById('loadingStatus');
-            if (statusText) { statusText.innerText = "⏳ Đang kiểm tra mã khóa..."; statusText.style.color = "var(--primary)"; }
+            if (statusText) { statusText.innerText = "⏳ Đang đọc file..."; statusText.style.color = "#ec4899"; }
 
             const reader = new FileReader();
             reader.onload = function(e) {
@@ -693,8 +779,8 @@
                     localStorage.setItem('hsk_vocab_data', JSON.stringify(fullVocabData));
                     
                     if (statusText) { 
-                        statusText.innerText = `✅ Đã nạp thành công ${fullVocabData.length} từ!`; 
-                        statusText.style.color = "var(--success)"; 
+                        statusText.innerText = `✅ Nạp ${fullVocabData.length} từ thành công!`; 
+                        statusText.style.color = "#10b981"; 
                     }
                     
                     document.getElementById('rangeFrom').value = 1;
@@ -781,8 +867,7 @@
                 let audioBtnHtml = '';
 
                 if (mode === 'chinese_to_meaning') {
-                    displayChinese = item.chinese || '---';
-                    audioBtnHtml = `<button class="audio-btn" onclick="speakText('${item.chinese.replace(/'/g, "\\'")}')" title="Nghe phát âm">🔊</button>`;
+                    displayMeaning = item.meaning || '---';
                 } else {
                     displayMeaning = item.meaning || '---';
                 }
@@ -845,36 +930,23 @@
             const cleanedInput = cleanString(inputVal);
             let isCorrect = false;
 
-            if (mode === 'chinese_to_meaning') {
-                const meaningVariants = splitVariants(item.meaning);
-                isCorrect = meaningVariants.some(v => cleanedInput === v || cleanedInput.includes(v));
-            } else if (mode === 'pinyin_to_chinese') {
-                const chineseVariants = splitVariants(item.chinese);
-                const pinyinVariants = splitVariants(item.pinyin);
-                const rawPinyinVariants = pinyinVariants.map(p => removePinyinTones(p));
-                const cleanInputNoTone = removePinyinTones(cleanedInput);
+            const chineseVariants = splitVariants(item.chinese);
+            const pinyinVariants = splitVariants(item.pinyin);
+            const rawPinyinVariants = pinyinVariants.map(p => removePinyinTones(p));
+            const cleanInputNoTone = removePinyinTones(cleanedInput);
 
-                isCorrect = chineseVariants.includes(cleanedInput) || 
-                            pinyinVariants.includes(cleanedInput) || 
-                            rawPinyinVariants.includes(cleanInputNoTone);
-            } else {
-                const chineseVariants = splitVariants(item.chinese);
-                isCorrect = chineseVariants.includes(cleanedInput);
-            }
+            isCorrect = chineseVariants.includes(cleanedInput) || 
+                        pinyinVariants.includes(cleanedInput) || 
+                        rawPinyinVariants.includes(cleanInputNoTone);
 
             if (isCorrect) {
                 tr.className = 'row-correct';
                 statusTd.innerHTML = '✅';
                 statusTd.style.color = 'var(--success)';
                 
-                if (mode === 'chinese_to_meaning') {
-                    document.getElementById(`pinyin_${index}`).innerText = item.pinyin;
-                    document.getElementById(`meaning_${index}`).innerText = item.meaning;
-                } else {
-                    document.getElementById(`chinese_${index}`).innerText = item.chinese;
-                    document.getElementById(`pinyin_${index}`).innerText = item.pinyin;
-                    document.getElementById(`audio_wrap_${index}`).innerHTML = `<button class="audio-btn" onclick="speakText('${item.chinese.replace(/'/g, "\\'")}')" title="Nghe phát âm">🔊</button>`;
-                }
+                document.getElementById(`chinese_${index}`).innerText = item.chinese;
+                document.getElementById(`pinyin_${index}`).innerText = item.pinyin;
+                document.getElementById(`audio_wrap_${index}`).innerHTML = `<button class="audio-btn" onclick="speakText('${item.chinese.replace(/'/g, "\\'")}')" title="Nghe phát âm">🔊</button>`;
                 
                 speakText(item.chinese);
             } else {
@@ -882,14 +954,9 @@
                 statusTd.innerHTML = '❌';
                 statusTd.style.color = 'var(--danger)';
 
-                if (mode === 'chinese_to_meaning') {
-                    document.getElementById(`pinyin_${index}`).innerText = item.pinyin;
-                    document.getElementById(`meaning_${index}`).innerHTML = `<span style="color: var(--danger); text-decoration: line-through;">${inputVal}</span><br><strong style="color: var(--success);">${item.meaning}</strong>`;
-                } else {
-                    document.getElementById(`chinese_${index}`).innerText = item.chinese;
-                    document.getElementById(`pinyin_${index}`).innerText = item.pinyin;
-                    document.getElementById(`audio_wrap_${index}`).innerHTML = `<button class="audio-btn" onclick="speakText('${item.chinese.replace(/'/g, "\\'")}')" title="Nghe phát âm">🔊</button>`;
-                }
+                document.getElementById(`chinese_${index}`).innerText = item.chinese;
+                document.getElementById(`pinyin_${index}`).innerText = item.pinyin;
+                document.getElementById(`audio_wrap_${index}`).innerHTML = `<button class="audio-btn" onclick="speakText('${item.chinese.replace(/'/g, "\\'")}')" title="Nghe phát âm">🔊</button>`;
             }
 
             updateStats();
