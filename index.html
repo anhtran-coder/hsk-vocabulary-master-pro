@@ -2,351 +2,317 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>HSK Vocabulary Master PRO AUDIO ONLINE</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Ôn Tập Từ Vựng HSK</title>
     <!-- Thư viện SheetJS để đọc file Excel -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <style>
         :root {
-            --primary: #ec4899;
-            --primary-hover: #db2777;
-            --bg-gradient: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%);
-            --card-bg: rgba(255, 255, 255, 0.96);
-            --text-main: #334155;
-            --border-color: #f3e8ff;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-body: #f8fafc;
+            --card-bg: #ffffff;
+            --border-color: #e2e8f0;
+            --text-color: #1e293b;
             --success: #10b981;
             --danger: #ef4444;
         }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--bg-gradient);
-            color: var(--text-main);
-            margin: 0;
-            padding: 20px;
-            min-height: 100vh;
+
+        * {
             box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-color);
+            padding: 15px;
             overflow-x: hidden;
+            position: relative;
         }
-        .falling-decor {
+
+        /* ----- HIỆU ỨNG HOA TUYẾT RƠI ----- */
+        .snowflake {
             position: fixed;
-            top: -10vh;
+            top: -10px;
+            color: #93c5fd;
+            font-size: 1em;
+            font-family: Arial, sans-serif;
+            text-shadow: 0 0 5px #0000001a;
             user-select: none;
+            z-index: 9999;
             pointer-events: none;
-            z-index: 1;
-            opacity: 0.35;
-            animation: fall linear infinite;
+            animation-name: snowflakes-fall, snowflakes-shake;
+            animation-duration: 10s, 3s;
+            animation-timing-function: linear, ease-in-out;
+            animation-iteration-count: infinite, infinite;
+            animation-play-state: running, running;
         }
-        @keyframes fall {
-            0% { transform: translateY(-10vh) rotate(0deg); }
-            100% { transform: translateY(110vh) rotate(360deg); }
+
+        @keyframes snowflakes-fall {
+            0% { top: -10%; }
+            100% { top: 100%; }
         }
-        .container-wrapper {
-            max-width: 1650px;
+
+        @keyframes snowflakes-shake {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(80px); }
+        }
+        /* ---------------------------------- */
+
+        .container {
+            max-width: 1200px;
             margin: 0 auto;
             position: relative;
-            z-index: 2;
+            z-index: 1;
         }
-        .app-header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .app-title {
-            font-size: 28px;
-            color: #be185d;
-            margin: 0;
-            font-weight: 800;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
-        }
-        .pro-tag {
-            background: linear-gradient(135deg, #ec4899, #8b5cf6);
-            color: white;
-            font-size: 12px;
-            padding: 4px 10px;
-            border-radius: 12px;
-            vertical-align: middle;
-            margin-left: 8px;
-            font-weight: 600;
-        }
-        .controls {
+
+        /* Controls Area */
+        .controls-wrapper {
             background: var(--card-bg);
-            padding: 16px 20px;
-            border-radius: 16px;
-            box-shadow: 0 10px 25px -5px rgba(236, 72, 153, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
             display: flex;
             flex-wrap: wrap;
-            gap: 14px;
+            gap: 12px;
             align-items: center;
             margin-bottom: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.9);
         }
+
         .control-box {
             display: flex;
             flex-direction: column;
             gap: 4px;
         }
+
         .box-label {
             font-size: 12px;
-            font-weight: 700;
-            color: #db2777;
+            font-weight: 600;
+            color: #64748b;
         }
-        select, input[type="number"] {
-            padding: 8px 12px;
-            border: 1px solid #f472b6;
-            border-radius: 8px;
+
+        select, input[type="number"], input[type="file"] {
+            padding: 7px 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
             font-size: 14px;
-            background: #fff;
-            color: var(--text-main);
             outline: none;
-            transition: all 0.2s;
         }
+
         select:focus, input:focus {
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.15);
         }
-        .btn {
-            padding: 9px 16px;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .btn-excel { background: #10b981; color: white; }
-        .btn-excel:hover { background: #059669; }
-        .btn-new { background: #ec4899; color: white; }
-        .btn-new:hover { background: #db2777; }
-        .btn-retry { background: #f59e0b; color: white; }
-        .btn-retry:hover { background: #d97706; }
-        .btn-reset { background: #64748b; color: white; }
-        .btn-reset:hover { background: #475569; }
-        .btn-audio-toggle { background: #8b5cf6; color: white; }
-        .btn-audio-toggle.muted { background: #94a3b8; }
+
         .range-container {
             display: flex;
             align-items: center;
             gap: 6px;
+            font-size: 13px;
         }
+
         .range-container input {
-            width: 55px;
+            width: 60px;
             text-align: center;
         }
-        .main-layout {
-            display: flex;
-            gap: 20px;
-        }
-        .table-container {
-            flex: 1;
-            background: var(--card-bg);
-            border-radius: 16px;
-            padding: 16px;
-            box-shadow: 0 10px 25px -5px rgba(236, 72, 153, 0.1);
-            overflow-y: auto;
-            max-height: 75vh;
-            border: 1px solid rgba(255, 255, 255, 0.9);
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th {
-            background: #fdf2f8;
-            color: #be185d;
-            padding: 12px 10px;
-            font-size: 14px;
-            font-weight: 700;
-            text-align: left;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            border-bottom: 2px solid #f472b6;
-        }
-        td {
-            padding: 10px;
-            border-bottom: 1px solid var(--border-color);
-            font-size: 15px;
-        }
-        .col-stt { width: 5%; text-align: center; }
-        .col-hanzi { width: 22%; font-weight: 600; font-size: 18px; color: #9d174d; }
-        .col-type { width: 12%; color: #64748b; font-size: 13px; }
-        .col-pinyin { width: 22%; color: #475569; font-size: 15px; }
-        .col-viet { width: 22%; font-weight: 500; font-size: 15px; }
-        .col-input { width: 12%; }
-        .col-status { width: 5%; text-align: center; font-size: 18px; }
-        input[type="text"] {
-            width: 92%;
-            padding: 8px 10px;
-            border: 1px solid #cbd5e1;
+
+        /* Buttons */
+        .btn {
+            padding: 8px 14px;
+            border: none;
             border-radius: 6px;
-            font-size: 15px;
-            text-align: center;
-            outline: none;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
             transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
         }
-        input[type="text"]:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.15);
-        }
-        .row-correct { background-color: rgba(209, 250, 229, 0.6) !important; }
-        .row-wrong { background-color: rgba(254, 226, 226, 0.6) !important; }
+
+        .btn-new { background-color: var(--primary); color: white; }
+        .btn-new:hover { background-color: var(--primary-hover); }
+
+        .btn-retry { background-color: #f59e0b; color: white; }
+        .btn-retry:hover { background-color: #d97706; }
+
+        .btn-reset { background-color: #ef4444; color: white; }
+        .btn-reset:hover { background-color: #dc2626; }
+
+        .btn-audio-toggle { background-color: #10b981; color: white; }
+        .btn-audio-toggle.muted { background-color: #6b7280; }
+
         .audio-btn {
             background: none;
             border: none;
             cursor: pointer;
-            font-size: 16px;
-            padding: 2px 6px;
-            border-radius: 4px;
-            transition: background 0.2s;
+            font-size: 15px;
+            margin-left: 4px;
+        }
+
+        /* Layout */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 20px;
+        }
+
+        @media (max-width: 900px) {
+            .main-layout { grid-template-columns: 1fr; }
+        }
+
+        /* Table */
+        .table-container {
+            background: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        th {
+            background-color: #f1f5f9;
+            padding: 12px 10px;
+            font-weight: 600;
+            color: #475569;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        td {
+            padding: 10px;
+            border-bottom: 1px solid var(--border-color);
             vertical-align: middle;
         }
-        .audio-btn:hover { background: rgba(236, 72, 153, 0.1); }
+
+        .col-stt { width: 50px; text-align: center; }
+        .col-hanzi { width: 120px; font-size: 18px; }
+        .col-type { width: 90px; color: #64748b; }
+        .col-pinyin { width: 120px; color: #0284c7; }
+        .col-viet { min-width: 150px; }
+        .col-input { width: 180px; }
+        .col-status { width: 70px; text-align: center; font-weight: bold; }
+
+        .quiz-input, td.col-input input {
+            width: 100%;
+            padding: 6px 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            outline: none;
+        }
+
+        .row-correct { background-color: #f0fdf4; }
+        .row-wrong { background-color: #fef2f2; }
+
+        /* Dashboard */
         .stats-dashboard {
-            width: 360px;
             background: var(--card-bg);
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 10px 25px -5px rgba(236, 72, 153, 0.1);
+            padding: 18px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
             display: flex;
             flex-direction: column;
-            gap: 14px;
-            border: 1px solid rgba(255, 255, 255, 0.9);
-            height: fit-content;
+            gap: 15px;
         }
+
         .timer-box {
-            background: linear-gradient(135deg, #f472b6, #db2777);
-            color: white;
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
             padding: 12px;
-            border-radius: 12px;
+            border-radius: 8px;
             text-align: center;
         }
-        .timer-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-        .timer-value { font-size: 24px; font-weight: 800; margin-top: 2px; font-family: monospace; }
+
+        .timer-label { font-size: 12px; color: #1e40af; font-weight: 600; }
+        .timer-value { font-size: 26px; font-weight: 700; color: #1d4ed8; }
+
         .progress-bar-bg {
-            background: #f1f5f9;
-            height: 12px;
-            border-radius: 6px;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 5px;
             overflow: hidden;
         }
+
         .progress-bar-fill {
-            background: linear-gradient(90deg, #ec4899, #10b981);
             height: 100%;
+            background: var(--primary);
             width: 0%;
-            transition: width 0.3s ease;
+            transition: width 0.3s;
         }
+
         .stats-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
         }
+
         .stat-card {
             background: #f8fafc;
-            border: 1px solid #e2e8f0;
+            border: 1px solid var(--border-color);
             padding: 10px;
-            border-radius: 10px;
+            border-radius: 6px;
             text-align: center;
         }
-        .stat-card .label { font-size: 12px; color: #64748b; font-weight: 600; }
-        .stat-card .value { font-size: 18px; font-weight: 700; color: #334155; margin-top: 2px; }
+
+        .stat-card .label { font-size: 11px; color: #64748b; font-weight: 600; }
+        .stat-card .value { font-size: 18px; font-weight: 700; margin-top: 2px; }
+
         .rate-card {
-            background: linear-gradient(135deg, #fdf2f8, #fbcfe8);
-            border: 1px solid #f472b6;
+            background: #fdf2f8;
+            border: 1px solid #fbcfe8;
             padding: 12px;
-            border-radius: 12px;
+            border-radius: 8px;
             text-align: center;
         }
+
         .contact-card {
-            background: #fdf4ff;
-            border: 1px solid #f0abfc;
+            background: #f8fafc;
+            border: 1px dashed var(--border-color);
             padding: 12px;
-            border-radius: 12px;
-            font-size: 13px;
-        }
-        .contact-title { font-weight: 700; color: #a21caf; margin-bottom: 6px; }
-        .contact-item { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
-        .contact-item a { color: #86198f; text-decoration: none; font-weight: 600; }
-        .contact-item a:hover { text-decoration: underline; }
-        .footer-owner {
-            text-align: center;
+            border-radius: 8px;
             font-size: 12px;
-            color: #64748b;
-            border-top: 1px dashed #cbd5e1;
-            padding-top: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
         }
-        @media (max-width: 768px) {
-            body { padding: 8px; }
-            .main-layout { flex-direction: column; }
-            .table-container { padding: 6px; max-height: 60vh; }
-            .stats-dashboard { width: 100%; box-sizing: border-box; }
-            .col-status { display: none !important; }
-            th { font-size: 11px !important; padding: 10px 2px !important; }
-            td { padding: 10px 2px !important; font-size: 13px; }
-            td.col-hanzi { font-size: 18px; }
-            td.col-pinyin { font-size: 12px; }
-            td.col-type { font-size: 11px; }
-            td.col-viet { font-size: 12px; }
-            input[type="text"] { font-size: 13px; padding: 6px 2px; width: 95%; }
-            .col-stt { width: 8%; }
-            .col-hanzi { width: 26%; }
-            .col-type { width: 12%; }
-            .col-pinyin { width: 18%; }
-            .col-viet { width: 21%; }
-            .col-input { width: 15%; }
+
+        .contact-title { font-weight: 700; color: #334155; }
+        .contact-item a { color: var(--primary); text-decoration: none; }
+
+        .footer-owner {
+            font-size: 11px;
+            color: #94a3b8;
+            text-align: center;
+            line-height: 1.4;
         }
     </style>
 </head>
 <body>
 
-    <script>
-        // Hiệu ứng hoa rơi nhẹ nhàng
-        const symbols = ['🌸', '🌺', '🌷', '🌻', '🍃', '❄️', '❅', '✨', '💮', '❄️'];
-        for (let i = 0; i < 40; i++) {
-            const div = document.createElement('div');
-            div.className = 'falling-decor';
-            div.innerHTML = symbols[Math.floor(Math.random() * symbols.length)];
-            div.style.left = Math.random() * 100 + 'vw';
-            div.style.animationDuration = (Math.random() * 5 + 5) + 's';
-            div.style.animationDelay = (Math.random() * 5) + 's';
-            div.style.fontSize = (Math.random() * 14 + 16) + 'px';
-            document.body.appendChild(div);
-        }
-    </script>
+    <!-- Container chứa hiệu ứng tuyết rơi -->
+    <div id="snowflakeContainer"></div>
 
-    <div class="container-wrapper">
-        <div class="app-header">
-            <h2 class="app-title">🌸 HSK Vocabulary Master <span class="pro-tag">PRO AUDIO ONLINE</span></h2>
-        </div>
-
-        <div class="controls">
-            <label class="btn btn-excel">
-                📁 Chọn Excel
-                <input type="file" id="excelFile" accept=".xlsx, .xls" style="display: none;">
-            </label>
-            
+    <div class="container">
+        <!-- Control Header Bar -->
+        <div class="controls-wrapper">
             <div class="control-box">
-                <label class="box-label">🎯 Chế độ</label>
+                <label class="box-label">📁 File Excel</label>
+                <input type="file" id="excelFile" accept=".xlsx, .xls">
+            </div>
+
+            <div class="control-box">
+                <label class="box-label">🎯 Chế độ luyện</label>
                 <select id="modeSelect">
-                    <option value="chinese_only">1. Chỉ gõ Chữ Hán (Hiện Tiếng Việt)</option>
-                    <option value="pinyin_to_chinese">2. Gõ Chữ Hán HOẶC Pinyin (Hiện Tiếng Việt)</option>
-                    <option value="chinese_to_meaning" selected>3. Gõ Tiếng Việt (Hiện Chữ Hán)</option>
-                </select>
-            </div>
-
-            <div class="control-box">
-                <label class="box-label">🎙️ Giọng đọc</label>
-                <select id="voiceSelect">
-                    <option value="google">Nữ chuẩn (Google)</option>
-                    <option value="baidu">Nam/Nữ (Baidu)</option>
-                </select>
-            </div>
-
-            <div class="control-box">
-                <label class="box-label">⚡ Tốc độ</label>
-                <select id="speedSelect">
-                    <option value="1">Bình thường</option>
-                    <option value="0.75">Chậm (Luyện nghe)</option>
+                    <option value="chinese_to_meaning">Hán ➔ Tiếng Việt</option>
+                    <option value="pinyin_to_chinese">Dịch sang Chữ Hán</option>
+                    <option value="chinese_only">Kiểm tra Chữ Hán</option>
                 </select>
             </div>
 
@@ -372,6 +338,9 @@
                 </div>
             </div>
 
+            <input type="hidden" id="voiceSelect" value="google">
+            <input type="hidden" id="speedSelect" value="1">
+
             <button class="btn btn-audio-toggle" id="btnAudioToggle">🔊 Âm thanh: Bật</button>
             <button class="btn btn-new" id="btnNewQuiz">⚡ Đổi đề</button>
             <button class="btn btn-retry" id="btnRetryQuiz">♻️ Làm lại</button>
@@ -379,7 +348,9 @@
             <span id="loadingStatus" style="font-size: 13px; font-weight: 600; color: var(--success); margin-left: auto;"></span>
         </div>
 
+        <!-- Main Layout -->
         <div class="main-layout">
+            <!-- Table Panel -->
             <div class="table-container">
                 <table>
                     <thead>
@@ -397,6 +368,7 @@
                 </table>
             </div>
 
+            <!-- Dashboard Panel -->
             <div class="stats-dashboard">
                 <div class="timer-box">
                     <div class="timer-label">⏱ Thời gian làm bài</div>
@@ -433,7 +405,37 @@
         </div>
     </div>
 
+    <!-- JavaScript Execution -->
     <script>
+        // --- SCRIPT TẠO TUYẾT RƠI TỰ ĐỘNG ---
+        function createSnowflakes() {
+            const container = document.getElementById('snowflakeContainer');
+            const icons = ['❄', '❅', '❆', '✻', '❇'];
+            const count = 20; // Số lượng hoa tuyết rơi cùng lúc
+            
+            for (let i = 0; i < count; i++) {
+                const flake = document.createElement('div');
+                flake.className = 'snowflake';
+                flake.innerText = icons[Math.floor(Math.random() * icons.length)];
+                
+                const leftPos = Math.random() * 100; // vị trí theo chiều ngang (%)
+                const duration = 5 + Math.random() * 10; // thời gian rơi (5s - 15s)
+                const delay = Math.random() * 5; // độ trễ xuất hiện
+                const size = 0.8 + Math.random() * 1.2; // kích thước
+                const opacity = 0.3 + Math.random() * 0.6; // độ mờ
+                
+                flake.style.left = `${leftPos}%`;
+                flake.style.animationDuration = `${duration}s, 3s`;
+                flake.style.animationDelay = `${delay}s, ${delay}s`;
+                flake.style.fontSize = `${size}em`;
+                flake.style.opacity = opacity;
+                
+                container.appendChild(flake);
+            }
+        }
+        createSnowflakes();
+        // ------------------------------------
+
         const SECRET_KEY = "CAMTU2019S2THANHAN2025";
 
         const EMBEDDED_VOCAB_DATA = [
@@ -480,8 +482,11 @@
             if (!pureText) return;
 
             const cleanText = encodeURIComponent(pureText);
-            const voiceType = document.getElementById('voiceSelect').value;
-            const speed = document.getElementById('speedSelect').value;
+            const voiceSelect = document.getElementById('voiceSelect');
+            const speedSelect = document.getElementById('speedSelect');
+
+            const voiceType = voiceSelect ? voiceSelect.value : 'google';
+            const speed = speedSelect ? speedSelect.value : '1';
             
             let audioUrl = "";
             if (voiceType === 'baidu') {
@@ -508,7 +513,6 @@
                       .toLowerCase();
         }
 
-        // HÀM CHUẨN HÓA TIẾNG VIỆT CHUYÊN SÂU (XỬ LÝ DẤU KIỂU CŨ & KIỂU MỚI)
         function normalizeVietnamese(str) {
             if (!str) return '';
             let s = str.normalize('NFC').toLowerCase();
@@ -864,7 +868,6 @@
                 statusTd.style.color = 'var(--success)';
                 
                 if (mode === 'chinese_to_meaning') {
-                    // Hiện đồng thời Pinyin + Tiếng Việt khi ĐÚNG
                     document.getElementById(`pinyin_${index}`).innerText = item.pinyin;
                     document.getElementById(`meaning_${index}`).innerText = item.meaning;
                 } else {
@@ -880,7 +883,6 @@
                 statusTd.style.color = 'var(--danger)';
 
                 if (mode === 'chinese_to_meaning') {
-                    // Hiện đồng thời Pinyin + Đáp án Tiếng Việt đúng khi SAI
                     document.getElementById(`pinyin_${index}`).innerText = item.pinyin;
                     document.getElementById(`meaning_${index}`).innerHTML = `<span style="color: var(--danger); text-decoration: line-through;">${inputVal}</span><br><strong style="color: var(--success);">${item.meaning}</strong>`;
                 } else {
