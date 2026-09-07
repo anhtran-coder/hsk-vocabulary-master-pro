@@ -32,22 +32,32 @@
         body {
             background-color: var(--bg-body);
             color: var(--text-color);
-            padding: 20px;
+            padding: 20px 30px;
             overflow-x: hidden;
             position: relative;
         }
 
-        /* ----- HIỆU ỨNG HOA TUYẾT / HOA ĐÀO RƠI ----- */
-        .snowflake {
+        /* ----- HIỆU ỨNG HOA ĐÀO RƠI ẨN PHÍA SAU (z-index: 0) ----- */
+        #snowflakeContainer {
             position: fixed;
-            top: -10px;
-            color: #f472b6;
-            font-size: 1em;
-            font-family: Arial, sans-serif;
-            text-shadow: 0 0 5px rgba(255,182,193,0.5);
-            user-select: none;
-            z-index: 9999;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
             pointer-events: none;
+            z-index: 0; /* Nằm dưới toàn bộ nội dung web */
+            overflow: hidden;
+        }
+
+        .snowflake {
+            position: absolute;
+            top: -20px;
+            color: #f472b6;
+            font-size: 1.1em;
+            font-family: Arial, sans-serif;
+            text-shadow: 0 0 5px rgba(255,182,193,0.3);
+            user-select: none;
+            opacity: 0.5; /* Giảm độ đậm để không lóa mắt */
             animation-name: snowflakes-fall, snowflakes-shake;
             animation-duration: 10s, 3s;
             animation-timing-function: linear, ease-in-out;
@@ -56,26 +66,28 @@
         }
 
         @keyframes snowflakes-fall {
-            0% { top: -10%; }
-            100% { top: 100%; }
+            0% { top: -5%; }
+            100% { top: 105%; }
         }
 
         @keyframes snowflakes-shake {
             0%, 100% { transform: translateX(0); }
-            50% { transform: translateX(60px); }
+            50% { transform: translateX(50px); }
         }
 
+        /* CONTAINER DÀN RỘNG CÂN ĐỐI TRÊN MÀN HÌNH MÁY TÍNH */
         .container {
-            max-width: 1250px;
+            max-width: 1600px; /* Nâng từ 1250px lên 1600px giúp dàn rộng hơn */
+            width: 96%;
             margin: 0 auto;
             position: relative;
-            z-index: 1;
+            z-index: 1; /* Hiển thị đè lên hiệu ứng hoa rơi */
         }
 
         /* HEADER TITLE */
         .header-title-box {
             text-align: center;
-            margin-bottom: 15px;
+            margin-bottom: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -84,15 +96,15 @@
 
         .header-title-box h1 {
             color: #be185d;
-            font-size: 24px;
+            font-size: 26px;
             font-weight: 800;
         }
 
         .header-title-box .badge {
             background: #a855f7;
             color: white;
-            font-size: 10px;
-            padding: 2px 8px;
+            font-size: 11px;
+            padding: 3px 9px;
             border-radius: 12px;
             font-weight: 700;
             text-transform: uppercase;
@@ -101,7 +113,7 @@
         /* CONTROLS PANEL */
         .controls-wrapper {
             background: var(--card-bg);
-            padding: 16px 20px;
+            padding: 16px 24px;
             border-radius: 14px;
             box-shadow: 0 4px 15px rgba(236, 72, 153, 0.08);
             border: 1px solid var(--border-color);
@@ -111,15 +123,15 @@
         .controls-row-top {
             display: flex;
             flex-wrap: wrap;
-            gap: 12px;
+            gap: 16px;
             align-items: center;
-            margin-bottom: 12px;
+            margin-bottom: 14px;
         }
 
         .controls-row-bottom {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 12px;
             align-items: center;
         }
 
@@ -213,17 +225,17 @@
             border: none;
             cursor: pointer;
             font-size: 14px;
-            margin-left: 4px;
+            margin-left: 6px;
         }
 
-        /* LAYOUT */
+        /* LAYOUT DÀN TỈ LỆ CÂN ĐỐI */
         .main-layout {
             display: grid;
-            grid-template-columns: 1fr 320px;
-            gap: 20px;
+            grid-template-columns: 1fr 340px; /* Bảng làm bài dàn rộng tự động, Bảng thống kê cố định 340px */
+            gap: 22px;
         }
 
-        @media (max-width: 950px) {
+        @media (max-width: 1024px) {
             .main-layout { grid-template-columns: 1fr; }
         }
 
@@ -240,37 +252,38 @@
             width: 100%;
             border-collapse: collapse;
             text-align: left;
-            font-size: 13px;
+            font-size: 14px;
         }
 
         th {
             background-color: #fff1f2;
-            padding: 12px 10px;
+            padding: 12px 14px;
             font-weight: 700;
             color: #9f1239;
             border-bottom: 2px solid var(--border-color);
         }
 
         td {
-            padding: 10px;
+            padding: 10px 14px;
             border-bottom: 1px solid #fecdd3;
             vertical-align: middle;
         }
 
-        .col-stt { width: 45px; text-align: center; color: #888; }
-        .col-hanzi { width: 130px; font-size: 17px; font-weight: 600; }
-        .col-type { width: 110px; color: #64748b; font-size: 12px; }
-        .col-pinyin { width: 110px; color: #0284c7; }
-        .col-viet { min-width: 160px; color: #334155; }
-        .col-input { width: 170px; }
-        .col-status { width: 65px; text-align: center; font-weight: bold; }
+        .col-stt { width: 50px; text-align: center; color: #888; }
+        .col-hanzi { width: 140px; font-size: 18px; font-weight: 600; }
+        .col-type { width: 130px; color: #64748b; font-size: 13px; }
+        .col-pinyin { width: 130px; color: #0284c7; }
+        .col-viet { min-width: 180px; color: #334155; }
+        .col-input { width: 200px; }
+        .col-status { width: 70px; text-align: center; font-weight: bold; }
 
         .col-input input {
             width: 100%;
-            padding: 6px 10px;
+            padding: 7px 12px;
             border: 1px solid #cbd5e1;
             border-radius: 6px;
             outline: none;
+            font-size: 14px;
         }
 
         .row-correct { background-color: #f0fdf4; }
@@ -279,26 +292,27 @@
         /* DASHBOARD */
         .stats-dashboard {
             background: var(--card-bg);
-            padding: 18px;
+            padding: 20px;
             border-radius: 14px;
             box-shadow: 0 4px 15px rgba(236, 72, 153, 0.08);
             border: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 16px;
+            height: fit-content;
         }
 
         .timer-box {
             background: #ec4899;
             color: white;
-            padding: 10px;
+            padding: 12px;
             border-radius: 10px;
             text-align: center;
             box-shadow: 0 2px 8px rgba(236, 72, 153, 0.3);
         }
 
         .timer-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
-        .timer-value { font-size: 26px; font-weight: 800; margin-top: 2px; }
+        .timer-value { font-size: 28px; font-weight: 800; margin-top: 2px; }
 
         .dash-heading {
             font-size: 15px;
@@ -372,7 +386,7 @@
 </head>
 <body>
 
-    <!-- Container chứa hiệu ứng hoa tuyết/đào rơi -->
+    <!-- Container chứa hiệu ứng hoa đào rơi (Nằm ở background - z-index: 0) -->
     <div id="snowflakeContainer"></div>
 
     <div class="container">
@@ -511,11 +525,11 @@
 
     <!-- JavaScript Execution -->
     <script>
-        // --- HIỆU ỨNG HOA TUYẾT / ĐÀO RƠI ---
+        // --- HIỆU ỨNG HOA ĐÀO RƠI ẨN BÊN DƯỚI ---
         function createSnowflakes() {
             const container = document.getElementById('snowflakeContainer');
-            const icons = ['🌸', '❄', '❅', '🌸', '❆'];
-            const count = 18;
+            const icons = ['🌸', '❄', '🌸', '❆'];
+            const count = 16;
             
             for (let i = 0; i < count; i++) {
                 const flake = document.createElement('div');
@@ -523,10 +537,10 @@
                 flake.innerText = icons[Math.floor(Math.random() * icons.length)];
                 
                 const leftPos = Math.random() * 100;
-                const duration = 6 + Math.random() * 8;
+                const duration = 7 + Math.random() * 8;
                 const delay = Math.random() * 5;
-                const size = 0.7 + Math.random() * 0.9;
-                const opacity = 0.4 + Math.random() * 0.5;
+                const size = 0.7 + Math.random() * 0.8;
+                const opacity = 0.25 + Math.random() * 0.35; // Làm nhạt bớt để không gây chói mắt
                 
                 flake.style.left = `${leftPos}%`;
                 flake.style.animationDuration = `${duration}s, 3s`;
@@ -602,7 +616,7 @@
             globalAudio.src = audioUrl;
             globalAudio.playbackRate = parseFloat(speed);
             globalAudio.play().catch(e => {
-                console.log("Audio block error:", e);
+                console.log("Audio play error:", e);
             });
         }
 
@@ -918,7 +932,6 @@
             const tr = document.getElementById(`row_${index}`);
             const statusTd = document.getElementById(`status_${index}`);
             const item = currentQuizData[index];
-            const mode = document.getElementById('modeSelect').value;
 
             if (!inputVal.trim()) {
                 tr.className = "";
