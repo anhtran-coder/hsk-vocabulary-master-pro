@@ -11,7 +11,7 @@
             --primary-color: #ec4899;
             --primary-hover: #db2777;
             --bg-gradient: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%);
-            --card-bg: rgba(255, 255, 255, 0.95);
+            --card-bg: rgba(255, 255, 255, 0.96);
             --text-color: #1f2937;
         }
 
@@ -31,7 +31,7 @@
             overflow-x: hidden;
         }
 
-        /* Hiệu ứng hoa đào rơi (đã giảm còn 110 cánh để mượt trên điện thoại) */
+        /* HOA ĐÀO RƠI PHÍA SAU TRANG, ĐỘ MỜ NHẸ, KHÔNG GÂY LÓA MẮT */
         .snowflake-container {
             position: fixed;
             top: 0;
@@ -39,7 +39,7 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
-            z-index: 9999;
+            z-index: 0; /* Nằm dưới container chính */
         }
 
         .snowflake {
@@ -49,6 +49,7 @@
             animation-timing-function: linear, ease-in-out;
             animation-iteration-count: infinite, infinite;
             user-select: none;
+            opacity: 0.25; /* Làm mờ để không bị chói mắt */
         }
 
         @keyframes fall {
@@ -58,7 +59,7 @@
 
         @keyframes sway {
             0%, 100% { transform: translateX(0); }
-            50% { transform: translateX(30px); }
+            50% { transform: translateX(20px); }
         }
 
         .container {
@@ -69,7 +70,7 @@
             box-shadow: 0 10px 25px rgba(236, 72, 153, 0.15);
             padding: 25px;
             position: relative;
-            z-index: 1;
+            z-index: 2; /* Nổi lên trên lớp hoa đào */
             backdrop-filter: blur(5px);
         }
 
@@ -239,7 +240,7 @@
 </head>
 <body>
 
-    <!-- Khung chứa hoa đào rơi -->
+    <!-- Khung chứa hoa đào rơi phía sau -->
     <div id="snowflakeContainer" class="snowflake-container"></div>
 
     <div class="container">
@@ -270,7 +271,7 @@
             <div class="control-group">
                 <label>Chế độ:</label>
                 <select id="modeSelect">
-                    <option value="chinese_to_meaning">Hán Tự / Pinyin ➔ Nghĩa</option>
+                    <option value="viet_to_chinese">Nghĩa ➔ Gõ Chữ Hán/Pinyin</option>
                 </select>
             </div>
 
@@ -341,9 +342,9 @@
         </div>
     </div>
 
-    <!-- JavaScript xử lý toàn bộ logic -->
+    <!-- JavaScript xử lý logic -->
     <script>
-        // --- TẠO HIỆU ỨNG HOA ĐÀO (110 CÁNH ĐỂ MƯỢT MÀ TRÊN ĐIỆN THOẠI) ---
+        // Tạo hoa đào rơi phía sau (110 cánh, mờ nhẹ, không lóa mắt)
         function createSnowflakes() {
             const container = document.getElementById('snowflakeContainer');
             if (!container) return;
@@ -359,16 +360,14 @@
                 flake.innerText = icons[Math.floor(Math.random() * icons.length)];
                 
                 const leftPos = Math.random() * 100;
-                const duration = 6 + Math.random() * 8;
+                const duration = 7 + Math.random() * 8;
                 const delay = Math.random() * 10;
-                const size = 0.5 + Math.random() * 0.8;
-                const opacity = 0.2 + Math.random() * 0.5;
+                const size = 0.5 + Math.random() * 0.7;
                 
                 flake.style.left = `${leftPos}%`;
-                flake.style.animationDuration = `${duration}s, 3.5s`;
+                flake.style.animationDuration = `${duration}s, 4s`;
                 flake.style.animationDelay = `${delay}s, ${delay}s`;
                 flake.style.fontSize = `${size}em`;
-                flake.style.opacity = opacity;
                 
                 fragment.appendChild(flake);
             }
@@ -714,6 +713,7 @@
                 const tr = document.createElement('tr');
                 tr.id = `row_${index}`;
                 
+                // Mặc định ẩn Chữ Hán và Pinyin (hiển thị ***), hiển thị rõ Nghĩa tiếng Việt
                 let displayChinese = '***';
                 let displayPinyin  = '***';
                 let displayMeaning = item.meaning || '---';
@@ -781,12 +781,11 @@
             const pinyinVariants = splitVariants(item.pinyin);
             const rawPinyinVariants = pinyinVariants.map(p => removePinyinTones(p));
             const cleanInputNoTone = removePinyinTones(cleanedInput);
-            const meaningVariants = splitVariants(item.meaning);
 
+            // Kiểm tra người dùng gõ đúng Chữ Hán hoặc Pinyin tương ứng với nghĩa tiếng Việt
             isCorrect = chineseVariants.includes(cleanedInput) || 
                         pinyinVariants.includes(cleanedInput) || 
-                        rawPinyinVariants.includes(cleanInputNoTone) ||
-                        meaningVariants.includes(cleanedInput);
+                        rawPinyinVariants.includes(cleanInputNoTone);
 
             const chineseSpan = document.getElementById(`chinese_${index}`);
             const pinyinSpan = document.getElementById(`pinyin_${index}`);
@@ -796,6 +795,7 @@
                 if (tr) tr.className = 'row-correct';
                 if (statusTd) statusTd.innerHTML = '✅';
                 
+                // Hiện Chữ Hán và Pinyin khi gõ đúng
                 if (chineseSpan) chineseSpan.innerText = item.chinese;
                 if (pinyinSpan) pinyinSpan.innerText = item.pinyin;
                 if (audioWrapSpan) {
@@ -807,6 +807,7 @@
                 if (tr) tr.className = 'row-wrong';
                 if (statusTd) statusTd.innerHTML = '❌';
 
+                // Vẫn hiện đáp án khi gõ sai để học viên tham khảo
                 if (chineseSpan) chineseSpan.innerText = item.chinese;
                 if (pinyinSpan) pinyinSpan.innerText = item.pinyin;
                 if (audioWrapSpan) {
