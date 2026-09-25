@@ -271,8 +271,8 @@
             <div class="control-group">
                 <label>Chế độ:</label>
                 <select id="modeSelect">
-                    <option value="viet_to_chinese">Nghĩa ➔ Gõ Chữ Hán/Pinyin (Hiện Chữ Hán khi đúng)</option>
-                    <option value="chinese_to_viet">Hán Tự ➔ Gõ Nghĩa Tiếng Việt</option>
+                    <option value="chinese_to_viet">Hán Tự ➔ Gõ Nghĩa TV</option>
+                    <option value="viet_to_chinese">Nghĩa TV ➔ Gõ Hán/Pinyin</option>
                 </select>
             </div>
 
@@ -710,25 +710,24 @@
             const tbody = document.getElementById('vocabTable');
             if (!tbody) return;
             const modeSelectElem = document.getElementById('modeSelect');
-            const mode = modeSelectElem ? modeSelectElem.value : 'viet_to_chinese';
+            const mode = modeSelectElem ? modeSelectElem.value : 'chinese_to_viet';
             tbody.innerHTML = '';
 
             currentQuizData.forEach((item, index) => {
                 const tr = document.createElement('tr');
                 tr.id = `row_${index}`;
                 
-                let displayChinese = '***';
+                let displayChinese = item.chinese; 
                 let displayPinyin  = '***';
-                let displayMeaning = '---';
+                let displayMeaning = '***';
 
-                if (mode === 'viet_to_chinese') {
-                    // Chế độ: Hiện nghĩa tiếng Việt, ẩn chữ Hán/Pinyin để gõ
-                    displayMeaning = item.meaning || '---';
-                } else {
-                    // Chế độ: Hiện chữ Hán/Pinyin, ẩn nghĩa để gõ nghĩa tiếng Việt
-                    displayChinese = item.chinese;
-                    displayPinyin = item.pinyin;
+                if (mode === 'chinese_to_viet') {
+                    displayPinyin = '***';
                     displayMeaning = '***';
+                } else {
+                    displayChinese = '***';
+                    displayPinyin = '***';
+                    displayMeaning = item.meaning || '---';
                 }
 
                 tr.innerHTML = `
@@ -751,7 +750,6 @@
                     <td id="status_${index}" class="col-status">-</td>
                 `;
                 
-                // Nếu ở chế độ Hán -> Nghĩa thì có nút nghe sẵn
                 if (mode === 'chinese_to_viet') {
                     const audioWrapSpan = tr.querySelector(`#audio_wrap_${index}`);
                     if(audioWrapSpan) {
@@ -787,7 +785,7 @@
             const statusTd = document.getElementById(`status_${index}`);
             const item = currentQuizData[index];
             const modeSelectElem = document.getElementById('modeSelect');
-            const mode = modeSelectElem ? modeSelectElem.value : 'viet_to_chinese';
+            const mode = modeSelectElem ? modeSelectElem.value : 'chinese_to_viet';
 
             if (!inputVal.trim()) {
                 if (tr) tr.className = "";
@@ -807,14 +805,12 @@
             const cleanInputNoTone = removePinyinTones(cleanedInput);
             const meaningVariants = splitVariants(item.meaning);
 
-            if (mode === 'viet_to_chinese') {
-                // Kiểm tra người dùng gõ Chữ Hán hoặc Pinyin tương ứng với nghĩa tiếng Việt
+            if (mode === 'chinese_to_viet') {
+                isCorrect = meaningVariants.includes(cleanedInput);
+            } else {
                 isCorrect = chineseVariants.includes(cleanedInput) || 
                             pinyinVariants.includes(cleanedInput) || 
                             rawPinyinVariants.includes(cleanInputNoTone);
-            } else {
-                // Kiểm tra người dùng gõ Nghĩa tiếng Việt
-                isCorrect = meaningVariants.includes(cleanedInput);
             }
 
             const chineseSpan = document.getElementById(`chinese_${index}`);
@@ -822,35 +818,21 @@
             const meaningSpan = document.getElementById(`meaning_${index}`);
             const audioWrapSpan = document.getElementById(`audio_wrap_${index}`);
 
+            // Dù đúng hay sai, khi gõ xong đều hiện đầy đủ Pinyin và Nghĩa ra
+            if (chineseSpan) chineseSpan.innerText = item.chinese;
+            if (pinyinSpan) pinyinSpan.innerText = item.pinyin;
+            if (meaningSpan) meaningSpan.innerText = item.meaning;
+            if (audioWrapSpan) {
+                audioWrapSpan.innerHTML = `<button class="audio-btn" onclick="speakText('${item.chinese.replace(/'/g, "\\'")}')" title="Nghe">🔊</button>`;
+            }
+
             if (isCorrect) {
                 if (tr) tr.className = 'row-correct';
                 if (statusTd) statusTd.innerHTML = '✅';
-                
-                if (mode === 'viet_to_chinese') {
-                    if (chineseSpan) chineseSpan.innerText = item.chinese;
-                    if (pinyinSpan) pinyinSpan.innerText = item.pinyin;
-                    if (audioWrapSpan) {
-                        audioWrapSpan.innerHTML = `<button class="audio-btn" onclick="speakText('${item.chinese.replace(/'/g, "\\'")}')" title="Nghe">🔊</button>`;
-                    }
-                } else {
-                    if (meaningSpan) meaningSpan.innerText = item.meaning;
-                }
-                
                 speakText(item.chinese);
             } else {
                 if (tr) tr.className = 'row-wrong';
                 if (statusTd) statusTd.innerHTML = '❌';
-
-                // Hiện đáp án đúng để học viên tham khảo khi sai
-                if (mode === 'viet_to_chinese') {
-                    if (chineseSpan) chineseSpan.innerText = item.chinese;
-                    if (pinyinSpan) pinyinSpan.innerText = item.pinyin;
-                    if (audioWrapSpan) {
-                        audioWrapSpan.innerHTML = `<button class="audio-btn" onclick="speakText('${item.chinese.replace(/'/g, "\\'")}')" title="Nghe">🔊</button>`;
-                    }
-                } else {
-                    if (meaningSpan) meaningSpan.innerText = item.meaning;
-                }
             }
 
             updateStats();
