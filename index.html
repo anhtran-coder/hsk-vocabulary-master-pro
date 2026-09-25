@@ -236,6 +236,95 @@
             font-size: 0.9rem;
             font-weight: bold;
         }
+
+        /* ========================================================== */
+        /* CSS TỐI ƯU RIÊNG CHO ĐIỆN THOẠI (MOBILE), KHÔNG ẢNH HƯỞNG MÁY TÍNH */
+        /* ========================================================== */
+        @media screen and (max-width: 768px) {
+            body {
+                padding: 8px;
+            }
+
+            .container {
+                padding: 12px;
+                border-radius: 10px;
+            }
+
+            h1 {
+                font-size: 1.3rem;
+                margin-bottom: 12px;
+            }
+
+            .controls-section {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+                padding: 10px;
+            }
+
+            .control-group {
+                justify-content: space-between;
+                width: 100%;
+            }
+
+            .control-group input[type="file"],
+            .control-group select {
+                flex: 1;
+                max-width: 70%;
+            }
+
+            .stats-bar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 6px;
+                padding: 10px;
+                font-size: 0.9rem;
+            }
+
+            /* Thu gọn bảng trên điện thoại để không bị xộc xệch */
+            table {
+                font-size: 0.85rem;
+            }
+
+            th, td {
+                padding: 8px 4px;
+            }
+
+            .col-stt {
+                width: 35px;
+            }
+
+            .col-hanzi {
+                font-size: 1rem;
+            }
+
+            /* Thu nhỏ tối đa cột KQ, nhường toàn bộ không gian cho ô nhập */
+            th:nth-last-child(1),
+            td.col-status,
+            .col-status {
+                width: 30px !important;
+                min-width: 30px;
+                max-width: 35px;
+                padding: 4px 2px;
+                font-size: 0.85rem;
+            }
+
+            .col-input {
+                width: 130px;
+            }
+
+            .col-input input {
+                width: 100%;
+                padding: 6px 4px;
+                font-size: 0.9rem;
+            }
+
+            .audio-btn {
+                font-size: 0.9rem;
+                padding: 1px 3px;
+                margin-left: 2px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -333,7 +422,7 @@
                         <th>Pinyin</th>
                         <th>Nghĩa Tiếng Việt</th>
                         <th style="width: 250px;">Nhập đáp án</th>
-                        <th style="width: 60px;">KQ</th>
+                        <th class="col-status" style="width: 60px;">KQ</th>
                     </tr>
                 </thead>
                 <tbody id="vocabTable">
@@ -818,7 +907,6 @@
             const meaningSpan = document.getElementById(`meaning_${index}`);
             const audioWrapSpan = document.getElementById(`audio_wrap_${index}`);
 
-            // Dù đúng hay sai, khi gõ xong đều hiện đầy đủ Pinyin và Nghĩa ra
             if (chineseSpan) chineseSpan.innerText = item.chinese;
             if (pinyinSpan) pinyinSpan.innerText = item.pinyin;
             if (meaningSpan) meaningSpan.innerText = item.meaning;
