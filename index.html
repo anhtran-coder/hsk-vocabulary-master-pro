@@ -39,7 +39,7 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
-            z-index: 0; /* Nằm dưới container chính */
+            z-index: 0;
         }
 
         .snowflake {
@@ -49,7 +49,7 @@
             animation-timing-function: linear, ease-in-out;
             animation-iteration-count: infinite, infinite;
             user-select: none;
-            opacity: 0.25; /* Làm mờ để không bị chói mắt */
+            opacity: 0.25; 
         }
 
         @keyframes fall {
@@ -70,7 +70,7 @@
             box-shadow: 0 10px 25px rgba(236, 72, 153, 0.15);
             padding: 25px;
             position: relative;
-            z-index: 2; /* Nổi lên trên lớp hoa đào */
+            z-index: 2;
             backdrop-filter: blur(5px);
         }
 
@@ -271,7 +271,8 @@
             <div class="control-group">
                 <label>Chế độ:</label>
                 <select id="modeSelect">
-                    <option value="viet_to_chinese">Nghĩa ➔ Gõ Chữ Hán/Pinyin</option>
+                    <option value="viet_to_chinese">Nghĩa ➔ Gõ Chữ Hán/Pinyin (Hiện Chữ Hán khi đúng)</option>
+                    <option value="chinese_to_viet">Hán Tự ➔ Gõ Nghĩa Tiếng Việt</option>
                 </select>
             </div>
 
@@ -344,7 +345,6 @@
 
     <!-- JavaScript xử lý logic -->
     <script>
-        // Tạo hoa đào rơi phía sau (110 cánh, mờ nhẹ, không lóa mắt)
         function createSnowflakes() {
             const container = document.getElementById('snowflakeContainer');
             if (!container) return;
@@ -497,10 +497,12 @@
             const btnNewQuiz = document.getElementById('btnNewQuiz');
             const btnRetryQuiz = document.getElementById('btnRetryQuiz');
             const btnReset = document.getElementById('btnReset');
+            const modeSelectElem = document.getElementById('modeSelect');
 
             if (btnNewQuiz) btnNewQuiz.addEventListener('click', startNewQuiz);
             if (btnRetryQuiz) btnRetryQuiz.addEventListener('click', retryCurrentQuiz);
             if (btnReset) btnReset.addEventListener('click', resetAllData);
+            if (modeSelectElem) modeSelectElem.addEventListener('change', startNewQuiz);
 
             startNewQuiz();
         };
@@ -707,16 +709,27 @@
         function renderTable() {
             const tbody = document.getElementById('vocabTable');
             if (!tbody) return;
+            const modeSelectElem = document.getElementById('modeSelect');
+            const mode = modeSelectElem ? modeSelectElem.value : 'viet_to_chinese';
             tbody.innerHTML = '';
 
             currentQuizData.forEach((item, index) => {
                 const tr = document.createElement('tr');
                 tr.id = `row_${index}`;
                 
-                // Mặc định ẩn Chữ Hán và Pinyin (hiển thị ***), hiển thị rõ Nghĩa tiếng Việt
                 let displayChinese = '***';
                 let displayPinyin  = '***';
-                let displayMeaning = item.meaning || '---';
+                let displayMeaning = '---';
+
+                if (mode === 'viet_to_chinese') {
+                    // Chế độ: Hiện nghĩa tiếng Việt, ẩn chữ Hán/Pinyin để gõ
+                    displayMeaning = item.meaning || '---';
+                } else {
+                    // Chế độ: Hiện chữ Hán/Pinyin, ẩn nghĩa để gõ nghĩa tiếng Việt
+                    displayChinese = item.chinese;
+                    displayPinyin = item.pinyin;
+                    displayMeaning = '***';
+                }
 
                 tr.innerHTML = `
                     <td class="col-stt">${index + 1}</td>
@@ -737,6 +750,15 @@
                     </td>
                     <td id="status_${index}" class="col-status">-</td>
                 `;
+                
+                // Nếu ở chế độ Hán -> Nghĩa thì có nút nghe sẵn
+                if (mode === 'chinese_to_viet') {
+                    const audioWrapSpan = tr.querySelector(`#audio_wrap_${index}`);
+                    if(audioWrapSpan) {
+                        audioWrapSpan.innerHTML = `<button class="audio-btn" onclick="speakText('${item.chinese.replace(/'/g, "\\'")}')" title="Nghe">🔊</button>`;
+                    }
+                }
+
                 tbody.appendChild(tr);
             });
             updateStats();
@@ -764,6 +786,8 @@
             const tr = document.getElementById(`row_${index}`);
             const statusTd = document.getElementById(`status_${index}`);
             const item = currentQuizData[index];
+            const modeSelectElem = document.getElementById('modeSelect');
+            const mode = modeSelectElem ? modeSelectElem.value : 'viet_to_chinese';
 
             if (!inputVal.trim()) {
                 if (tr) tr.className = "";
@@ -781,25 +805,35 @@
             const pinyinVariants = splitVariants(item.pinyin);
             const rawPinyinVariants = pinyinVariants.map(p => removePinyinTones(p));
             const cleanInputNoTone = removePinyinTones(cleanedInput);
+            const meaningVariants = splitVariants(item.meaning);
 
-            // Kiểm tra người dùng gõ đúng Chữ Hán hoặc Pinyin tương ứng với nghĩa tiếng Việt
-            isCorrect = chineseVariants.includes(cleanedInput) || 
-                        pinyinVariants.includes(cleanedInput) || 
-                        rawPinyinVariants.includes(cleanInputNoTone);
+            if (mode === 'viet_to_chinese') {
+                // Kiểm tra người dùng gõ Chữ Hán hoặc Pinyin tương ứng với nghĩa tiếng Việt
+                isCorrect = chineseVariants.includes(cleanedInput) || 
+                            pinyinVariants.includes(cleanedInput) || 
+                            rawPinyinVariants.includes(cleanInputNoTone);
+            } else {
+                // Kiểm tra người dùng gõ Nghĩa tiếng Việt
+                isCorrect = meaningVariants.includes(cleanedInput);
+            }
 
             const chineseSpan = document.getElementById(`chinese_${index}`);
             const pinyinSpan = document.getElementById(`pinyin_${index}`);
+            const meaningSpan = document.getElementById(`meaning_${index}`);
             const audioWrapSpan = document.getElementById(`audio_wrap_${index}`);
 
             if (isCorrect) {
                 if (tr) tr.className = 'row-correct';
                 if (statusTd) statusTd.innerHTML = '✅';
                 
-                // Hiện Chữ Hán và Pinyin khi gõ đúng
-                if (chineseSpan) chineseSpan.innerText = item.chinese;
-                if (pinyinSpan) pinyinSpan.innerText = item.pinyin;
-                if (audioWrapSpan) {
-                    audioWrapSpan.innerHTML = `<button class="audio-btn" onclick="speakText('${item.chinese.replace(/'/g, "\\'")}')" title="Nghe">🔊</button>`;
+                if (mode === 'viet_to_chinese') {
+                    if (chineseSpan) chineseSpan.innerText = item.chinese;
+                    if (pinyinSpan) pinyinSpan.innerText = item.pinyin;
+                    if (audioWrapSpan) {
+                        audioWrapSpan.innerHTML = `<button class="audio-btn" onclick="speakText('${item.chinese.replace(/'/g, "\\'")}')" title="Nghe">🔊</button>`;
+                    }
+                } else {
+                    if (meaningSpan) meaningSpan.innerText = item.meaning;
                 }
                 
                 speakText(item.chinese);
@@ -807,11 +841,15 @@
                 if (tr) tr.className = 'row-wrong';
                 if (statusTd) statusTd.innerHTML = '❌';
 
-                // Vẫn hiện đáp án khi gõ sai để học viên tham khảo
-                if (chineseSpan) chineseSpan.innerText = item.chinese;
-                if (pinyinSpan) pinyinSpan.innerText = item.pinyin;
-                if (audioWrapSpan) {
-                    audioWrapSpan.innerHTML = `<button class="audio-btn" onclick="speakText('${item.chinese.replace(/'/g, "\\'")}')" title="Nghe">🔊</button>`;
+                // Hiện đáp án đúng để học viên tham khảo khi sai
+                if (mode === 'viet_to_chinese') {
+                    if (chineseSpan) chineseSpan.innerText = item.chinese;
+                    if (pinyinSpan) pinyinSpan.innerText = item.pinyin;
+                    if (audioWrapSpan) {
+                        audioWrapSpan.innerHTML = `<button class="audio-btn" onclick="speakText('${item.chinese.replace(/'/g, "\\'")}')" title="Nghe">🔊</button>`;
+                    }
+                } else {
+                    if (meaningSpan) meaningSpan.innerText = item.meaning;
                 }
             }
 
