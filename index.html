@@ -480,10 +480,9 @@
             return s;
         }
 
-        // HÀM LOẠI BỎ TOÀN BỘ PHẦN TRONG NGOẶC (CHỈ GIỮ LẠI NGHĨA CHÍNH BÊN NGOÀI)
+        // HÀM LOẠI BỎ TOÀN BỘ PHẦN TRONG NGOẶC ĐỂ SO SÁNH
         function cleanString(str) {
             if (!str) return '';
-            // Xóa sạch mọi loại ngoặc và nội dung bên trong nó trước
             let noBracket = str.replace(/\([^)]*\)/g, '')
                                .replace(/（[^）]*）/g, '')
                                .replace(/\[[^\]]*\]/g, '')
@@ -495,7 +494,6 @@
             return normalizeVietnamese(cleaned);
         }
 
-        // TÁCH CÁC BIẾN THỂ DỰA TRÊN DẤU PHẦY/CHẤM PHẨY SAU KHI ĐÃ CẮT BỎ NGOẶC
         function splitVariants(str) {
             if (!str) return [];
             let noBracket = str.replace(/\([^)]*\)/g, '')
@@ -731,7 +729,7 @@
                 } else if (mode === 'viet_to_chinese') {
                     displayChinese = '***';
                     displayPinyin = '***';
-                    displayMeaning = item.meaning || '---';
+                    displayMeaning = item.meaning || '---'; // ĐÃ FIX CHUẨN XÁC: Nghĩa TV nằm ở cột Nghĩa Tiếng Việt
                 } else if (mode === 'listening_mode') {
                     displayChinese = '***';
                     displayPinyin = '***';
