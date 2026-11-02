@@ -1018,15 +1018,27 @@
                 if (tr) tr.className = 'row-correct';
                 speakText(item.chinese);
                 
-                // Chỉ khi đang luyện ở chế độ "Sổ từ sai" mà gõ đúng thì mới xóa khỏi sổ sai
+                // Nếu đang ở chế độ Sổ từ sai và gõ đúng -> Xóa ngay lập tức khỏi sổ tay và cập nhật lại bảng
                 if (isMistakeMode && wrongWordsMap[item.chinese]) {
                     delete wrongWordsMap[item.chinese];
                     localStorage.setItem('wrong_words', JSON.stringify(wrongWordsMap));
                     updateWrongCountUI();
+
+                    setTimeout(() => {
+                        const keys = Object.keys(wrongWordsMap);
+                        if (keys.length > 0) {
+                            currentQuizData = keys.map(chinese => wrongWordsMap[chinese]);
+                            renderTable();
+                        } else {
+                            alert("Tuyệt vời! Bạn đã luyện thuộc tất cả các từ trong Sổ từ sai.");
+                            startNewQuiz();
+                        }
+                    }, 600);
+                    return;
                 }
             } else {
                 if (tr) tr.className = 'row-wrong';
-                // Gõ sai luôn được cộng dồn vào sổ từ sai
+                // Gõ sai cộng dồn vào sổ từ sai
                 wrongWordsMap[item.chinese] = item;
                 localStorage.setItem('wrong_words', JSON.stringify(wrongWordsMap));
                 updateWrongCountUI();
