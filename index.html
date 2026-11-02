@@ -234,12 +234,14 @@
             vertical-align: middle;
         }
 
+        /* SỬA LỖI PHÔNG CHỮ: Ép tất cả các tiêu đề cột (th) phải in hoa, đậm nét và cùng kích thước */
         th {
             background-color: #e0e7ff;
-            color: #3730a3;
-            font-weight: 700;
-            font-size: 0.95rem; /* Đồng bộ kích thước font chữ cho tất cả các cột tiêu đề */
-            letter-spacing: 0.3px;
+            color: #3730a3 !important;
+            font-weight: 700 !important;
+            font-size: 0.95rem !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.5px;
         }
 
         tr.row-correct {
@@ -1042,7 +1044,6 @@
                 if (tr) tr.className = 'row-correct';
                 speakText(item.chinese);
                 
-                // Gõ đúng trong sổ từ sai -> xóa ngầm khỏi danh sách và cập nhật số đếm, không render lại bảng tránh mất con trỏ
                 if (isMistakeMode && currentWrongMap[item.chinese]) {
                     delete currentWrongMap[item.chinese];
                     wrongWordsByMode[mode] = currentWrongMap;
