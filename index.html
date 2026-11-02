@@ -3,428 +3,453 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>HSK Vocabulary Master - Hệ Thống Luyện Từ Vựng HSK</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@500;700;900&display=swap" rel="stylesheet">
+    <title>Luyện gõ Pinyin & Từ Vựng Tiếng Trung</title>
+    <!-- Thư viện đọc file Excel SheetJS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-
     <style>
         :root {
-            --primary: #6366f1;
-            --success: #10b981;
-            --success-light: rgba(209, 250, 229, 0.85);
-            --danger: #ef4444;
-            --danger-light: rgba(254, 226, 226, 0.85);
-            --card-bg: rgba(255, 255, 255, 0.88);
-            --text-dark: #1e293b;
-            --header-bg-start: rgba(238, 242, 255, 0.95);
-            --header-bg-end: rgba(224, 231, 255, 0.95);
-            --header-text: #3730a3;
-            --header-border: #c7d2fe;
+            --primary-color: #ec4899;
+            --primary-hover: #db2777;
+            --bg-gradient: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%);
+            --card-bg: rgba(255, 255, 255, 0.96);
+            --text-color: #1f2937;
         }
 
-        body { 
-            font-family: 'Inter', system-ui, -apple-system, sans-serif; 
-            margin: 0; 
-            padding: 20px;
-            color: var(--text-dark);
-            font-size: 14px; 
+        * {
             box-sizing: border-box;
-            position: relative;
-            min-height: 100vh;
-            overflow-x: hidden;
-            background: linear-gradient(135deg, #fbcfe8 0%, #e0e7ff 50%, #bae6fd 100%);
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-style: normal !important; /* Đảm bảo không bị dính chữ in nghiêng */
         }
 
-        .falling-decor {
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-color);
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .snowflake-container {
             position: fixed;
-            top: -10vh;
-            z-index: 0;
-            user-select: none;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             pointer-events: none;
-            animation: fall linear infinite;
-            font-size: 24px;
-            opacity: 0.8;
+            z-index: 0;
+        }
+
+        .snowflake {
+            position: absolute;
+            top: -10vh;
+            animation-name: fall, sway;
+            animation-timing-function: linear, ease-in-out;
+            animation-iteration-count: infinite, infinite;
+            user-select: none;
+            opacity: 0.3; 
         }
 
         @keyframes fall {
-            0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(110vh) rotate(360deg); opacity: 0.2; }
+            0% { top: -10vh; }
+            100% { top: 110vh; }
         }
 
-        .container-wrapper { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; }
+        @keyframes sway {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(20px); }
+        }
 
-        .app-header {
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(236, 72, 153, 0.15);
+            padding: 25px;
+            position: relative;
+            z-index: 2;
+            backdrop-filter: blur(5px);
+        }
+
+        h1 {
+            text-align: center;
+            color: #be185d;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+
+        .controls-section {
+            background: #fff;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.92rem;
+        }
+
+        .control-group label {
+            font-weight: 600;
+            color: #4b5563;
+        }
+
+        input[type="number"], select {
+            padding: 6px 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            outline: none;
+            font-size: 0.9rem;
+        }
+
+        input[type="number"] {
+            width: 70px;
+        }
+
+        .btn-excel {
+            background-color: #059669;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        .btn-excel:hover { background-color: #047857; }
+
+        .btn-new {
+            background-color: #6366f1;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .btn-new:hover { background-color: #4f46e5; }
+
+        .btn-retry {
+            background-color: #d97706;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .btn-retry:hover { background-color: #b45309; }
+
+        .btn-reset {
+            background-color: #dc2626;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .btn-reset:hover { background-color: #b91c1c; }
+
+        .stats-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            background: #fdf2f8;
+            padding: 12px 20px;
+            border-radius: 8px;
             margin-bottom: 20px;
+            font-weight: 600;
+            color: #831843;
             flex-wrap: wrap;
-            gap: 12px;
-        }
-
-        .app-title {
-            font-size: 26px;
-            font-weight: 700;
-            color: #1e1b4b;
-            display: flex;
-            align-items: center;
             gap: 10px;
-            margin: 0;
-            text-shadow: 0 2px 4px rgba(255, 255, 255, 0.8);
         }
 
-        .app-title .pro-tag {
-            background: linear-gradient(135deg, #4f46e5, #8b5cf6);
-            color: white;
-            font-size: 11px;
-            padding: 4px 10px;
-            border-radius: 12px;
-            vertical-align: middle;
-            box-shadow: 0 2px 5px rgba(79, 70, 229, 0.3);
-        }
-
-        .controls { 
-            display: flex; 
-            gap: 12px; 
-            flex-wrap: wrap; 
-            align-items: center; 
-            background: rgba(255, 255, 255, 0.85); 
-            backdrop-filter: blur(16px);
-            padding: 18px 22px; 
-            border-radius: 24px; 
-            box-shadow: 0 12px 35px -8px rgba(99, 102, 241, 0.2);
-            margin-bottom: 20px;
-            border: 2px solid rgba(255, 255, 255, 0.9);
-        }
-
-        .control-box {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: #ffffff;
-            padding: 7px 14px;
-            border-radius: 14px;
-            border: 1.5px solid #e2e8f0;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
-            transition: all 0.2s ease;
-        }
-
-        .control-box:hover { border-color: #cbd5e1; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-
-        .controls label.box-label {
-            font-weight: 600;
-            font-size: 13px;
-            color: #475569;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            white-space: nowrap;
-            margin: 0;
-        }
-
-        .controls select, .controls input[type="number"] {
-            padding: 6px 10px;
-            border: 1.5px solid #cbd5e1;
-            border-radius: 9px;
-            outline: none;
-            font-weight: 600;
-            color: #0f172a;
-            background: #f8fafc;
-            transition: all 0.2s;
-            font-size: 13px;
-        }
-
-        .controls select:focus, .controls input:focus {
-            border-color: #6366f1;
-            background: #ffffff;
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
-        }
-
-        .range-container {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: #f8fafc;
-            padding: 5px 10px;
-            border-radius: 12px;
-            border: 1.5px solid #cbd5e1;
-        }
-        .range-container input { width: 48px; text-align: center; }
-
-        .btn { 
-            padding: 10px 20px; 
-            border: none; 
-            border-radius: 14px; 
-            cursor: pointer; 
-            font-weight: 600; 
-            color: white; 
-            font-size: 13px; 
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
-            position: relative;
+        .progress-bar-container {
+            width: 100%;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            margin-top: 8px;
             overflow: hidden;
         }
 
-        .btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.18); }
-
-        .btn-excel { background: linear-gradient(135deg, #059669, #047857); box-shadow: 0 4px 15px rgba(5, 150, 105, 0.35); }
-        .btn-new { background: linear-gradient(135deg, #6366f1, #4f46e5); box-shadow: 0 4px 15px rgba(99, 102, 241, 0.35); }
-        .btn-retry { background: linear-gradient(135deg, #f59e0b, #d97706); box-shadow: 0 4px 15px rgba(245, 158, 11, 0.35); }
-        .btn-reset { background: linear-gradient(135deg, #ef4444, #dc2626); box-shadow: 0 4px 15px rgba(239, 68, 68, 0.35); }
-        
-        .main-layout { display: flex; gap: 20px; align-items: flex-start; }
-
-        .table-container { 
-            flex: 1; 
-            background: var(--card-bg); 
-            backdrop-filter: blur(10px);
-            border-radius: 16px; 
-            padding: 16px; 
-            box-shadow: 0 10px 30px -5px rgba(0,0,0,0.1);
-            border: 2px solid rgba(244, 114, 182, 0.4);
-            overflow-x: auto; 
-        }
-        
-        table { width: 100%; border-collapse: separate; border-spacing: 0; table-layout: fixed; }
-
-        th { 
-            background: linear-gradient(135deg, var(--header-bg-start), var(--header-bg-end)) !important;
-            color: var(--header-text) !important;
-            font-weight: 700 !important;
-            font-size: 13px !important;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            padding: 12px 8px !important;
-            border-top: 1.5px solid var(--header-border) !important;
-            border-bottom: 2px solid #f472b6 !important;
+        .progress-bar {
+            height: 100%;
+            background: var(--primary-color);
+            width: 0%;
+            transition: width 0.3s ease;
         }
 
-        th:first-child { border-left: 1.5px solid var(--header-border); border-top-left-radius: 10px; border-bottom-left-radius: 10px; }
-        th:last-child { border-right: 1.5px solid var(--header-border); border-top-right-radius: 10px; border-bottom-right-radius: 10px; }
-
-        td { border-bottom: 1px solid rgba(203, 213, 225, 0.6); padding: 12px 6px; text-align: center; word-wrap: break-word; }
-
-        td.col-hanzi { 
-            font-family: 'Noto Sans SC', 'Microsoft YaHei', 'PingFang SC', sans-serif;
-            font-size: 26px; 
-            font-weight: 700 !important;
-            color: #9f1239;
-            letter-spacing: 1px;
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
         }
 
-        td.col-pinyin { color: #475569; font-style: italic; font-size: 14px; font-weight: 600; }
-        td.col-stt { color: #475569; font-weight: 600; }
-        td.col-type { color: #0284c7; font-size: 12px; font-weight: 600; }
-        td.col-viet { font-weight: 600; color: #1e293b; }
-        td.col-status { font-weight: 700; font-size: 16px; }
-
-        .col-stt { width: 6%; }
-        .col-hanzi { width: 20%; }
-        .col-type { width: 12%; }
-        .col-pinyin { width: 16%; }
-        .col-viet { width: 21%; }
-        .col-input { width: 17%; }
-        .col-status { width: 8%; }
-
-        input[type="text"] { 
-            width: 85%; 
-            padding: 8px 10px; 
-            border: 1.5px solid #cbd5e1; 
-            border-radius: 8px; 
-            text-align: center; 
-            font-size: 15px; 
-            font-weight: 500;
-            outline: none;
-            background: rgba(255, 255, 255, 0.95);
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            table-layout: fixed;
         }
 
-        input[type="text"]:focus {
-            border-color: #ec4899;
-            background: #ffffff;
-            box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.25);
-        }
-
-        input[type="text"]:disabled {
-            background-color: rgba(241, 245, 249, 0.7);
-            color: #334155;
-            cursor: not-allowed;
-            border-color: #cbd5e1;
-            font-weight: 600;
-        }
-        
-        tr.row-correct td { background-color: var(--success-light) !important; color: #064e3b; }
-        tr.row-wrong td { background-color: var(--danger-light) !important; color: #7f1d1d; }
-
-        .stats-dashboard { 
-            width: 250px; 
-            background: var(--card-bg); 
-            backdrop-filter: blur(10px);
-            border-radius: 16px; 
-            padding: 18px; 
-            box-shadow: 0 10px 30px -5px rgba(0,0,0,0.1);
-            border: 2px solid rgba(244, 114, 182, 0.4);
-        }
-
-        .stats-dashboard h3 { font-size: 13px; margin: 0 0 12px 0; text-transform: uppercase; color: #db2777; font-weight: 700; }
-
-        .timer-box {
-            background: linear-gradient(135deg, #e0e7ff, #fce7f3);
-            border: 1.5px solid #f472b6;
-            border-radius: 12px;
-            padding: 10px;
+        th, td {
+            padding: 12px 10px;
             text-align: center;
-            margin-bottom: 14px;
+            border-bottom: 1px solid #f3f4f6;
+            font-size: 0.95rem;
+            word-wrap: break-word;
+            white-space: normal;
+            vertical-align: middle;
         }
-        .timer-box .timer-label { font-size: 11px; color: #4f46e5; font-weight: 700; text-transform: uppercase; }
-        .timer-box .timer-value { font-size: 20px; font-weight: 800; color: #db2777; margin-top: 2px; font-family: monospace; }
 
-        .progress-bar-bg { width: 100%; height: 8px; background-color: rgba(203, 213, 225, 0.6); border-radius: 10px; overflow: hidden; margin-bottom: 16px; }
-        .progress-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #ec4899, #8b5cf6); transition: width 0.4s ease; }
+        th {
+            background-color: #e0e7ff;
+            color: #3730a3;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+        }
 
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .stat-card { background: rgba(255, 255, 255, 0.85); padding: 10px; border-radius: 10px; border: 1.5px solid #fbcfe8; text-align: center; }
-        .stat-card .label { font-size: 11px; color: #475569; margin-bottom: 4px; font-weight: 600; }
-        .stat-card .value { font-size: 16px; font-weight: 700; }
+        tr.row-correct {
+            background-color: #d1fae5 !important;
+        }
 
-        .rate-card { margin-top: 12px; text-align: center; background: rgba(253, 242, 248, 0.9); padding: 12px; border-radius: 12px; border: 1.5px solid #f472b6; }
+        tr.row-wrong {
+            background-color: #fee2e2 !important;
+        }
 
-        @media (max-width: 768px) {
-            body { padding: 8px; }
-            .main-layout { flex-direction: column; }
-            .table-container { padding: 6px; }
-            .stats-dashboard { width: 100%; box-sizing: border-box; }
-            .col-status { display: none !important; }
-            th { font-size: 11px !important; padding: 10px 2px !important; }
-            td { padding: 10px 2px !important; font-size: 13px; }
-            td.col-hanzi { font-size: 20px; }
-            td.col-pinyin { font-size: 12px; }
-            td.col-type { font-size: 11px; }
-            td.col-viet { font-size: 12px; }
-            input[type="text"] { font-size: 13px; padding: 6px 2px; width: 95%; }
-            .col-stt { width: 8%; }
-            .col-hanzi { width: 25%; }
-            .col-type { width: 12%; }
-            .col-pinyin { width: 18%; }
-            .col-viet { width: 22%; }
-            .col-input { width: 15%; }
+        /* Đồng bộ kích thước và font chữ cho các cột */
+        .col-stt { width: 50px; font-weight: 600; color: #4b5563; }
+        .col-hanzi { width: 20%; font-size: 1.25rem; font-weight: 700; color: #111827; line-height: 1.4; }
+        .col-type { width: 15%; color: #4b5563; font-weight: 500; font-size: 0.92rem; }
+        .col-pinyin { width: 18%; color: #4b5563; font-weight: 500; line-height: 1.4; }
+        .col-viet { width: 22%; color: #1f2937; font-weight: 500; line-height: 1.4; }
+        .col-input { width: 25%; }
+
+        .col-input textarea { 
+            width: 100%;
+            min-height: 42px;
+            padding: 8px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 0.95rem;
+            resize: none;
+            overflow: hidden;
+            font-family: inherit;
+            line-height: 1.3;
+            display: block;
+        }
+
+        .col-input textarea:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.2);
+            outline: none;
+        }
+
+        .audio-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            padding: 2px 6px;
+            margin-left: 4px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        .audio-btn:hover {
+            background: #f1f5f9;
+        }
+
+        #loadingStatus {
+            font-size: 0.88rem;
+            font-weight: bold;
+            margin-left: 8px;
+        }
+
+        @media screen and (max-width: 768px) {
+            body { padding: 6px; overflow-x: hidden; }
+            .container { padding: 12px 6px; border-radius: 10px; }
+            h1 { font-size: 1.25rem; margin-bottom: 12px; }
+            .controls-section { flex-direction: column; align-items: stretch; gap: 10px; padding: 10px; }
+            .control-group { justify-content: space-between; width: 100%; }
+            .stats-bar { flex-direction: column; align-items: flex-start; gap: 6px; padding: 10px; font-size: 0.85rem; }
+            
+            table { font-size: 0.85rem; table-layout: auto; }
+            th, td { padding: 8px 4px; }
+            .col-stt { width: 35px; }
+            .col-hanzi { font-size: 1.05rem; }
+            
+            .col-input textarea { 
+                padding: 6px 4px; 
+                font-size: 16px !important;
+                min-height: 38px;
+            }
         }
     </style>
 </head>
 <body>
 
-    <script>
-        const symbols = ['🌸', '🌺', '🌷', '🌻', '🍃', '❄️', '❅', '✨', '💮', '❄️'];
-        for (let i = 0; i < 40; i++) {
-            const div = document.createElement('div');
-            div.className = 'falling-decor';
-            div.innerHTML = symbols[Math.floor(Math.random() * symbols.length)];
-            div.style.left = Math.random() * 100 + 'vw';
-            div.style.animationDuration = (Math.random() * 5 + 5) + 's';
-            div.style.animationDelay = (Math.random() * 5) + 's';
-            div.style.fontSize = (Math.random() * 14 + 16) + 'px';
-            document.body.appendChild(div);
-        }
-    </script>
+    <div id="snowflakeContainer" class="snowflake-container"></div>
 
-    <div class="container-wrapper">
-        <div class="app-header">
-            <h2 class="app-title">🌸 HSK Vocabulary Master <span class="pro-tag">PRO</span></h2>
-        </div>
+    <div class="container">
+        <h1>🌸 Luyện Gõ Pinyin & Từ Vựng Tiếng Trung 🌸</h1>
 
-        <div class="controls">
-            <label class="btn btn-excel">
-                📁 Chọn Excel
+        <div class="controls-section">
+            <div class="control-group">
+                <label class="btn-excel" onclick="document.getElementById('excelFile').click()">
+                    📁 Chọn Excel
+                </label>
                 <input type="file" id="excelFile" accept=".xlsx, .xls" style="display: none;">
-            </label>
-            
-            <div class="control-box">
-                <label class="box-label">🎯 Chế độ</label>
+                <span id="loadingStatus"></span>
+            </div>
+
+            <div class="control-group">
+                <label>🎯 Chế độ:</label>
                 <select id="modeSelect">
-                    <option value="pinyin_to_chinese">Gõ Chữ Hán / Pinyin (Hiện Tiếng Việt)</option>
-                    <option value="chinese_to_meaning">Gõ Nghĩa Tiếng Việt (Hiện sẵn Chữ Hán)</option>
+                    <option value="chinese_to_viet">Hán Tự ➔ Gõ Nghĩa TV</option>
+                    <option value="viet_to_chinese">Nghĩa TV ➔ Gõ Hán/Pinyin</option>
+                    <option value="listening_mode">🔊 Luyện Nghe ➔ Gõ Từ</option>
                 </select>
             </div>
 
-            <div class="control-box">
-                <label class="box-label">🔄 Trộn câu</label>
+            <div class="control-group">
+                <label>🔄 Trộn câu:</label>
                 <select id="shuffleSelect">
-                    <option value="sequential">🔢 Theo thứ tự</option>
-                    <option value="random">🔀 Đảo ngẫu nhiên</option>
+                    <option value="random">Ngẫu nhiên (Fisher-Yates)</option>
+                    <option value="sequential">Theo thứ tự</option>
                 </select>
             </div>
 
-            <div class="control-box">
-                <label class="box-label">📝 Số câu</label>
-                <input type="number" id="quizSize" value="10" min="1" style="width: 48px; text-align: center;">
+            <div class="control-group">
+                <label>📝 Số câu:</label>
+                <input type="number" id="quizSize" value="10" min="1" max="100">
             </div>
 
-            <div class="control-box">
-                <label class="box-label">📊 Khoảng</label>
-                <div class="range-container">
-                    <input type="number" id="rangeFrom" placeholder="Từ" min="1" value="1">
-                    <span>đến</span>
-                    <input type="number" id="rangeTo" placeholder="Đến" min="1" value="100">
-                </div>
+            <div class="control-group">
+                <label>⚡ Tốc độ:</label>
+                <select id="speedSelect">
+                    <option value="1.0">1.0x</option>
+                    <option value="0.75">0.75x</option>
+                    <option value="0.5">0.5x</option>
+                </select>
             </div>
 
-            <button class="btn btn-new" id="btnNewQuiz">⚡ Đổi đề</button>
-            <button class="btn btn-retry" id="btnRetryQuiz">♻️ Làm lại</button>
-            <button class="btn btn-reset" id="btnReset">🗑️ Xóa data</button>
-            <span id="loadingStatus" style="font-size: 13px; font-weight: 600; color: var(--success); margin-left: auto;"></span>
+            <div class="control-group">
+                <button id="btnAudioToggle" class="btn-new" style="background-color: #db2777;">🔊 Âm thanh</button>
+            </div>
         </div>
 
-        <div class="main-layout">
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th class="col-stt">STT</th>
-                            <th class="col-hanzi">Chữ Hán</th>
-                            <th class="col-type">Loại từ</th>
-                            <th class="col-pinyin">Pinyin</th>
-                            <th class="col-viet">Tiếng Việt</th>
-                            <th class="col-input">Ô Nhập</th>
-                            <th class="col-status">Trạng thái</th>
-                        </tr>
-                    </thead>
-                    <tbody id="vocabTable"></tbody>
-                </table>
+        <div class="controls-section" style="margin-top: -10px;">
+            <div class="control-group">
+                <label>📊 Khoảng:</label>
+                <input type="number" id="rangeFrom" value="1" min="1">
+                <label>đến</label>
+                <input type="number" id="rangeTo" value="40" min="1">
             </div>
 
-            <div class="stats-dashboard">
-                <div class="timer-box">
-                    <div class="timer-label">⏱ Thời gian làm bài</div>
-                    <div class="timer-value" id="timerDisplay">00:00</div>
-                </div>
-
-                <h3>📊 Tiến độ bài tập</h3>
-                <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressBar"></div></div>
-                <div class="stats-grid">
-                    <div class="stat-card"><div class="label">Tổng số câu</div><div class="value" id="statTotal">0</div></div>
-                    <div class="stat-card"><div class="label">Đã hoàn thành</div><div class="value" id="statDone">0</div></div>
-                    <div class="stat-card" style="border-color: #a7f3d0; background: rgba(240, 253, 244, 0.9);"><div class="label" style="color: #065f46;">Số câu Đúng</div><div class="value" style="color: var(--success);" id="statCorrect">0</div></div>
-                    <div class="stat-card" style="border-color: #fecaca; background: rgba(254, 242, 242, 0.9);"><div class="label" style="color: #991b1b;">Số câu Sai</div><div class="value" style="color: var(--danger);" id="statWrong">0</div></div>
-                </div>
-                <div class="rate-card">
-                    <div style="font-size: 11px; color: #be185d; font-weight: 700;">TỶ LỆ CHÍNH XÁC</div>
-                    <div style="font-size: 22px; font-weight: 700; color: #db2777; margin-top: 2px;" id="statRate">0.0%</div>
-                </div>
+            <div class="control-group" style="margin-left: auto; gap: 10px;">
+                <button id="btnNewQuiz" class="btn-new">⚡ Đổi đề</button>
+                <button id="btnRetryQuiz" class="btn-retry">♻️ Làm lại</button>
+                <button id="btnReset" class="btn-reset">🗑️ Xóa data</button>
             </div>
+        </div>
+
+        <div class="stats-bar">
+            <div>Tổng số: <span id="statTotal">0</span></div>
+            <div>Đã làm: <span id="statDone">0</span></div>
+            <div>Đúng: <span id="statCorrect" style="color: #059669;">0</span></div>
+            <div>Sai: <span id="statWrong" style="color: #dc2626;">0</span></div>
+            <div>Tỷ lệ đúng: <span id="statRate">0.0%</span></div>
+            <div>⏱️ Thời gian: <span id="timerDisplay">00:00</span></div>
+            <div class="progress-bar-container">
+                <div id="progressBar" class="progress-bar"></div>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th class="col-stt">STT</th>
+                        <th class="col-hanzi">CHỮ HÁN</th>
+                        <th class="col-type">LOẠI TỪ</th>
+                        <th class="col-pinyin">PINYIN</th>
+                        <th class="col-viet">TIẾNG VIỆT</th>
+                        <th class="col-input">Ô NHẬP</th>
+                    </tr>
+                </thead>
+                <tbody id="vocabTable"></tbody>
+            </table>
         </div>
     </div>
 
     <script>
-        const SECRET_KEY = "CAMTU2019S2THANHAN2025";
+        function createSnowflakes() {
+            const container = document.getElementById('snowflakeContainer');
+            if (!container) return;
+            container.innerHTML = '';
+            const icons = ['🌸', '❄', '🌸', '❆', '🌺'];
+            const isMobile = window.innerWidth <= 768;
+            const count = isMobile ? 35 : 80; 
+            
+            const fragment = document.createDocumentFragment();
+
+            for (let i = 0; i < count; i++) {
+                const flake = document.createElement('div');
+                flake.className = 'snowflake';
+                flake.innerText = icons[Math.floor(Math.random() * icons.length)];
+                
+                const leftPos = Math.random() * 100;
+                const duration = 7 + Math.random() * 8;
+                const delay = Math.random() * 8;
+                const size = 0.5 + Math.random() * 0.7;
+                
+                flake.style.left = `${leftPos}%`;
+                flake.style.animationDuration = `${duration}s, 4s`;
+                flake.style.animationDelay = `${delay}s, ${delay}s`;
+                flake.style.fontSize = `${size}em`;
+                
+                fragment.appendChild(flake);
+            }
+            container.appendChild(fragment);
+        }
+        createSnowflakes();
 
         const EMBEDDED_VOCAB_DATA = [
-            {"chinese": "早饭 / 早餐", "type": "Danh từ", "pinyin": "zǎofàn / zǎocān", "meaning": "Bữa sáng, điểm tâm"},
-            {"chinese": "午饭 / 晚餐", "type": "Danh từ", "pinyin": "wǔfàn / wǔcān", "meaning": "Bữa trưa"},
-            {"chinese": "เพราะ……อย่างไรก็ตาม……", "type": "Liên từ", "pinyin": "yīnwèi……suǒyǐ……", "meaning": "Vì…… nên……"},
-            {"chinese": "姐姐", "type": "Danh từ", "pinyin": "jiějie", "meaning": "Chị gái"}
+            {"chinese": "年", "type": "Danh từ", "pinyin": "nián", "meaning": "Năm"},
+            {"chinese": "今年", "type": "Danh từ chỉ thời gian", "pinyin": "jīnnián", "meaning": "Năm nay"},
+            {"chinese": "明年", "type": "Danh từ chỉ thời gian", "pinyin": "míngnián", "meaning": "Năm sau, sang năm"},
+            {"chinese": "后年", "type": "Danh từ chỉ thời gian", "pinyin": "hòunián", "meaning": "Năm sau nữa"},
+            {"chinese": "去年", "type": "Danh từ chỉ thời gian", "pinyin": "qùnián", "meaning": "Năm ngoái"},
+            {"chinese": "毕业", "type": "Động từ (ly hợp)", "pinyin": "bìyè", "meaning": "Tốt nghiệp"},
+            {"chinese": "多", "type": "Phó từ / Tính từ", "pinyin": "duō", "meaning": "Nhiều, hơn"},
+            {"chinese": "多大", "type": "Cụm từ hỏi", "pinyin": "duōdà", "meaning": "Bao nhiêu tuổi"},
+            {"chinese": "岁", "type": "Lượng từ", "pinyin": "suì", "meaning": "Tuổi"},
+            {"chinese": "属", "type": "Động từ", "pinyin": "shǔ", "meaning": "Cầm tinh, thuộc về"}
         ];
+
+        const SECRET_Z1_KEY = "CAMTU2019S2THANHAN2025"; 
 
         let fullVocabData = [];
         let currentQuizData = [];
@@ -432,6 +457,50 @@
         let secondsElapsed = 0;
         let isTimerRunning = false;
         let sequentialOffset = 0;
+        let isAudioEnabled = true;
+
+        function fisherYatesShuffle(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        const btnAudioToggle = document.getElementById('btnAudioToggle');
+        if (btnAudioToggle) {
+            btnAudioToggle.addEventListener('click', function() {
+                isAudioEnabled = !isAudioEnabled;
+                if (isAudioEnabled) {
+                    btnAudioToggle.innerHTML = "🔊 Âm thanh";
+                    btnAudioToggle.style.backgroundColor = "#db2777";
+                    speakText("好");
+                } else {
+                    btnAudioToggle.innerHTML = "🔇 Âm thanh";
+                    btnAudioToggle.style.backgroundColor = "#9ca3af";
+                }
+            });
+        }
+
+        let speechTimeout = null;
+        function speakText(text) {
+            if (!isAudioEnabled || !text) return;
+            if (!('speechSynthesis' in window)) return;
+
+            window.speechSynthesis.cancel();
+            if (speechTimeout) clearTimeout(speechTimeout);
+
+            speechTimeout = setTimeout(() => {
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'zh-CN';
+                
+                const speedSelectElem = document.getElementById('speedSelect');
+                utterance.rate = speedSelectElem ? parseFloat(speedSelectElem.value) : 1.0;
+
+                window.speechSynthesis.speak(utterance);
+            }, 50);
+        }
 
         function removePinyinTones(str) {
             if (!str) return '';
@@ -442,16 +511,41 @@
                       .toLowerCase();
         }
 
+        function normalizeVietnamese(str) {
+            if (!str) return '';
+            let s = str.normalize('NFC').toLowerCase();
+            s = s.replace(/hoả/g, 'hỏa').replace(/hoà/g, 'hòa').replace(/hoá/g, 'hóa')
+                 .replace(/thuỷ/g, 'thủy').replace(/thuý/g, 'thúy');
+            return s;
+        }
+
         function cleanString(str) {
             if (!str) return '';
-            return str.toLowerCase().trim().replace(/\s+/g, ' ');
+            let noBracket = str.replace(/\([^)]*\)/g, '')
+                               .replace(/（[^）]*）/g, '')
+                               .replace(/\[[^\]]*\]/g, '')
+                               .replace(/【[^】]*】/g, '');
+            
+            let cleaned = noBracket.normalize('NFC').toLowerCase()
+                                   .replace(/[？，！\?,\.!:;""''`~]/g, '') 
+                                   .trim().replace(/\s+/g, ' ');
+            return normalizeVietnamese(cleaned);
         }
 
         function splitVariants(str) {
             if (!str) return [];
-            return str.split(/[/,;|\n]+/)
-                      .map(s => cleanString(s))
-                      .filter(s => s.length > 0);
+            let noBracket = str.replace(/\([^)]*\)/g, '')
+                               .replace(/（[^）]*）/g, '')
+                               .replace(/\[[^\]]*\]/g, '')
+                               .replace(/【[^】]*】/g, '');
+            return noBracket.split(/[/,;|\n]+/)
+                            .map(s => cleanString(s))
+                            .filter(s => s.length > 0);
+        }
+
+        function autoExpandInput(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = (textarea.scrollHeight) + 'px';
         }
 
         window.onload = function() {
@@ -466,13 +560,18 @@
             } else {
                 fullVocabData = [...EMBEDDED_VOCAB_DATA];
             }
-            document.getElementById('rangeTo').value = fullVocabData.length;
+            const rangeToElem = document.getElementById('rangeTo');
+            if (rangeToElem) rangeToElem.value = fullVocabData.length;
             
-            document.getElementById('btnNewQuiz').addEventListener('click', startNewQuiz);
-            document.getElementById('btnRetryQuiz').addEventListener('click', retryCurrentQuiz);
-            document.getElementById('btnReset').addEventListener('click', resetAllData);
-            document.getElementById('shuffleSelect').addEventListener('change', function() { sequentialOffset = 0; });
-            document.getElementById('modeSelect').addEventListener('change', function() { renderTable(); });
+            const btnNewQuiz = document.getElementById('btnNewQuiz');
+            const btnRetryQuiz = document.getElementById('btnRetryQuiz');
+            const btnReset = document.getElementById('btnReset');
+            const modeSelectElem = document.getElementById('modeSelect');
+
+            if (btnNewQuiz) btnNewQuiz.addEventListener('click', startNewQuiz);
+            if (btnRetryQuiz) btnRetryQuiz.addEventListener('click', retryCurrentQuiz);
+            if (btnReset) btnReset.addEventListener('click', resetAllData);
+            if (modeSelectElem) modeSelectElem.addEventListener('change', startNewQuiz);
 
             startNewQuiz();
         };
@@ -501,114 +600,90 @@
         }
 
         function updateTimerDisplay() {
+            const timerDisplay = document.getElementById('timerDisplay');
+            if (!timerDisplay) return;
             const mins = Math.floor(secondsElapsed / 60).toString().padStart(2, '0');
             const secs = (secondsElapsed % 60).toString().padStart(2, '0');
-            document.getElementById('timerDisplay').innerText = `${mins}:${secs}`;
+            timerDisplay.innerText = `${mins}:${secs}`;
         }
 
-        document.getElementById('excelFile').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
+        const excelFileElem = document.getElementById('excelFile');
+        if (excelFileElem) {
+            excelFileElem.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
 
-            const statusText = document.getElementById('loadingStatus');
-            if (statusText) { statusText.innerText = "⏳ Đang kiểm tra mã khóa..."; statusText.style.color = "var(--primary)"; }
+                const statusText = document.getElementById('loadingStatus');
+                if (statusText) { statusText.innerText = "⏳ Đang đọc..."; statusText.style.color = "#ec4899"; }
 
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const data = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(data, { type: 'array' });
-                    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const data = new Uint8Array(e.target.result);
+                        const workbook = XLSX.read(data, { type: 'array' });
+                        const worksheet = workbook.Sheets[workbook.SheetNames[0]];
 
-                    const cellZ1 = worksheet['Z1'] ? worksheet['Z1'].v.toString().trim() : '';
-                    const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: "" });
+                        const cellZ1 = worksheet['Z1'] ? worksheet['Z1'].v.toString().trim() : '';
+                        if (cellZ1 !== SECRET_Z1_KEY) {
+                            alert("Bản quyền file không hợp lệ hoặc sai mã xác thực. Vui lòng liên hệ Admin để được hỗ trợ!");
+                            if (statusText) { statusText.innerText = "❌ Sai mã xác thực bản quyền!"; statusText.style.color = "#dc2626"; }
+                            return;
+                        }
 
-                    if (!rows || rows.length < 2) {
-                        alert("File Excel không có dữ liệu!");
-                        return;
-                    }
+                        const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: "" });
 
-                    let hasValidKey = false;
-                    if (cellZ1 === SECRET_KEY) {
-                        hasValidKey = true;
-                    } else if (rows[0]) {
-                        for (let col = 0; col < rows[0].length; col++) {
-                            if (rows[0][col] && rows[0][col].toString().trim() === SECRET_KEY) {
-                                hasValidKey = true;
+                        if (!rows || rows.length === 0) {
+                            alert("File Excel trống!");
+                            return;
+                        }
+
+                        let headerRowIndex = 0;
+                        for (let i = 0; i < Math.min(rows.length, 5); i++) {
+                            const rowStr = rows[i].join(" ").toUpperCase();
+                            if (rowStr.includes("HÁN") || rowStr.includes("CHINESE") || rowStr.includes("PINYIN") || rowStr.includes("NGHĨA") || rowStr.includes("LOẠI")) {
+                                headerRowIndex = i;
                                 break;
                             }
                         }
-                    }
 
-                    if (!hasValidKey) {
-                        alert("❌ TRUY CẬP BỊ TỪ CHỐI!\n\nFile Excel này KHÔNG HỢP LỆ hoặc mã khóa ở ô Z1 không đúng.");
-                        document.getElementById('excelFile').value = '';
-                        if (statusText) statusText.innerText = "";
-                        return;
-                    }
+                        const parsedData = [];
+                        for (let i = headerRowIndex + 1; i < rows.length; i++) {
+                            const row = rows[i];
+                            if (!row || row.length === 0) continue;
 
-                    let headerRowIndex = 0;
-                    for (let i = 0; i < Math.min(rows.length, 5); i++) {
-                        const rowStr = rows[i].join(" ").toUpperCase();
-                        if (rowStr.includes("CHENESE") || rowStr.includes("CHINESE") || rowStr.includes("PINYIN") || rowStr.includes("MEANING")) {
-                            headerRowIndex = i;
-                            break;
+                            let chinese = row[1] ? row[1].toString().trim() : (row[0] ? row[0].toString().trim() : '');
+                            let type    = row[2] ? row[2].toString().trim() : '';
+                            let pinyin  = row[3] ? row[3].toString().trim() : (row[2] ? row[2].toString().trim() : '');
+                            let meaning = row[4] ? row[4].toString().trim() : (row[3] ? row[3].toString().trim() : '');
+
+                            if (chinese || meaning) {
+                                parsedData.push({ chinese, type, pinyin, meaning });
+                            }
                         }
-                    }
 
-                    const headers = rows[headerRowIndex].map(h => h.toString().trim().toUpperCase());
-                    let colChinese = -1, colType = -1, colPinyin = -1, colMeaning = -1;
-
-                    headers.forEach((h, idx) => {
-                        if (h.includes('INPUT')) return;
-                        if ((h.includes('CHENESE') || h.includes('CHINESE') || h.includes('HÁN')) && colChinese === -1) colChinese = idx;
-                        else if (h.includes('TYPE') || h.includes('LOẠI TỪ')) colType = idx;
-                        else if (h.includes('PINYIN') || h.includes('PHIÊN ÂM')) colPinyin = idx;
-                        else if (h.includes('MEANING') || h.includes('TIẾNG VIỆT') || h.includes('NGHĨA')) colMeaning = idx;
-                    });
-
-                    if (colChinese === -1) colChinese = 1;
-                    if (colType === -1) colType = 2;
-                    if (colPinyin === -1) colPinyin = 3;
-                    if (colMeaning === -1) colMeaning = 4;
-
-                    const parsedData = [];
-                    for (let i = headerRowIndex + 1; i < rows.length; i++) {
-                        const row = rows[i];
-                        if (!row || row.length === 0) continue;
-
-                        const chinese = row[colChinese] ? row[colChinese].toString().trim() : '';
-                        const type    = row[colType]    ? row[colType].toString().trim() : '';
-                        const pinyin  = row[colPinyin]  ? row[colPinyin].toString().trim() : '';
-                        const meaning = row[colMeaning] ? row[colMeaning].toString().trim() : '';
-
-                        if (chinese || meaning) {
-                            parsedData.push({ chinese, type, pinyin, meaning });
+                        if (parsedData.length === 0) {
+                            alert("Không tìm thấy dữ liệu từ vựng hợp lệ trong file!");
+                            return;
                         }
-                    }
 
-                    if (parsedData.length === 0) {
-                        alert("Không tìm thấy dữ liệu từ vựng hợp lệ!");
-                        return;
-                    }
-
-                    fullVocabData = parsedData;
-                    localStorage.setItem('hsk_vocab_data', JSON.stringify(fullVocabData));
-                    
-                    if (statusText) { 
-                        statusText.innerText = `✅ Đã nạp thành công ${fullVocabData.length} từ!`; 
-                        statusText.style.color = "var(--success)"; 
-                    }
-
-                    document.getElementById('rangeFrom').value = 1;
-                    document.getElementById('rangeTo').value = fullVocabData.length;
-                    sequentialOffset = 0;
-
-                    startNewQuiz();
-                } catch (err) { alert("Lỗi khi đọc file Excel: " + err.message); }
-            };
-            reader.readAsArrayBuffer(file);
-        });
+                        fullVocabData = parsedData;
+                        localStorage.setItem('hsk_vocab_data', JSON.stringify(fullVocabData));
+                        
+                        if (statusText) { 
+                            statusText.innerText = `✅ Đã nạp ${fullVocabData.length} từ!`; 
+                            statusText.style.color = "#10b981"; 
+                        }
+                        
+                        document.getElementById('rangeFrom').value = 1;
+                        document.getElementById('rangeTo').value = fullVocabData.length;
+                        sequentialOffset = 0;
+                        
+                        startNewQuiz();
+                    } catch (err) { alert("Lỗi khi đọc file Excel: " + err.message); }
+                };
+                reader.readAsArrayBuffer(file);
+            });
+        }
 
         function startNewQuiz() {
             if (!fullVocabData || fullVocabData.length === 0) fullVocabData = [...EMBEDDED_VOCAB_DATA];
@@ -616,7 +691,8 @@
             let fromIdx = parseInt(document.getElementById('rangeFrom').value) || 1;
             let toIdx = parseInt(document.getElementById('rangeTo').value) || fullVocabData.length;
             const size = parseInt(document.getElementById('quizSize').value) || 10;
-            const shuffleMode = document.getElementById('shuffleSelect').value;
+            const shuffleSelectElem = document.getElementById('shuffleSelect');
+            const shuffleMode = shuffleSelectElem ? shuffleSelectElem.value : 'random';
 
             if (fromIdx < 1) fromIdx = 1;
             if (toIdx > fullVocabData.length) toIdx = fullVocabData.length;
@@ -634,7 +710,7 @@
 
             let processedData = [];
             if (shuffleMode === 'random') {
-                const shuffled = [...slicedData].sort(() => 0.5 - Math.random());
+                const shuffled = fisherYatesShuffle(slicedData);
                 processedData = shuffled.slice(0, Math.min(size, slicedData.length));
             } else {
                 if (sequentialOffset >= slicedData.length) sequentialOffset = 0;
@@ -647,6 +723,9 @@
             renderTable();
         }
 
+        const shuffleSelectElem = document.getElementById('shuffleSelect');
+        if (shuffleSelectElem) shuffleSelectElem.addEventListener('change', function() { sequentialOffset = 0; });
+
         function retryCurrentQuiz() { 
             if (currentQuizData.length > 0) {
                 resetTimer();
@@ -658,7 +737,8 @@
             if (confirm("Bạn có chắc chắn muốn xóa dữ liệu đã lưu?")) {
                 localStorage.removeItem('hsk_vocab_data');
                 fullVocabData = [...EMBEDDED_VOCAB_DATA];
-                document.getElementById('loadingStatus').innerText = "";
+                const statusText = document.getElementById('loadingStatus');
+                if (statusText) statusText.innerText = "";
                 document.getElementById('rangeFrom').value = 1;
                 document.getElementById('rangeTo').value = fullVocabData.length;
                 sequentialOffset = 0;
@@ -668,38 +748,59 @@
 
         function renderTable() {
             const tbody = document.getElementById('vocabTable');
-            const mode = document.getElementById('modeSelect').value;
+            if (!tbody) return;
+            const modeSelectElem = document.getElementById('modeSelect');
+            const mode = modeSelectElem ? modeSelectElem.value : 'chinese_to_viet';
             tbody.innerHTML = '';
 
             currentQuizData.forEach((item, index) => {
                 const tr = document.createElement('tr');
                 tr.id = `row_${index}`;
                 
-                let displayChinese = '***';
+                let displayChinese = item.chinese; 
                 let displayPinyin  = '***';
                 let displayMeaning = '***';
 
-                if (mode === 'chinese_to_meaning') {
-                    displayChinese = item.chinese || '---';
-                } else {
+                if (mode === 'chinese_to_viet') {
+                    displayPinyin = '***';
+                    displayMeaning = '***';
+                } else if (mode === 'viet_to_chinese') {
+                    displayChinese = '***';
+                    displayPinyin = '***';
                     displayMeaning = item.meaning || '---';
+                } else if (mode === 'listening_mode') {
+                    displayChinese = '***';
+                    displayPinyin = '***';
+                    displayMeaning = '***';
                 }
 
                 tr.innerHTML = `
                     <td class="col-stt">${index + 1}</td>
-                    <td id="chinese_${index}" class="col-hanzi">${displayChinese}</td>
-                    <td class="col-type">${item.type || '-'}</td>
+                    <td class="col-hanzi">
+                        <span id="chinese_${index}">${displayChinese}</span>
+                        <span id="audio_wrap_${index}"></span>
+                    </td>
+                    <td class="col-type">${item.type || '---'}</td>
                     <td id="pinyin_${index}" class="col-pinyin">${displayPinyin}</td>
                     <td id="meaning_${index}" class="col-viet">${displayMeaning}</td>
                     <td class="col-input">
-                        <input type="text" id="input_${index}" 
-                               enterkeyhint="next" 
-                               oninput="checkAndStartTimer()"
-                               onblur="checkAnswer(${index})"
-                               onkeydown="handleKeyDown(event, ${index})">
+                        <textarea id="input_${index}" 
+                                  rows="1"
+                                  enterkeyhint="next" 
+                                  autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"
+                                  oninput="checkAndStartTimer(); autoExpandInput(this);"
+                                  onblur="checkAnswer(${index})"
+                                  onkeydown="handleKeyDown(event, ${index})"></textarea>
                     </td>
-                    <td id="status_${index}" class="col-status">-</td>
                 `;
+
+                const audioWrapSpan = tr.querySelector(`#audio_wrap_${index}`);
+                if (mode === 'chinese_to_viet' || mode === 'listening_mode') {
+                    if(audioWrapSpan) {
+                        audioWrapSpan.innerHTML = `<button class="audio-btn" onclick="speakText('${item.chinese.replace(/'/g, "\\'")}')" title="Nghe">🔊</button>`;
+                    }
+                }
+
                 tbody.appendChild(tr);
             });
             updateStats();
@@ -714,89 +815,172 @@
                 const nextInput = document.getElementById(`input_${index + 1}`);
                 if (nextInput) {
                     nextInput.focus();
-                } else {
-                    document.getElementById(`input_${index}`).blur();
+                    nextInput.select();
                 }
             }
         }
 
+        function getSimilarityRatio(str1, str2) {
+            const s1 = cleanString(str1);
+            const s2 = cleanString(str2);
+            if (s1 === s2) return 1.0;
+            if (!s1 || !s2) return 0.0;
+
+            const len1 = s1.length;
+            const len2 = s2.length;
+            const track = Array(len2 + 1).fill(null).map(() => Array(len1 + 1).fill(null));
+
+            for (let i = 0; i <= len1; i += 1) track[0][i] = i;
+            for (let j = 0; j <= len2; j += 1) track[j][0] = j;
+
+            for (let j = 1; j <= len2; j += 1) {
+                for (let i = 1; i <= len1; i += 1) {
+                    const indicator = s1[i - 1] === s2[j - 1] ? 0 : 1;
+                    track[j][i] = Math.min(
+                        track[j][i - 1] + 1, 
+                        track[j - 1][i] + 1, 
+                        track[j - 1][i - 1] + indicator 
+                    );
+                }
+            }
+            const distance = track[len2][len1];
+            const maxLen = Math.max(len1, len2);
+            return (maxLen - distance) / maxLen;
+        }
+
         function checkAnswer(index) {
             const inputElem = document.getElementById(`input_${index}`);
-            if (!inputElem || inputElem.disabled) return;
-            
-            const userVal = cleanString(inputElem.value);
-            const item = currentQuizData[index];
-            const mode = document.getElementById('modeSelect').value;
-            const rowElem = document.getElementById(`row_${index}`);
-            const statusElem = document.getElementById(`status_${index}`);
+            if (!inputElem) return;
 
-            if (!userVal) {
-                rowElem.className = '';
-                if (statusElem) statusElem.innerText = '-';
-                updateStats();
+            const inputVal = inputElem.value;
+            const tr = document.getElementById(`row_${index}`);
+            const item = currentQuizData[index];
+            const modeSelectElem = document.getElementById('modeSelect');
+            const mode = modeSelectElem ? modeSelectElem.value : 'chinese_to_viet';
+
+            if (!inputVal.trim()) {
+                if (tr) tr.className = "";
                 return;
             }
 
+            const cleanedInput = cleanString(inputVal);
             let isCorrect = false;
 
-            if (mode === 'chinese_to_meaning') {
-                const validMeanings = splitVariants(item.meaning);
-                isCorrect = validMeanings.some(m => userVal === m || userVal.includes(m) || m.includes(userVal));
-            } else {
-                const validChinese = splitVariants(item.chinese);
-                const validPinyinWithTones = splitVariants(item.pinyin);
-                const validPinyinNoTones = validPinyinWithTones.map(p => removePinyinTones(p));
+            const chineseVariants = splitVariants(item.chinese);
+            const pinyinVariants = splitVariants(item.pinyin);
+            const rawPinyinVariants = pinyinVariants.map(p => removePinyinTones(p));
+            const cleanInputNoTone = removePinyinTones(cleanedInput);
+            const meaningVariants = splitVariants(item.meaning);
 
-                const userValNoTones = removePinyinTones(userVal);
+            if (mode === 'chinese_to_viet') {
+                isCorrect = meaningVariants.some(variant => {
+                    const cleanTarget = cleanString(variant);
+                    if (cleanedInput === cleanTarget) return true;
 
-                isCorrect = validChinese.includes(userVal) || 
-                            validPinyinWithTones.includes(userVal) || 
-                            validPinyinNoTones.includes(userValNoTones);
+                    const subVariants = variant.split(/[/,;|\n]+/).map(s => cleanString(s));
+                    if (subVariants.includes(cleanedInput)) return true;
+
+                    let userText = " " + cleanedInput + " ";
+                    let targetText = " " + cleanTarget + " ";
+
+                    const fillerWords = [" là ", " có ", " được ", " thì ", " của "];
+                    fillerWords.forEach(word => {
+                        userText = userText.replaceAll(word, " ");
+                        targetText = targetText.replaceAll(word, " ");
+                    });
+
+                    const synonyms = [
+                        ["bây giờ", "hiện tại"], ["định", "muốn", "tính"],
+                        ["tệ", "nghìn", "đồng", "k"], ["ngày mai", "mai"],
+                        ["hôm nay", "nay"], ["thời tiết", "trời"]
+                    ];
+                    synonyms.forEach(group => {
+                        const mainWord = group[0];
+                        for (let i = 1; i < group.length; i++) {
+                            const subWord = group[i];
+                            if (subWord) {
+                                userText = userText.replaceAll(subWord, mainWord);
+                                targetText = targetText.replaceAll(subWord, mainWord);
+                            }
+                        }
+                    });
+
+                    userText = userText.replace(/\s+/g, ' ').trim();
+                    targetText = targetText.replace(/\s+/g, ' ').trim();
+
+                    if (userText === targetText) return true;
+
+                    const similarity = getSimilarityRatio(userText, targetText);
+                    return similarity >= 0.55;
+                });
+
+            } else if (mode === 'viet_to_chinese') {
+                isCorrect = chineseVariants.includes(cleanedInput) || 
+                            pinyinVariants.includes(cleanedInput) || 
+                            rawPinyinVariants.includes(cleanInputNoTone);
+            } else if (mode === 'listening_mode') {
+                isCorrect = chineseVariants.includes(cleanedInput) || 
+                            pinyinVariants.includes(cleanedInput) || 
+                            rawPinyinVariants.includes(cleanInputNoTone) ||
+                            meaningVariants.some(variant => getSimilarityRatio(cleanedInput, cleanString(variant)) >= 0.55);
             }
 
-            document.getElementById(`chinese_${index}`).innerText = item.chinese || '---';
-            document.getElementById(`pinyin_${index}`).innerText = item.pinyin || '---';
-            document.getElementById(`meaning_${index}`).innerText = item.meaning || '---';
+            const chineseSpan = document.getElementById(`chinese_${index}`);
+            const pinyinSpan = document.getElementById(`pinyin_${index}`);
+            const meaningSpan = document.getElementById(`meaning_${index}`);
+            const audioWrapSpan = document.getElementById(`audio_wrap_${index}`);
+
+            if (chineseSpan) chineseSpan.innerText = item.chinese;
+            if (pinyinSpan) pinyinSpan.innerText = item.pinyin;
+            if (meaningSpan) meaningSpan.innerText = item.meaning;
+            if (audioWrapSpan) {
+                audioWrapSpan.innerHTML = `<button class="audio-btn" onclick="speakText('${item.chinese.replace(/'/g, "\\'")}')" title="Nghe">🔊</button>`;
+            }
 
             if (isCorrect) {
-                rowElem.className = 'row-correct';
-                if (statusElem) statusElem.innerText = '✓';
+                if (tr) tr.className = 'row-correct';
+                speakText(item.chinese);
             } else {
-                rowElem.className = 'row-wrong';
-                if (statusElem) statusElem.innerText = '✗';
+                if (tr) tr.className = 'row-wrong';
             }
 
-            inputElem.disabled = true;
             updateStats();
         }
 
         function updateStats() {
             const total = currentQuizData.length;
-            let done = 0, correct = 0, wrong = 0;
+            let done = 0;
+            let correct = 0;
+            let wrong = 0;
 
-            currentQuizData.forEach((_, idx) => {
-                const row = document.getElementById(`row_${idx}`);
-                if (row) {
-                    if (row.classList.contains('row-correct')) {
-                        done++;
-                        correct++;
-                    } else if (row.classList.contains('row-wrong')) {
-                        done++;
-                        wrong++;
-                    }
+            currentQuizData.forEach((_, index) => {
+                const tr = document.getElementById(`row_${index}`);
+                if (tr && (tr.classList.contains('row-correct') || tr.className.includes('row-correct'))) {
+                    done++;
+                    correct++;
+                } else if (tr && (tr.classList.contains('row-wrong') || tr.className.includes('row-wrong'))) {
+                    done++;
+                    wrong++;
                 }
             });
 
-            document.getElementById('statTotal').innerText = total;
-            document.getElementById('statDone').innerText = done;
-            document.getElementById('statCorrect').innerText = correct;
-            document.getElementById('statWrong').innerText = wrong;
+            const statTotal = document.getElementById('statTotal');
+            const statDone = document.getElementById('statDone');
+            const statCorrect = document.getElementById('statCorrect');
+            const statWrong = document.getElementById('statWrong');
+            const statRate = document.getElementById('statRate');
+            const progressBar = document.getElementById('progressBar');
 
-            const rate = total > 0 ? ((correct / total) * 100).toFixed(1) : '0.0';
-            document.getElementById('statRate').innerText = `${rate}%`;
+            if (statTotal) statTotal.innerText = total;
+            if (statDone) statDone.innerText = done;
+            if (statCorrect) statCorrect.innerText = correct;
+            if (statWrong) statWrong.innerText = wrong;
 
-            const progress = total > 0 ? (done / total) * 100 : 0;
-            document.getElementById('progressBar').style.width = `${progress}%`;
+            const rate = done > 0 ? ((correct / done) * 100).toFixed(1) : '0.0';
+            if (statRate) statRate.innerText = `${rate}%`;
+
+            const percent = total > 0 ? (done / total) * 100 : 0;
+            if (progressBar) progressBar.style.width = `${percent}%`;
 
             if (done === total && total > 0) {
                 stopTimer();
