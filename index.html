@@ -464,13 +464,14 @@
 
         let fullVocabData = [];
         let currentQuizData = [];
-        let wrongWordsMap = {}; // Lưu trữ danh sách các từ sai
-        let activeAudioText = ""; // Dùng cho phím tắt nghe lại
+        let wrongWordsMap = {}; 
+        let activeAudioText = ""; 
         let timerInterval = null;
         let secondsElapsed = 0;
         let isTimerRunning = false;
         let sequentialOffset = 0;
         let isAudioEnabled = true;
+        let isMistakeMode = false; // Cờ đánh dấu đang ở chế độ luyện sổ từ sai
 
         function fisherYatesShuffle(array) {
             const arr = [...array];
@@ -562,7 +563,6 @@
         }
 
         window.onload = function() {
-            // Load từ vựng gốc
             const savedData = localStorage.getItem('hsk_vocab_data');
             if (savedData) {
                 try { 
@@ -575,7 +575,6 @@
                 fullVocabData = [...EMBEDDED_VOCAB_DATA];
             }
 
-            // Load sổ từ sai từ localStorage
             const savedWrong = localStorage.getItem('wrong_words');
             if (savedWrong) {
                 try { wrongWordsMap = JSON.parse(savedWrong); } catch(e) { wrongWordsMap = {}; }
@@ -717,6 +716,7 @@
         }
 
         function startNewQuiz() {
+            isMistakeMode = false; // Chế độ luyện tập bình thường
             if (!fullVocabData || fullVocabData.length === 0) fullVocabData = [...EMBEDDED_VOCAB_DATA];
             
             let fromIdx = parseInt(document.getElementById('rangeFrom').value) || 1;
@@ -754,13 +754,13 @@
             renderTable();
         }
 
-        // Chế độ ôn tập từ sai
         function startMistakeQuiz() {
             const keys = Object.keys(wrongWordsMap);
             if (keys.length === 0) {
                 alert("Tuyệt vời! Sổ tay từ sai của bạn đang trống.");
                 return;
             }
+            isMistakeMode = true; // Bật cờ đang luyện sổ từ sai
             currentQuizData = keys.map(chinese => wrongWordsMap[chinese]);
             resetTimer();
             renderTable();
@@ -852,7 +852,7 @@
             });
             updateStats();
 
-            // 1. TỰ ĐỘNG PHÁT ÂM CÂU ĐẦU TIÊN NẾU Ở CHẾ ĐỘ NGHE
+            // Tự động phát âm câu đầu tiên khi ở chế độ nghe
             if (mode === 'listening_mode' && currentQuizData.length > 0) {
                 setTimeout(() => {
                     speakText(currentQuizData[0].chinese);
@@ -863,14 +863,12 @@
             }
         }
 
-        // Xử lý phím Enter chuyển câu & phím Space nghe lại nhanh
         function handleKeyDown(event, index) {
             checkAndStartTimer();
             
-            // Phím Space (khi nhấn một mình hoặc cùng Ctrl để nghe lại nhanh)
+            // Phím Space để nghe lại nhanh nếu ô đang trống
             if (event.key === ' ' || event.code === 'Space') {
                 const inputElem = document.getElementById(`input_${index}`);
-                // Nếu ô input đang trống mà bấm Space thì phát lại âm thanh hiện tại
                 if (inputElem && !inputElem.value.trim() && activeAudioText) {
                     event.preventDefault();
                     speakText(activeAudioText);
@@ -878,7 +876,7 @@
                 }
             }
 
-            // Phím Enter
+            // Phím Enter tự động kiểm tra và nhảy xuống ô tiếp theo
             if (event.key === 'Enter' || event.keyCode === 13) {
                 event.preventDefault();
                 checkAnswer(index); 
@@ -888,7 +886,6 @@
                     nextInput.focus();
                     nextInput.select(); 
 
-                    // Nếu đang ở chế độ nghe, tự động phát âm từ tiếp theo ngay khi chuyển xuống
                     const modeSelectElem = document.getElementById('modeSelect');
                     const mode = modeSelectElem ? modeSelectElem.value : 'chinese_to_viet';
                     if (mode === 'listening_mode' && currentQuizData[index + 1]) {
@@ -1020,15 +1017,16 @@
             if (isCorrect) {
                 if (tr) tr.className = 'row-correct';
                 speakText(item.chinese);
-                // Nếu trả lời đúng và trước đó có trong sổ từ sai thì có thể giữ nguyên hoặc xóa khỏi sổ sai (tùy chọn)
-                if (wrongWordsMap[item.chinese]) {
+                
+                // Chỉ khi đang luyện ở chế độ "Sổ từ sai" mà gõ đúng thì mới xóa khỏi sổ sai
+                if (isMistakeMode && wrongWordsMap[item.chinese]) {
                     delete wrongWordsMap[item.chinese];
                     localStorage.setItem('wrong_words', JSON.stringify(wrongWordsMap));
                     updateWrongCountUI();
                 }
             } else {
                 if (tr) tr.className = 'row-wrong';
-                // Thêm vào danh sách từ sai
+                // Gõ sai luôn được cộng dồn vào sổ từ sai
                 wrongWordsMap[item.chinese] = item;
                 localStorage.setItem('wrong_words', JSON.stringify(wrongWordsMap));
                 updateWrongCountUI();
