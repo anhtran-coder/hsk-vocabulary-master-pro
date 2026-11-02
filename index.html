@@ -238,6 +238,7 @@
             background-color: #e0e7ff;
             color: #3730a3;
             font-weight: 700;
+            font-size: 0.95rem; /* Đồng bộ kích thước font chữ cho tất cả các cột tiêu đề */
             letter-spacing: 0.3px;
         }
 
@@ -1041,7 +1042,7 @@
                 if (tr) tr.className = 'row-correct';
                 speakText(item.chinese);
                 
-                // CẢI TIẾN: Gõ đúng trong sổ từ sai -> chỉ xóa ngầm khỏi danh sách và cập nhật số đếm, TUYỆT ĐỐI KHÔNG vẽ lại bảng (`renderTable`) để không làm mất con trỏ chuột của anh!
+                // Gõ đúng trong sổ từ sai -> xóa ngầm khỏi danh sách và cập nhật số đếm, không render lại bảng tránh mất con trỏ
                 if (isMistakeMode && currentWrongMap[item.chinese]) {
                     delete currentWrongMap[item.chinese];
                     wrongWordsByMode[mode] = currentWrongMap;
